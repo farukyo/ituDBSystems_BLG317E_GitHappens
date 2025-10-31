@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/static/css/summary.css" /> 
+    <title>Özetler</title>
+</head>
+<body>
+    <nav class="site-nav">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/movies">Movies</a></li>
+            <li><a href="/series">Series</a></li>
+            <li><a href="/celebrities">Celebrities</a></li>
+            <li><a href="/quiz">Quiz</a></li>
+            <li><a href="/recommend">Recommend</a></li>
+            <li><a href="/about">About</a></li>
+        </ul>
+    </nav>
+
+    <h1>Tüm Özetler</h1>
+
+    <div class="controls">
+        <select id="genre">
+            <option value="">Tür seç</option>
+            <option value="action">Aksiyon</option>
+            <option value="drama">Drama</option>
+            <option value="comedy">Komedi</option>
+            <option value="sci-fi">Bilim Kurgu</option>
+        </select>
+
+        <input type="text" placeholder="Film/Dizi ara..." />
+    </div>
+
+    <div class="summary-list">
+        
+        <div class="summary-item">
+            <h3><a href="/movie/tt0109830">Forrest Gump</a> (Film)</h3>
+            <p class="summary-text">Hayatı boyunca önemli olaylara tanıklık eden, iyi kalpli bir adamın hikayesi.</p>
+            <p class="details">Tür: Drama | Yıl: 1994</p>
+        </div>
+
+        <div class="summary-item">
+            <h3><a href="/serie/tt0903747">Breaking Bad</a> (Dizi)</h3>
+            <p class="summary-text">Kanser teşhisi konan bir kimya öğretmeninin ailesinin geleceği için suça yönelmesi.</p>
+            <p class="details">Tür: Suç, Drama | Yıl: 2008</p>
+        </div>
+        
+        <div class="summary-item">
+            <h3><a href="/movie/tt0120815">Saving Private Ryan</a> (Film)</h3>
+            <p class="summary-text">Normandiya Çıkarması sonrası, son kalan kardeşi kurtarmak için yola çıkan bir asker grubu.</p>
+            <p class="details">Tür: Savaş, Drama | Yıl: 1998</p>
+        </div>
+        
+    </div>
+</body>
+</html>
