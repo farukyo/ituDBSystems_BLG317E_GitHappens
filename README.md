@@ -1,10 +1,10 @@
 # GitHappens BLG317E Project
 
 ## Team Members
-- Faruk Yiğit Oluşan
-- Turgut Emre Sürenkök
-- Ceyda Nur Akalın
-- Eylül Ebrar Gülbeyaz
+- Faruk Yiğit Oluşan (farukyo)
+- Turgut Emre Sürenkök (T-Emre-S)
+- Ceyda Nur Akalın (cedaynur)
+- Eylül Ebrar Gülbeyaz (eylulebrar)
 - Şevval Hayyar
 
 ## Teaching Assistant (TA)

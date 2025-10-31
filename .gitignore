@@ -1,5 +1,5 @@
 #git e yüklenmesine gerek olmayan dosyalar
-
+venv/           # Sanal ortam klasörü
 .venv/          # Python sanal ortamı
 __pycache__/    # Python bytecode önbelleği
 *.pyc           # Python derlenmiş dosyalar
