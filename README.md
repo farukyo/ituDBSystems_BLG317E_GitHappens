@@ -5,7 +5,7 @@
 - Turgut Emre Sürenkök (T-Emre-S)
 - Ceyda Nur Akalın (cedaynur)
 - Eylül Ebrar Gülbeyaz (eylulebrar)
-- Şevval Hayyar
+- Şevval Hayyar (sevvaaal)
 
 ## Teaching Assistant (TA)
 - Elif Yıldırım
