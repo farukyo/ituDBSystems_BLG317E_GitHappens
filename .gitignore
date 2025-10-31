@@ -1,3 +1,12 @@
 #git e yüklenmesine gerek olmayan dosyalar
 
-.venv/
+.venv/          # Python sanal ortamı
+__pycache__/    # Python bytecode önbelleği
+*.pyc           # Python derlenmiş dosyalar
+*.pyo           # Optimize edilmiş bytecode dosyaları
+*.log           # Log dosyaları
+.env            # Çevre değişkenleri (gizli anahtarlar)
+.DS_Store       # macOS sistem dosyası
+.vscode/        # Visual Studio Code ayarları
+.idea/          # PyCharm/IntelliJ IDEA ayarları
+instance/       # Flask instance klasörü (yerel ayarlar)
