@@ -3,20 +3,98 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Githappens Homepage</title>
+    
+    <title>BeeMD — Discover movies & series</title>
     <link rel="stylesheet" href="/static/css/home.css" />
+    
 </head>
 
 <body>
-    <nav>
-        <li><a href="/">Home</a></li>
-        <li><a href="/movies">Movies</a></li>
-        <li><a href="/series">Series</a></li>
-        <li><a href="/celebrities">Celebrities</a></li>
-        <li><a href="/quiz">Quiz</a></li>
-        <li><a href="/recommend">Recommend</a></li>
-        <li><a href="/about">About</a></li>
-    </nav>
+    <header class="site-header">
+        <div class="container nav-row">
+            <div class="brand">
+                <a href="/">BeeMD</a>
+            </div>
+
+            <form class="search" action="/movies" method="get">
+                <input type="search" name="q" placeholder="Search movies, series or people..." aria-label="Search">
+                <button type="submit">Search</button>
+            </form>
+
+            <nav class="top-nav">
+                <ul>
+                    <li><a href="/movies">Movies</a></li>
+                    <li><a href="/series">Series</a></li>
+                    <li><a href="/celebrities">Celebrities</a></li>
+                    <li><a href="/quiz">Quiz</a></li>
+                    <li><a href="/recommend">Recommend</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-text">
+                <h1>Discover and explore movies & series</h1>
+                <p>Browse our curated picks, learn about cast & crew, and get personalized recommendations.</p>
+                <div class="hero-ctas">
+                    <a class="btn primary" href="/movies">Browse Movies</a>
+                    <a class="btn" href="/recommend">Get Recommendations</a>
+                </div>
+            </div>
+            <div class="hero-art">
+                <div class="poster-grid">
+                    <div class="poster"></div>
+                    <div class="poster small"></div>
+                    <div class="poster small"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured container">
+        <h2>Featured this week</h2>
+        <div class="cards">
+            <a class="card" href="/movies">New release: Example Movie</a>
+            <a class="card" href="/movies">Top rated: Example Drama</a>
+            <a class="card" href="/series">Must-see Series: Example Show</a>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-col footer-brand">
+                <a class="brand-footer" href="/">BeeMD</a>
+                <p class="muted">Discover movies, series and the people behind them. A course project by ITU BLG317E.
+                </p>
+            </div>
+
+            <div class="footer-col footer-links">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="/movies">Movies</a></li>
+                    <li><a href="/series">Series</a></li>
+                    <li><a href="/celebrities">Celebrities</a></li>
+                    <li><a href="/quiz">Quiz</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col footer-about">
+                <h4>About & Contact</h4>
+                <ul>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/recommend">Recommendations</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <div>© BeeMD — GitHappens — 2025</div>
+        </div>
+    </footer>
+
 </body>
 
 </html>

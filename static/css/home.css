@@ -1,3 +1,300 @@
-h1{
-    color: #e9601a;
+/* ----------------------------
+   home.css
+-------------------------------*/
+
+/* --- :root: global variables ---
+   Burada renkleri ve tekrar kullanmak isteyebileceğimiz değerleri
+   değişken olarak tanımlıyoruz. Değişkenler `var(--accent)` şeklinde
+   kullanılabilir. Bu, stil değişikliklerini merkezi hale getirir.
+*/
+:root {
+    --accent: #e9601a;
+    /* site vurgu rengi (butonlar vb.) */
+    --bg: #0b1220;
+    /* sayfa arka plan rengi */
+    --muted: #94a3b8;
+    /* ikincil metin için soluk renk */
+}
+
+
+/* --- box-sizing: kutu modelini kolaylaştırma ---
+   Tüm elemanlarda `box-sizing: border-box` kullanmak, padding ve border
+   değerlerinin genişlik/yükseklik hesaplarına dahil edilmesini sağlar.
+   Bu, responsive düzenleri kurarken işleri kolaylaştırır.
+*/
+* {
+    box-sizing: border-box
+}
+
+
+/* --- body: sayfa genel ayarları ---
+   - font-family: metinlerin hangi yazı tipinde görüneceğini belirtir
+   - margin: sayfanın etrafındaki boşluğu sıfırlıyoruz
+   - background / color: arka plan ve varsayılan metin rengi
+*/
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: #e6eef8;
+}
+
+
+/* --- container: içerik genişliği sınırlama ---
+   `.container` sınıfı içeriğin çok geniş ekranlarda çok yayılmasını
+   engeller; aynı zamanda iç kenar boşluğu (padding) verir.
+*/
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px
+}
+
+
+/* ----------------------
+   Header / navigation (üst kısım)
+   -----------------------*/
+
+/* site-header: arka plan, padding ve gölge */
+.site-header {
+    background: linear-gradient(90deg, #071026 0%, #0f1724 100%);
+    padding: 12px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+}
+
+/* nav-row: nav içi elemanları yatayda dizeriz */
+.nav-row {
+    display: flex;
+    align-items: center;
+    gap: 16px
+}
+
+/* brand: sol üstte görünen site ismi */
+.brand a {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.4rem
+}
+
+/* top-nav: link listesinin stili
+   - list-style: none -> madde işaretlerini kaldırır
+   - gap ile linkler arasına boşluk verilir
+*/
+.top-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 12px
+}
+
+.top-nav a {
+    color: #dbeafe;
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px
+}
+
+.top-nav a:hover {
+    background: rgba(255, 255, 255, 0.03)
+}
+
+
+/* search: arama kutusunun görünümü
+   - margin-left: auto ile arama sağa itilir (diğerleri solda kalır)
+*/
+.search {
+    margin-left: auto;
+    display: flex;
+    gap: 8px
+}
+
+.search input {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: none;
+    min-width: 220px
+}
+
+.search button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer
+}
+
+
+/* ----------------------
+   Hero bölümü (sayfanın üst büyük kısmı)
+-----------------------*/
+.hero {
+    padding: 48px 0;
+    background: linear-gradient(180deg, rgba(14, 22, 34, 0.9), rgba(5, 9, 15, 0.9))
+}
+
+/* hero-inner: metin ve görseli yan yana yerleştirir */
+.hero-inner {
+    display: flex;
+    gap: 24px;
+    align-items: center
+}
+
+.hero-text {
+    flex: 1
+}
+
+.hero-text h1 {
+    font-size: 2.4rem;
+    margin: 0 0 12px;
+    color: #fff
+}
+
+.hero-text p {
+    color: var(--muted);
+    margin: 0 0 18px
+}
+
+/* CTA butonları yan yana durur */
+.hero-ctas {
+    display: flex;
+    gap: 10px
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    text-decoration: none
+}
+
+.btn.primary {
+    background: var(--accent);
+    box-shadow: 0 6px 18px rgba(233, 96, 26, 0.14)
+}
+
+
+/* hero-art: poster benzeri kutular için alan */
+.hero-art {
+    width: 280px
+}
+
+.poster-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px
+}
+
+.poster {
+    background: linear-gradient(180deg, #1f2937, #111827);
+    height: 180px;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .6)
+}
+
+.poster.small {
+    height: 84px
+}
+
+
+/* ----------------------
+   Featured bölüm (kartlar)
+-----------------------*/
+.featured {
+    padding: 28px 0;
+    background: transparent;
+    color: #cfe6ff
+}
+
+.featured h2 {
+    margin: 0 0 12px
+}
+
+.cards {
+    display: flex;
+    gap: 12px
+}
+
+.card {
+    flex: 1;
+    background: linear-gradient(180deg, #071028, #07141c);
+    padding: 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #fff
+}
+
+
+/* ----------------------
+   Footer (alt kısım)
+   Açıklamalar:
+   - footer-grid: üç sütunlu düzen (marka, explore, hakkında)
+   - footer-bottom: alt satır, telif hakkı gibi küçük bilgi
+*/
+.site-footer {
+    padding: 28px 0 12px 0;
+    background: linear-gradient(180deg, #06101a, #071025);
+    color: #b7cfe6
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 200px 200px;
+    gap: 24px;
+    align-items: start;
+    padding-bottom: 12px
+}
+
+.footer-col h4 {
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+    color: #fff
+}
+
+.brand-footer {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.1rem
+}
+
+.footer-col .muted {
+    color: var(--muted);
+    font-size: 0.93rem;
+    margin-top: 8px
+}
+
+.footer-links ul,
+.footer-about ul {
+    list-style: none;
+    padding: 0;
+    margin: 0
+}
+
+.footer-links li,
+.footer-about li {
+    margin-bottom: 8px
+}
+
+.footer-links a,
+.footer-about a {
+    color: #9fb7de;
+    text-decoration: none
+}
+
+.footer-links a:hover,
+.footer-about a:hover {
+    color: #fff
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+    padding-top: 12px;
+    color: #93a9c6;
+    font-size: 0.9rem;
+    text-align: center
 }
