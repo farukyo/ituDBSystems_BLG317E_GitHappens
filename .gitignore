@@ -10,3 +10,4 @@ __pycache__/    # Python bytecode önbelleği
 .vscode/        # Visual Studio Code ayarları
 .idea/          # PyCharm/IntelliJ IDEA ayarları
 instance/       # Flask instance klasörü (yerel ayarlar)
+/.venv
