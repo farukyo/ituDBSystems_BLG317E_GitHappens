@@ -11,3 +11,10 @@ __pycache__/    # Python bytecode önbelleği
 .idea/          # PyCharm/IntelliJ IDEA ayarları
 instance/       # Flask instance klasörü (yerel ayarlar)
 /.venv
+data/title.ratings.tsv
+data/title.principals.tsv
+data/title.episode.tsv
+data/title.crew.tsv
+data/title.basics.tsv
+data/title.akas.tsv
+data/name.basics.tsv
