@@ -11,3 +11,4 @@ __pycache__/    # Python bytecode önbelleği
 .idea/          # PyCharm/IntelliJ IDEA ayarları
 instance/       # Flask instance klasörü (yerel ayarlar)
 /.venv
+
