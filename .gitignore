@@ -20,4 +20,4 @@ data/title.akas.tsv
 data/name.basics.tsv
 /.idea
 *.csv
-*.pyc
+

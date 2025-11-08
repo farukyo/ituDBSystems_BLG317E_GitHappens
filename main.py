@@ -1,4 +1,8 @@
 from flask import Flask, render_template
+from database.db import engine
+from sqlalchemy import text
+
+
 
 app= Flask(__name__)
 
@@ -20,7 +24,10 @@ def recommend_page():
 
 @app.route("/movies")
 def movies_page():
-    return render_template("movies.html")
+    with engine.connect() as conn:
+        result = conn.execute(text("SELECT * FROM series"))
+        data = result.fetchall()
+    return render_template("movies.html", series=data)
 
 @app.route("/series")
 def series_page():
