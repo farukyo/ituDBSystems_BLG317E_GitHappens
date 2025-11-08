@@ -30,5 +30,13 @@ def series_page():
 def celebrities_page():
     return render_template("celebrities.html")
 
+@app.route("/user")
+def user_page():
+    return render_template("user.html")
+
+@app.route("/suggest")
+def suggest_page():
+    return render_template("suggestion.html")
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)
