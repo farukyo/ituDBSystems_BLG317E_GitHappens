@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>{% block title %}BeeMD{% endblock %}</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}" />
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <div id="sidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" id="closeMenuBtn">×</a>
+        <a href="{{ url_for('index') }}">🏠 Home</a>
+        <a href="{{ url_for('movies') }}">🎬 Movies</a>
+        <a href="{{ url_for('series') }}">📺 Series</a>
+        <a href="{{ url_for('celebrities') }}">⭐ Celebrities</a>
+        <a href="{{ url_for('recommend') }}">💡 Recommend</a>
+        <a href="{{ url_for('quiz') }}">❓ Quizes</a>
+    </div>
+    
+    <div id="main-content" class="main-content">
+        <header class="site-header">
+            <div class="container nav-row">
+                <div class="brand">
+                    <span class="menu-btn" id="openMenuBtn">☰</span>
+                    <a href="{{ url_for('index') }}">BeeMD</a>
+                </div>
+
+                <form class="search" action="{{ url_for('movies') }}" method="get">
+                    <input type="search" name="q" placeholder="Search..." aria-label="Search">
+                    <button type="submit">Search</button>
+                </form>
+
+                <div class="header-user-links">
+                {% block header_user_links %}
+                    <div class="about-link">
+                        <a href="{{ url_for('about') }}" title="About Us">ℹ️</a>
+                    </div>
+                    {% if current_user.is_authenticated %}
+                        <div class="user-link">
+                            <a href="{{ url_for('profile') }}" title="Profile">👤</a>
+                        </div>
+                        <div class="user-link">
+                            <a href="{{ url_for('logout') }}" title="Logout">Logout</a>
+                        </div>
+                    {% else %}
+                        <div class="user-link">
+                            <a href="{{ url_for('login') }}" title="Login / Sign Up">
+                                Login
+                            </a>
+                        </div>
+                    {% endif %}
+                {% endblock %}
+                </div>
+            </div>
+        </header>
+        
+        <main class="page-content">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <ul class="flashes" style="color: red; text-align: center; list-style: none; padding: 1rem;">
+                {% for message in messages %}
+                  <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+        
+            {% block content %}{% endblock %}
+        </main>
+
+    </div>{% block footer %}
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-brand-section">
+                <a class="brand-footer" href="{{ url_for('index') }}">BeeMD</a>
+                <p class="muted">Discover movies, series and the people behind them. A course project by ITU BLG317E.</p>
+            </div>
+
+            <div class="footer-links-grid">
+
+                <div class="footer-col footer-links">
+                    <h4>Explore Data</h4>
+                    <ul>
+                        <li><a href="{{ url_for('movies') }}">Movies</a></li>
+                        <li><a href="{{ url_for('series') }}">Series</a></li>
+                        <li><a href="{{ url_for('celebrities') }}">Celebrities</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col footer-user">
+                    <h4>Explore As User</h4>
+                    <ul>
+                        <li><a href="{{ url_for('profile') }}">User</a></li>
+                        <li><a href="{{ url_for('quiz') }}">Quizes</a></li>
+                        <li><a href="{{ url_for('recommend') }}">Recommendations</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col footer-about">
+                    <h4>About & Contact</h4>
+                    <ul>
+                        <li><a href="{{ url_for('about') }}">About</a></li>
+                        <li><a href="{{ url_for('suggest') }}">Suggestions</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div> <div class="container footer-bottom">
+            <div>© BeeMD — GitHappens — 2025</div>
+        </div>
+    </footer>
+    {% endblock %}
+
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+</body>
+</html>
