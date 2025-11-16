@@ -3,31 +3,105 @@
 {% block title %}Movies - BeeMD{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/movies.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/movies.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container movies-page">
+
     <h1>Movies</h1>
 
-    <div class="controls">
-        <select id="genre">
-            <option value="">Select Genre</option>
-            <option value="action">Action</option>
-            <option value="drama">Drama</option>
-            <option value="comedy">Comedy</option>
-            <option value="sci-fi">Sci-Fi</option>
+    <!-- Search Bar (movieTitle) -->
+    <div class="search-box">
+        <input type="text" id="movie-search" placeholder="Search movie title...">
+        <button id="movie-search-btn">Search</button>
+    </div>
+
+    <!-- Filters Section (titleType, startYear, endYear, runtimeMinutes, isAdult, genreId gibi) -->
+    <div class="filters">
+
+        <!-- titleType -->
+        <select id="movie-title-type">
+            <option value="">Title Type</option>
+            <option value="movie">Movie</option>
+            <option value="short">Short</option>
+            <option value="tvMovie">TV Movie</option>
         </select>
 
-        <input type="text" placeholder="Search movies...">
+        <!-- startYear -->
+        <select id="movie-start-year">
+            <option value="">Start Year</option>
+            <option value="2020">2020s</option>
+            <option value="2010">2010s</option>
+            <option value="2000">2000s</option>
+            <option value="1990">1990s</option>
+        </select>
+
+        <!-- endYear (çoğu film için start=end ama yine de bıraktım) -->
+        <select id="movie-end-year">
+            <option value="">End Year</option>
+            <option value="2020">2020+</option>
+            <option value="2010">2010+</option>
+            <option value="2000">2000+</option>
+            <option value="1990">1990+</option>
+        </select>
+
+        <!-- runtimeMinutes -->
+        <select id="movie-runtime">
+            <option value="">Runtime (minutes)</option>
+            <option value="lt90">&lt; 90</option>
+            <option value="90-120">90 – 120</option>
+            <option value="gt120">&gt; 120</option>
+        </select>
+
+        <!-- isAdult -->
+        <select id="movie-is-adult">
+            <option value="">Adult Content</option>
+            <option value="false">Non-adult (0)</option>
+            <option value="true">Adult (1)</option>
+        </select>
+
+        <!-- genreId -->
+        <select id="movie-genre">
+            <option value="">Genre</option>
+            <option value="drama">Drama</option>
+            <option value="comedy">Comedy</option>
+            <option value="action">Action</option>
+            <option value="thriller">Thriller</option>
+        </select>
+
+        <button id="movie-filter-btn">Apply Filters</button>
     </div>
 
-    <div class="movie-list">
-        {% for movie in movies %}
-            <div class="movie-item">{{ movie.title }}</div>
-        {% else %}
-            <p>No movies found.</p>
-        {% endfor %}
+    <!-- Top 3 Popular Movies (kartlar) -->
+    <h2 class="sub-title">Top 3 Most Popular Movies</h2>
+    <div class="popular-movies">
+
+        <div class="movie-card">
+            <h3>Movie Name 1</h3>
+            <p class="movie-genre">Drama</p>
+            <p class="movie-likes">Liked by 30 users</p>
+        </div>
+
+        <div class="movie-card">
+            <h3>Movie Name 2</h3>
+            <p class="movie-genre">Action</p>
+            <p class="movie-likes">Liked by 24 users</p>
+        </div>
+
+        <div class="movie-card">
+            <h3>Movie Name 3</h3>
+            <p class="movie-genre">Comedy</p>
+            <p class="movie-likes">Liked by 19 users</p>
+        </div>
     </div>
+
+    <!-- Results After Query (Empty for now) -->
+    <div id="movie-results"></div>
+
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/movies.js') }}"></script>
 {% endblock %}

@@ -7,28 +7,101 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container series-page">
+
     <h1>Series</h1>
 
-    <div class="controls">
+    <!-- Search Bar (seriesTitle) -->
+    <div class="search-box">
+        <input type="text" id="series-search" placeholder="Search series title...">
+        <button id="series-search-btn">Search</button>
+    </div>
+
+    <!-- Filters Section (titleType, startYear, endYear, runtimeMinutes, isAdult, genreId) -->
+    <div class="filters">
+
+        <!-- titleType -->
+        <select id="title-type">
+            <option value="">Title Type</option>
+            <option value="tvSeries">TV Series</option>
+            <option value="tvMiniSeries">TV Mini Series</option>
+            <option value="tvEpisode">TV Episode</option>
+        </select>
+
+        <!-- startYear -->
+        <select id="start-year">
+            <option value="">Start Year</option>
+            <option value="2020">2020s</option>
+            <option value="2010">2010s</option>
+            <option value="2000">2000s</option>
+            <option value="1990">1990s</option>
+        </select>
+
+        <!-- endYear -->
+        <select id="end-year">
+            <option value="">End Year</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="2020">Ended 2020+</option>
+            <option value="2010">Ended 2010+</option>
+            <option value="2000">Ended 2000+</option>
+        </select>
+
+        <!-- runtimeMinutes (kabaca aralıklar) -->
+        <select id="runtime">
+            <option value="">Runtime (minutes)</option>
+            <option value="lt30">&lt; 30</option>
+            <option value="30-60">30 – 60</option>
+            <option value="gt60">&gt; 60</option>
+        </select>
+
+        <!-- isAdult -->
+        <select id="is-adult">
+            <option value="">Adult Content</option>
+            <option value="false">Non-adult (0)</option>
+            <option value="true">Adult (1)</option>
+        </select>
+
+        <!-- genreId -->
         <select id="genre">
-            <option value="">Select Genre</option>
+            <option value="">Genre</option>
             <option value="drama">Drama</option>
             <option value="comedy">Comedy</option>
             <option value="crime">Crime</option>
+            <option value="fantasy">Fantasy</option>
         </select>
 
-        <input type="text" placeholder="Search series...">
+        <button id="series-filter-btn">Apply Filters</button>
     </div>
 
-    <div class="series-list">
-        {% for series in series_list %}
-            <div class="series-item">
-                {{ series.title }}
-            </div>
-        {% else %}
-            <p>No series found.</p>
-        {% endfor %}
+    <!-- Top 3 Popular Series (kartlar) -->
+    <h2 class="sub-title">Top 3 Most Popular Series</h2>
+    <div class="popular-series">
+
+        <div class="series-card">
+            <h3>Series Name 1</h3>
+            <p class="series-genre">Drama</p>
+            <p class="series-likes">Liked by 25 users</p>
+        </div>
+
+        <div class="series-card">
+            <h3>Series Name 2</h3>
+            <p class="series-genre">Crime / Thriller</p>
+            <p class="series-likes">Liked by 20 users</p>
+        </div>
+
+        <div class="series-card">
+            <h3>Series Name 3</h3>
+            <p class="series-genre">Comedy</p>
+            <p class="series-likes">Liked by 18 users</p>
+        </div>
     </div>
+
+    <!-- Results After Query (Empty for now) -->
+    <div id="series-results"></div>
+
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/series.js') }}"></script>
 {% endblock %}

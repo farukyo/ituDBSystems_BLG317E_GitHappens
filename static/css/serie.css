@@ -1,0 +1,74 @@
+/* Single Series Detail Page */
+
+.serie-page {
+    padding-top: 10px;
+}
+
+.serie-header h1 {
+    margin-bottom: 8px;
+}
+
+.serie-meta {
+    margin: 0 0 8px;
+    color: var(--muted);
+}
+
+.serie-desc {
+    margin: 0 0 20px;
+    max-width: 700px;
+}
+
+/* Episodes list */
+.episodes h2 {
+    margin-bottom: 10px;
+}
+
+.episode-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+}
+
+.episode-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background: #111827;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .4);
+}
+
+.ep-title {
+    font-weight: 500;
+}
+
+.ep-duration {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.ep-link {
+    text-decoration: none;
+    background: var(--accent);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+/* Back button */
+.back-to-series {
+    margin-top: 20px;
+}
+
+.back-button {
+    text-decoration: none;
+    color: var(--accent);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--accent);
+    font-size: 0.9rem;
+}
