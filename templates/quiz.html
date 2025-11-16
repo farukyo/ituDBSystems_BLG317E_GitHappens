@@ -1,27 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="utf-8" />
-    <title>Quiz</title>
-    <link rel="stylesheet" href="/static/css/quiz.css" />
-</head>
+{% block title %}Quiz - BeeMD{% endblock %}
 
-<body>
-    <nav class="site-nav">
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/movies.css') }}" />
+{% endblock %}
 
-            <li><a href="/">Home</a></li>
-            <li><a href="/movies">Movies</a></li>
-            <li><a href="/series">Series</a></li>
-            <li><a href="/celebrities">Celebrities</a></li>
-            <li><a href="/quiz">Quiz</a></li>
-            <li><a href="/recommend">Recommend</a></li>
-            <li><a href="/about">About</a></li>
-
-    </nav>
-
+{% block content %}
+<div class="container">
     <h1>Quiz</h1>
-
-</body>
-
-</html>
+    <p>Welcome, {{ current_user.username }}! The quiz will be here.</p>
+</div>
+{% endblock %}
