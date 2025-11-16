@@ -12,3 +12,4 @@ __pycache__/    # Python bytecode önbelleği
 instance/       # Flask instance klasörü (yerel ayarlar)
 /.venv
 
+.env
