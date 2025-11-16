@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - IMDb Project</title>
+{% extends "base.html" %}
+
+{% block title %}Sign Up - BeeMD{% endblock %}
+
+{% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
-</head>
-<body>
-    
+{% endblock %}
+
+{% block content %}
     <div class="auth-container">
         <form action="{{ url_for('signup') }}" method="POST">
             <h2>Sign Up</h2>
@@ -16,7 +15,7 @@
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
             </div>
-            
+
             <div class="input-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required>
@@ -28,17 +27,32 @@
             </div>
             
             <div class="input-group">
-                <label for="confirm_password">Confirm Password</label>
-                <input type="password" id="confirm_password" name="confirm_password" required>
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob">
+            </div>
+
+            <div class="input-group">
+                <label for="gender">Gender</label>
+                <select id="gender" name="gender">
+                    <option value="" disabled selected>Select an option...</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="prefer_not_to_say">Prefer not to say</option>
+                </select>
             </div>
             
             <button type="submit" class="btn">Sign Up</button>
             
             <p class="form-footer">
-                Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+                Already have an account? <a href="{{ url_for('login') }}">Login</a>
             </p>
         </form>
     </div>
+{% endblock %}
 
-</body>
-</html>
+{% block header_user_links %}
+    {% endblock %}
+
+{% block footer %}
+    {% endblock %}

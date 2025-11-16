@@ -1,45 +1,33 @@
-<!DOCTYPE html>
-<html lang="tr">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="/static/css/movies.css" />
-    <title>Movies</title>
-</head>
+{% block title %}Movies - BeeMD{% endblock %}
 
-<body>
-    <nav class="site-nav">
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/movies.css') }}" />
+{% endblock %}
 
-            <li><a href="/">Home</a></li>
-            <li><a href="/movies">Movies</a></li>
-            <li><a href="/series">Series</a></li>
-            <li><a href="/celebrities">Celebrities</a></li>
-            <li><a href="/quiz">Quiz</a></li>
-            <li><a href="/recommend">Recommend</a></li>
-            <li><a href="/about">About</a></li>
-
-    </nav>
-
+{% block content %}
+<div class="container">
     <h1>Movies</h1>
 
     <div class="controls">
         <select id="genre">
-            <option value="">Tür seç</option>
-            <option value="action">Aksiyon</option>
+            <option value="">Select Genre</option>
+            <option value="action">Action</option>
             <option value="drama">Drama</option>
-            <option value="comedy">Komedi</option>
-            <option value="sci-fi">Bilim Kurgu</option>
+            <option value="comedy">Comedy</option>
+            <option value="sci-fi">Sci-Fi</option>
         </select>
 
-        <input type="text" placeholder="Film ara...">
+        <input type="text" placeholder="Search movies...">
     </div>
 
     <div class="movie-list">
-        <div class="movie-item">Film 1 (örnek)</div>
-        <div class="movie-item">Film 2 (örnek)</div>
-        <div class="movie-item">Film 3 (örnek)</div>
+        {% for movie in movies %}
+            <div class="movie-item">{{ movie.title }}</div>
+        {% else %}
+            <p>No movies found.</p>
+        {% endfor %}
     </div>
-
-</body>
-
-</html>
+</div>
+{% endblock %}

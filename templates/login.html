@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - IMDb Project</title>
+{% extends "base.html" %}
+
+{% block title %}Login - BeeMD{% endblock %}
+
+{% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
-</head>
-<body>
-    
+{% endblock %}
+
+{% block content %}
     <div class="auth-container">
         <form action="{{ url_for('login') }}" method="POST">
             <h2>Login</h2>
@@ -29,6 +28,10 @@
             </p>
         </form>
     </div>
+{% endblock %}
 
-</body>
-</html>
+{% block header_user_links %}
+    {% endblock %}
+
+{% block footer %}
+    {% endblock %}
