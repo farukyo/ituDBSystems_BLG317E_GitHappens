@@ -4,16 +4,9 @@
     padding: 0;
 }
 
-body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #121212; 
-    color: #f5f5f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    line-height: 1.5;
-}
+/* REMOVED the 'body' selector here. 
+  The base.html and home.css are now in control of the page background.
+*/
 
 .auth-container {
     background-color: #1f1f1f;
@@ -23,7 +16,9 @@ body {
     border: 1px solid #333;
     width: 100%;
     max-width: 450px;
-    margin: 1rem;
+    
+    /* ADDED: This centers the form in the middle of the <main> area */
+    margin: 3rem auto; 
 }
 
 .auth-container h2 {

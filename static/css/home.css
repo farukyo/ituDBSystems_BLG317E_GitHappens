@@ -155,6 +155,15 @@ body {
     cursor: pointer
 }
 
+/* FIX #1: This rule fixes the overlapping "About" and "Login" buttons.
+*/
+.header-user-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
 /* User Link - About Us Link Stili */
 .user-link a {
     text-decoration: none;
@@ -290,79 +299,48 @@ body {
 
 /* ----------------------
    Footer (alt kısım)
-   Açıklamalar:
-   - footer-brand: marka 
-   - footer-grid: üç sütunlu düzen (explore db, explore as user, hakkında)
-   - footer-bottom: alt satır, telif hakkı gibi küçük bilgi
-*/
+   FIX #2: This section is updated for the new layout.
+-----------------------*/
 .site-footer {
     padding: 28px 0 12px 0;
-    background: linear-gradient(180deg, #06101a, #071025);
-    color: #b7cfe6
+    background: #0b1220;
+    color: #b7cfe6;
 }
 
-.footer-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 24px;
-    align-items: start;
-    padding-bottom: 12px
-}
-
-.footer-col h4 {
-    margin: 0 0 8px;
-    font-size: 0.95rem;
-    color: #fff
+/* NEW: Styles for the top brand section */
+.footer-brand-section {
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .brand-footer {
     color: var(--accent);
     font-weight: 700;
     text-decoration: none;
-    font-size: 1.1rem
+    font-size: 1.3rem;
 }
 
-.footer-col .muted {
+.footer-brand-section .muted {
     color: var(--muted);
-    font-size: 0.93rem;
-    margin-top: 8px
+    font-size: 0.95rem;
+    margin-top: 8px;
+    max-width: 450px; /* Stops text from stretching too wide */
 }
 
-/* Marka bloğu, Grid dışındaysa bu kuralı kullanmalıyız */
-.footer-col.footer-brand {
-    /* Genel konteyner genişliğini almasını sağlar */
-    width: 100%; 
-    /* Metinleri sola hizala (Zaten varsayılan olabilir) */
-    text-align: left; 
-    /* Dikey hiza düzeltmelerini kaldırma/sıfırlama */
-    margin-top: 0;
-    padding-top: 0;
+/* NEW: This is now a 3-column grid for links */
+.footer-links-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */
+    gap: 24px;
+    align-items: start;
+    padding-bottom: 12px;
 }
 
-/* YENİ KURAL: Marka içeriğinin Grid'in ilk sütununa denk gelmesi için */
-.site-footer > .footer-col.footer-brand {
-    /* Kapsayıcı konteynere eşit genişlik veririz (Örn: 3 sütunluk toplam genişlik) */
-    max-width: 1100px; /* .container ile aynı olmalı */
-    margin: 0 auto; /* Metni merkeze getirir (Grid'in hizalandığı gibi) */
-    padding: 0 16px; /* .container ile aynı padding'i korur */
-
-    /* Metinlerin başlangıç noktasına ayar çekmek için */
-    /* Bu değer, Grid'in solundaki 1/3'lük alana denk gelmelidir. */
-    width: calc(100% / 3 - 16px); /* 1/3 genişlik - gap boşluğunu yaklaşık telafi */
-    margin-left: 0; /* Sola yaslar */
-}
-
-/* Eğer Marka bloğu footer-grid'in hemen üstündeyse (HTML yapınıza göre): */
-/* Bu bloğun Grid konteyneri ile aynı yatay hizayı alması için: */
-.site-footer > .footer-col.footer-brand {
-    /* Yatay konteyner hizalama ayarları */
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 16px; 
-    
-    /* İçeriği sola itmek için, Grid'in başladığı noktaya göre bir boşluk ekleyin */
-    /* Diğer 3 sütuna göre 2/3'lük boşluk (gap'ler dahil) bırakılmalı */
-    padding-right: calc(100% * 2/3 - 16px); 
+.footer-col h4 {
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+    color: #fff;
 }
 
 .footer-links ul,

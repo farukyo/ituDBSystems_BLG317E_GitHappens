@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="tr">
+{% extends "base.html" %}
 
 <head>
     <meta charset="UTF-8">
@@ -56,8 +55,34 @@
             {% endif %}
         </div>
         {% endif %}
+{% block title %}Movies - BeeMD{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/movies.css') }}" />
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Movies</h1>
+
+    <div class="controls">
+        <select id="genre">
+            <option value="">Select Genre</option>
+            <option value="action">Action</option>
+            <option value="drama">Drama</option>
+            <option value="comedy">Comedy</option>
+            <option value="sci-fi">Sci-Fi</option>
+        </select>
+
+        <input type="text" placeholder="Search movies...">
     </div>
 
-</body>
-
-</html>
+    <div class="movie-list">
+        {% for movie in movies %}
+            <div class="movie-item">{{ movie.title }}</div>
+        {% else %}
+            <p>No movies found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

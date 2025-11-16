@@ -1,41 +1,28 @@
-<!DOCTYPE html>
-<html lang="tr">
+{% extends "base.html" %}
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="stylesheet" href="/static/css/series.css" />
-  <title>Breaking Bad - 1. Bölüm</title>
-</head>
+{% block title %}Episode Detail - BeeMD{% endblock %}
 
-<body>
-  <nav class="site-nav">
-    <li><a href="/">Home</a></li>
-    <li><a href="/movies">Movies</a></li>
-    <li><a href="/series">Series</a></li>
-    <li><a href="/celebrities">Celebrities</a></li>
-    <li><a href="/quiz">Quiz</a></li>
-    <li><a href="/recommend">Recommend</a></li>
-    <li><a href="/about">About</a></li>
-  </nav>
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/series.css') }}" />
+{% endblock %}
 
+{% block content %}
+<div class="container">
+    <section class="episode-detail">
+        <h1>Breaking Bad – Season 1, Episode 1</h1>
 
-  <section class="episode-detail">
-    <h1>Breaking Bad – 1. Sezon, 1. Bölüm</h1>
+        <div class="episode-info">
+            <p><strong>Episode Title:</strong> Pilot</p>
+            <p><strong>Runtime:</strong> 58 minutes</p>
+            <p><strong>Air Date:</strong> January 20, 2008</p>
+            <p><strong>Summary:</strong> Walter White, struggling with financial problems, learns he has cancer. He decides to enter an illegal business with his former student, Jesse Pinkman.</p>
+        </div>
 
-
-    <div class="episode-info">
-      <p><strong>Bölüm Adı:</strong> Pilot</p>
-      <p><strong>Süre:</strong> 58 dakika</p>
-      <p><strong>Yayın Tarihi:</strong> 20 Ocak 2008</p>
-      <p><strong>Kısa Özet:</strong> Walter White, maddi sıkıntılarla boğuşurken kanser olduğunu öğrenir. Eski öğrencisi
-        Jesse Pinkman’la birlikte yasa dışı bir işe girişmeye karar verir.</p>
-    </div>
-
-    <div class="episode-buttons">
-      <a href="/templates/serie.html" class="back-button">Back</a>
-
-    </div>
-  </section>
-</body>
-
-</html>
+        <div class="episode-buttons" style="margin-top: 20px;">
+            <a href="{{ url_for('series') }}" class="back-button" style="color: #f5c518; text-decoration: none; background: #333; padding: 10px 15px; border-radius: 5px;">
+                Back to Series
+            </a>
+        </div>
+    </section>
+</div>
+{% endblock %}

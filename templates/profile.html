@@ -11,6 +11,7 @@
             background-color: #1f1f1f;
             border-radius: 10px;
             border: 1px solid #333;
+            color: #fff;
         }
         .profile-header {
             border-bottom: 2px solid #f5c518;
@@ -25,6 +26,31 @@
             font-size: 1.2rem;
             color: #aaa;
             margin-top: 0.5rem;
+        }
+        .profile-info {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+        .profile-info-item {
+            color: #ccc;
+        }
+        .profile-info-item span {
+            font-weight: bold;
+            color: #fff;
+        }
+        .profile-section {
+            margin-bottom: 2.5rem;
+        }
+        .profile-section h2 {
+            color: #f5f5f5;
+            border-bottom: 1px solid #444;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .profile-section h3 {
+            color: #f5c518;
+            font-size: 1.8rem;
         }
         .liked-list {
             list-style: none;
@@ -47,11 +73,20 @@
     <div class="profile-header">
         <h1>{{ user.username }}</h1>
         <p>Email: {{ user.email }}</p>
+
+        <div class="profile-info">
+            <div class="profile-info-item">
+                Date of Birth: <span>{{ user.dob | default('N/A') }}</span>
+            </div>
+            <div class="profile-info-item">
+                Gender: <span>{{ user.gender | title | default('N/A') }}</span>
+            </div>
+        </div>
     </div>
 
     <section class="profile-section">
         <h2>My Quiz Score</h2>
-        <h3>{{ user.quiz_score }}</h3>
+        <h3>{{ user.quiz_score | default('Not taken yet') }}</h3>
     </section>
 
     <section class="profile-section">
@@ -72,6 +107,17 @@
                 <li>{{ series.title }}</li>
             {% else %}
                 <li>You haven't liked any series yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="profile-section">
+        <h2>Liked Celebrities</h2>
+        <ul class="liked-list">
+            {% for actor in user.liked_actors %}
+                <li>{{ actor.name }}</li>
+            {% else %}
+                <li>You haven't liked any celebrities yet.</li>
             {% endfor %}
         </ul>
     </section>
