@@ -21,3 +21,4 @@ data/name.basics.tsv
 /.idea
 *.csv
 
+*.pyc
