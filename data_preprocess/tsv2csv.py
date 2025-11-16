@@ -5,6 +5,7 @@ from pathlib import Path
 # Increase the field size limit to handle large fields
 csv.field_size_limit(10**7)
 
+
 def convert_tsv_to_csv(tsv_file_path, csv_file_path):
     """
     Convert a TSV file to CSV format.
@@ -16,12 +17,14 @@ def convert_tsv_to_csv(tsv_file_path, csv_file_path):
     try:
         print(f"Converting {os.path.basename(tsv_file_path)}...")
 
-        with open(tsv_file_path, 'r', encoding='utf-8') as tsv_file:
-            with open(csv_file_path, 'w', encoding='utf-8', newline='') as csv_file:
+        with open(tsv_file_path, "r", encoding="utf-8") as tsv_file:
+            with open(csv_file_path, "w", encoding="utf-8", newline="") as csv_file:
                 # Read TSV with tab delimiter
-                tsv_reader = csv.reader(tsv_file, delimiter='\t')
+                tsv_reader = csv.reader(tsv_file, delimiter="\t")
                 # Write CSV with comma delimiter
-                csv_writer = csv.writer(csv_file, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+                csv_writer = csv.writer(
+                    csv_file, delimiter=",", quoting=csv.QUOTE_MINIMAL
+                )
 
                 # Copy all rows from TSV to CSV
                 row_count = 0
@@ -33,7 +36,9 @@ def convert_tsv_to_csv(tsv_file_path, csv_file_path):
                     if row_count % 100000 == 0:
                         print(f"  Processed {row_count:,} rows...")
 
-                print(f"  ✓ Completed: {row_count:,} rows written to {os.path.basename(csv_file_path)}")
+                print(
+                    f"  ✓ Completed: {row_count:,} rows written to {os.path.basename(csv_file_path)}"
+                )
                 return True
 
     except Exception as e:
@@ -58,7 +63,7 @@ def convert_all_tsv_in_folder(data_folder, output_folder=None):
 
     # Get all TSV files in the data folder
     data_path = Path(data_folder)
-    tsv_files = list(data_path.glob('*.tsv'))
+    tsv_files = list(data_path.glob("*.tsv"))
 
     if not tsv_files:
         print(f"No TSV files found in {data_folder}")
@@ -72,7 +77,7 @@ def convert_all_tsv_in_folder(data_folder, output_folder=None):
 
     for tsv_file in tsv_files:
         # Create output CSV filename
-        csv_filename = tsv_file.stem + '.csv'
+        csv_filename = tsv_file.stem + ".csv"
         csv_file_path = os.path.join(output_folder, csv_filename)
 
         # Convert the file
@@ -84,7 +89,7 @@ def convert_all_tsv_in_folder(data_folder, output_folder=None):
         print("-" * 60)
 
     print("\n" + "=" * 60)
-    print(f"Conversion Summary:")
+    print("Conversion Summary:")
     print(f"  ✓ Successful: {successful}")
     print(f"  ✗ Failed: {failed}")
     print(f"  Total: {len(tsv_files)}")
@@ -96,7 +101,7 @@ if __name__ == "__main__":
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     # Define the data folder path (one level up from script directory)
-    data_folder = os.path.join(os.path.dirname(script_dir), 'data')
+    data_folder = os.path.join(os.path.dirname(script_dir), "data")
 
     # You can optionally specify a different output folder
     # output_folder = os.path.join(os.path.dirname(script_dir), 'data_csv')
@@ -110,4 +115,3 @@ if __name__ == "__main__":
 
     # Convert all TSV files
     convert_all_tsv_in_folder(data_folder, output_folder)
-
