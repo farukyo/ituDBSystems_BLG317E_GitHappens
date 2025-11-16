@@ -1,44 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
+  <title>BeeMD — Series</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Page-specific stylesheet -->
   <link rel="stylesheet" href="/static/css/series.css" />
-  <title>Series</title>
 </head>
 
 <body>
-  <nav class="site-nav">
-    <li><a href="/">Home</a></li>
-    <li><a href="/movies">Movies</a></li>
-    <li><a href="/series">Series</a></li>
-    <li><a href="/celebrities">Celebrities</a></li>
-    <li><a href="/quiz">Quiz</a></li>
-    <li><a href="/recommend">Recommend</a></li>
-    <li><a href="/about">About</a></li>
-  </nav>
-
-  <h1>Series</h1>
-
-  <div class="controls">
-    <select id="genre">
-      <option value="">Tür seç</option>
-      <option value="action">Aksiyon</option>
-      <option value="drama">Drama</option>
-      <option value="comedy">Komedi</option>
-      <option value="sci-fi">Bilim Kurgu</option>
-    </select>
-
-    <input type="text" placeholder="Dizi ara..." />
+  <!-- Optional slide-out sidebar (same structure as Home) -->
+  <div id="sidebar" class="sidebar" aria-hidden="true">
+    <a href="javascript:void(0)" class="closebtn" aria-label="Close menu">×</a>
+    <a href="/">🏠 Home</a>
+    <a href="/movies">🎬 Movies</a>
+    <a href="/series" aria-current="page">📺 Series</a>
+    <a href="/celebrities">⭐ Celebrities</a>
+    <a href="/recommend">💡 Recommend</a>
+    <a href="/quiz">❓ Quizzes</a>
+    <a href="/about">ℹ️ About</a>
   </div>
 
-  <div class="series-list">
-    <div class="series-card">
-      <a href="/templates/serie.html">
-        <h3>Breaking Bad</h3>
-      </a>
+  <div id="main-content" class="main-content">
+    <!-- Header (mirrors Home header) -->
+    <header class="site-header">
+      <div class="container nav-row">
+        <div class="brand">
+          <span class="menu-btn" id="openMenuBtn" aria-label="Open menu">☰</span>
+          <a href="/">BeeMD</a>
+        </div>
+
+        <!-- Global search routes to /series by default here -->
+        <form class="search" action="/series" method="get" role="search" aria-label="Search series">
+          <input type="search" name="q" placeholder="Search series or people..." aria-label="Search" />
+          <button type="submit">Search</button>
+        </form>
+
+        <div class="about-link">
+          <a href="/about" title="About Us">ℹ️</a>
+        </div>
+
+        <div class="user-link">
+          <a href="/user" title="User Profile">👤</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page hero -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <h1>Explore TV Series</h1>
+          <p>Filter by genre, sort by rating, and discover cast & crew in seconds.</p>
+          <div class="hero-ctas">
+            <a class="btn primary" href="#results">Browse Series</a>
+            <a class="btn" href="/recommend">Get Recommendations</a>
+          </div>
+        </div>
+        <div class="hero-art">
+          <div class="poster-grid">
+            <div class="poster"></div>
+            <div class="poster small"></div>
+            <div class="poster small"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters / controls -->
+    <section class="container controls" aria-label="Series filters">
+      <form class="filters" action="/series" method="get">
+        <div class="row">
+          <label class="sr-only" for="genre">Genre</label>
+          <select id="genre" name="genre">
+            <option value="">All genres</option>
+            <option value="action">Action</option>
+            <option value="drama">Drama</option>
+            <option value="comedy">Comedy</option>
+            <option value="sci-fi">Sci-Fi</option>
+            <option value="thriller">Thriller</option>
+            <option value="fantasy">Fantasy</option>
+          </select>
+
+          <label class="sr-only" for="year">Year</label>
+          <select id="year" name="year">
+            <option value="">Any year</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+            <option value="2020s">2020s</option>
+            <option value="2010s">2010s</option>
+            <option value="2000s">2000s</option>
+          </select>
+
+          <label class="sr-only" for="sort">Sort</label>
+          <select id="sort" name="sort">
+            <option value="trending">Trending</option>
+            <option value="rating_desc">Rating (High → Low)</option>
+            <option value="rating_asc">Rating (Low → High)</option>
+            <option value="newest">Newest</option>
+            <option value="az">A → Z</option>
+            <option value="za">Z → A</option>
+          </select>
+
+          <input type="search" name="q" placeholder="Search within results…" aria-label="Search within results" />
+          <button type="submit" class="btn small primary">Apply</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Results -->
+    <main id="results" class="container results">
+      <h2 class="section-title">Popular Series</h2>
+
+      <div class="grid">
+        <!-- Card -->
+        <a class="series-card" href="/templates/serie.html" aria-label="Breaking Bad">
+          <div class="thumb" style="background-image:url('/static/img/series/breaking-bad.jpg');" role="img" aria-label="Poster: Breaking Bad"></div>
+          <div class="meta">
+            <h3>Breaking Bad</h3>
+            <p class="sub">2008 • Crime, Drama • ★ 9.5</p>
+          </div>
+        </a>
+
+        <a class="series-card" href="/templates/serie.html" aria-label="Stranger Things">
+          <div class="thumb" style="background-image:url('/static/img/series/stranger-things.jpg');" role="img" aria-label="Poster: Stranger Things"></div>
+          <div class="meta">
+            <h3>Stranger Things</h3>
+            <p class="sub">2016 • Sci-Fi, Horror • ★ 8.7</p>
+          </div>
+        </a>
+
+        <a class="series-card" href="/templates/serie.html" aria-label="The Last of Us">
+          <div class="thumb" style="background-image:url('/static/img/series/the-last-of-us.jpg');" role="img" aria-label="Poster: The Last of Us"></div>
+          <div class="meta">
+            <h3>The Last of Us</h3>
+            <p class="sub">2023 • Drama, Adventure • ★ 8.8</p>
+          </div>
+        </a>
+
+        <a class="series-card" href="/templates/serie.html" aria-label="Chernobyl">
+          <div class="thumb" style="background-image:url('/static/img/series/chernobyl.jpg');" role="img" aria-label="Poster: Chernobyl"></div>
+          <div class="meta">
+            <h3>Chernobyl</h3>
+            <p class="sub">2019 • Drama, History • ★ 9.4</p>
+          </div>
+        </a>
+        <!-- Add more cards as needed -->
+      </div>
+
+      <!-- Empty state (hidden by default; toggle with server/JS when no results) -->
+      <div class="empty" hidden>
+        <p class="muted">No series found. Try changing filters or keywords.</p>
+      </div>
+
+      <!-- Pagination -->
+      <nav class="pagination" aria-label="Pagination">
+        <a class="page prev" href="?page=1">← Prev</a>
+        <span class="page current">2</span>
+        <a class="page" href="?page=3">3</a>
+        <a class="page next" href="?page=3">Next →</a>
+      </nav>
+    </main>
+  </div>
+
+  <!-- Footer (mirrors Home) -->
+  <footer class="site-footer">
+    <div class="footer-col footer-brand">
+      <a class="brand-footer" href="/">BeeMD</a>
+      <p class="muted">Discover movies, series and the people behind them. A course project by ITU BLG317E.</p>
     </div>
-  </div>
-</body>
 
+    <div class="container footer-grid">
+      <div class="footer-col footer-links">
+        <h4>Explore Data</h4>
+        <ul>
+          <li><a href="/movies">Movies</a></li>
+          <li><a href="/series" aria-current="page">Series</a></li>
+          <li><a href="/celebrities">Celebrities</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-user">
+        <h4>Explore As User</h4>
+        <ul>
+          <li><a href="/user">User</a></li>
+          <li><a href="/quiz">Quizzes</a></li>
+          <li><a href="/recommend">Recommendations</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-about">
+        <h4>About & Contact</h4>
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li><a href="/suggest">Suggestions</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <div>© BeeMD — GitHappens — 2025</div>
+    </div>
+  </footer>
+
+  <!-- Optional: reuse your /static/js/home.js if it handles sidebar open/close -->
+  <script src="/static/js/home.js"></script>
+</body>
 </html>

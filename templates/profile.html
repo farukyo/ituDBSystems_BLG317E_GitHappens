@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }}'s Profile{% endblock %}
+
+{% block head %}
+    <style>
+        .profile-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #1f1f1f;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        .profile-header {
+            border-bottom: 2px solid #f5c518;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        .profile-header h1 {
+            margin: 0;
+            color: #f5c518;
+        }
+        .profile-header p {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-top: 0.5rem;
+        }
+        .liked-list {
+            list-style: none;
+            padding: 0;
+        }
+        .liked-list li {
+            background-color: #333;
+            padding: 0.8rem 1rem;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+<div class="profile-container">
+    
+    <div class="profile-header">
+        <h1>{{ user.username }}</h1>
+        <p>Email: {{ user.email }}</p>
+    </div>
+
+    <section class="profile-section">
+        <h2>My Quiz Score</h2>
+        <h3>{{ user.quiz_score }}</h3>
+    </section>
+
+    <section class="profile-section">
+        <h2>Liked Movies</h2>
+        <ul class="liked-list">
+            {% for movie in user.liked_movies %}
+                <li>{{ movie.title }}</li>
+            {% else %}
+                <li>You haven't liked any movies yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="profile-section">
+        <h2>Liked Series</h2>
+        <ul class="liked-list">
+            {% for series in user.liked_series %}
+                <li>{{ series.title }}</li>
+            {% else %}
+                <li>You haven't liked any series yet.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+</div>
+{% endblock %}

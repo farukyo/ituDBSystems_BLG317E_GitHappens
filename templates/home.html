@@ -3,81 +3,109 @@
 
 <head>
     <meta charset="utf-8" />
-    
+
     <title>BeeMD — Discover movies & series</title>
     <link rel="stylesheet" href="/static/css/home.css" />
-    
+
 </head>
 
 <body>
-    <header class="site-header">
-        <div class="container nav-row">
-            <div class="brand">
-                <a href="/">BeeMD</a>
+    <div id="sidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn">×</a>
+        <a href="/">🏠 Home</a>
+        <a href="/movies">🎬 Movies</a>
+        <a href="/series">📺 Series</a>
+        <a href="/celebrities">⭐ Celebrities</a>
+        <a href="/recommend">💡 Recommend</a>
+        <a href="/quiz">❓ Quizes</a>
+    </div>
+
+    <div id="main-content" class="main-content">
+
+        <header class="site-header">
+            <div class="container nav-row">
+
+                <div class="brand">
+                    <span class="menu-btn" id="openMenuBtn">☰</span>
+                    <a href="/">BeeMD</a>
+                </div>
+
+                <form class="search" action="/movies" method="get">
+                    <input type="search" name="q" placeholder="Search movies, series or people..." aria-label="Search">
+                    <button type="submit">Search</button>
+                </form>
+
+                <div class="about-link">
+                    <a href="/about" title="About Us">
+                        ℹ️
+                    </a>
+                </div>
+
+                <div class="user-link">
+                    <a href="/user" title="User Profile">
+                        👤
+                    </a>
+                </div>
+
             </div>
+        </header>
 
-            <form class="search" action="/movies" method="get">
-                <input type="search" name="q" placeholder="Search movies, series or people..." aria-label="Search">
-                <button type="submit">Search</button>
-            </form>
-
-            <nav class="top-nav">
-                <ul>
-                    <li><a href="/movies">Movies</a></li>
-                    <li><a href="/series">Series</a></li>
-                    <li><a href="/celebrities">Celebrities</a></li>
-                    <li><a href="/quiz">Quiz</a></li>
-                    <li><a href="/recommend">Recommend</a></li>
-                    <li><a href="/about">About</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <section class="hero">
-        <div class="container hero-inner">
-            <div class="hero-text">
-                <h1>Discover and explore movies & series</h1>
-                <p>Browse our curated picks, learn about cast & crew, and get personalized recommendations.</p>
-                <div class="hero-ctas">
-                    <a class="btn primary" href="/movies">Browse Movies</a>
-                    <a class="btn" href="/recommend">Get Recommendations</a>
+        <section class="hero">
+            <div class="container hero-inner">
+                <div class="hero-text">
+                    <h1>Discover and explore movies & series</h1>
+                    <p>Browse our curated picks, learn about cast & crew, and get personalized recommendations.</p>
+                    <div class="hero-ctas">
+                        <a class="btn primary" href="/movies">Browse Movies</a>
+                        <a class="btn" href="/recommend">Get Recommendations</a>
+                    </div>
+                </div>
+                <div class="hero-art">
+                    <div class="poster-grid">
+                        <div class="poster"></div>
+                        <div class="poster small"></div>
+                        <div class="poster small"></div>
+                    </div>
                 </div>
             </div>
-            <div class="hero-art">
-                <div class="poster-grid">
-                    <div class="poster"></div>
-                    <div class="poster small"></div>
-                    <div class="poster small"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="featured container">
-        <h2>Featured this week</h2>
-        <div class="cards">
-            <a class="card" href="/movies">New release: Example Movie</a>
-            <a class="card" href="/movies">Top rated: Example Drama</a>
-            <a class="card" href="/series">Must-see Series: Example Show</a>
-        </div>
-    </section>
+        <section class="featured container">
+            <h2>Featured this week</h2>
+            <div class="cards">
+                <a class="card" href="/movies">New release: Example Movie</a>
+                <a class="card" href="/movies">Top rated: Example Drama</a>
+                <a class="card" href="/series">Must-see Series: Example Show</a>
+            </div>
+        </section>
+
+    </div>
 
     <footer class="site-footer">
-        <div class="container footer-grid">
-            <div class="footer-col footer-brand">
+
+        <div class="footer-col footer-brand">
                 <a class="brand-footer" href="/">BeeMD</a>
                 <p class="muted">Discover movies, series and the people behind them. A course project by ITU BLG317E.
                 </p>
-            </div>
+        </div>
+
+        <div class="container footer-grid">
 
             <div class="footer-col footer-links">
-                <h4>Explore</h4>
+                <h4>Explore Data</h4>
                 <ul>
                     <li><a href="/movies">Movies</a></li>
                     <li><a href="/series">Series</a></li>
                     <li><a href="/celebrities">Celebrities</a></li>
-                    <li><a href="/quiz">Quiz</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col footer-user">
+                <h4>Explore As User</h4>
+                <ul>
+                    <li><a href="/user">User</a></li>
+                    <li><a href="/quiz">Quizes</a></li>
+                    <li><a href="/recommend">Recommendations</a></li>
                 </ul>
             </div>
 
@@ -85,7 +113,7 @@
                 <h4>About & Contact</h4>
                 <ul>
                     <li><a href="/about">About</a></li>
-                    <li><a href="/recommend">Recommendations</a></li>
+                    <li><a href="/suggest">Suggestions</a></li>
                 </ul>
             </div>
         </div>
@@ -94,6 +122,8 @@
             <div>© BeeMD — GitHappens — 2025</div>
         </div>
     </footer>
+
+    <script src="/static/js/home.js"></script>
 
 </body>
 
