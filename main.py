@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from database.db import engine
 from sqlalchemy import text
 
@@ -25,14 +25,28 @@ def quiz_page():
 def recommend_page():
     return render_template("recommend.html")
 
-
 @app.route("/movies")
 def movies_page():
+    search_query = request.args.get('q')  # Kullanıcının girdiği kelimeyi alır (Örn: 'real')
+    
     with engine.connect() as conn:
-        result = conn.execute(text("SELECT * FROM series"))
+        if search_query:
+            # 1. SQL Sorgusu: ':term' adında bir değişken bekler.
+            sql_query = text("SELECT * FROM genre WHERE description LIKE :term LIMIT 100")
+            
+            # SQL'e gönderilen parametre adı 'term' olmalıdır.
+            result = conn.execute(sql_query, {"term": f"%{search_query}%"})
+            
+            page_title = f"'{search_query}' için sonuçlar"
+        
+        else:
+            # Arama yapılmazsa...
+            sql_query = text("SELECT * FROM genre LIMIT 50")
+            result = conn.execute(sql_query)
+            page_title = "Tüm Film Türleri"
+        
         data = result.fetchall()
-    return render_template("movies.html", series=data)
-
+    return render_template("movies.html", items=data, title=page_title)
 
 @app.route("/series")
 def series_page():

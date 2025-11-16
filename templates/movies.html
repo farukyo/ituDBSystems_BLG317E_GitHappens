@@ -4,40 +4,58 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/static/css/movies.css" />
-    <title>Movies</title>
+    <title>{{ title | default("Filmler") }} — BeeMD</title>
 </head>
 
 <body>
     <nav class="site-nav">
-
-            <li><a href="/">Home</a></li>
-            <li><a href="/movies">Movies</a></li>
-            <li><a href="/series">Series</a></li>
-            <li><a href="/celebrities">Celebrities</a></li>
-            <li><a href="/quiz">Quiz</a></li>
-            <li><a href="/recommend">Recommend</a></li>
-            <li><a href="/about">About</a></li>
-
+        <li><a href="/">Home</a></li>
+        <li><a href="/movies">Movies</a></li>
+        <li><a href="/series">Series</a></li>
+        <li><a href="/celebrities">Celebrities</a></li>
+        <li><a href="/quiz">Quiz</a></li>
+        <li><a href="/recommend">Recommend</a></li>
+        <li><a href="/about">About</a></li>
     </nav>
 
-    <h1>Movies</h1>
-
+    <h1>{{ title | default("Tüm Filmler") }}</h1>
     <div class="controls">
-        <select id="genre">
+        <select id="genre" name="genre_filter" onchange="this.form.submit()">
             <option value="">Tür seç</option>
-            <option value="action">Aksiyon</option>
-            <option value="drama">Drama</option>
-            <option value="comedy">Komedi</option>
-            <option value="sci-fi">Bilim Kurgu</option>
+            <option value="Action">Aksiyon</option>
+            <option value="Drama">Drama</option>
+            <option value="Comedy">Komedi</option>
+            <option value="Sci-Fi">Bilim Kurgu</option>
         </select>
 
-        <input type="text" placeholder="Film ara...">
+        <form action="/movies" method="get" class="search-form-inline">
+            <input type="text" name="q" placeholder="Film ara..." value="{{ request.args.get('q') or '' }}">
+            <button type="submit">Ara</button>
+        </form>
     </div>
 
     <div class="movie-list">
-        <div class="movie-item">Film 1 (örnek)</div>
-        <div class="movie-item">Film 2 (örnek)</div>
-        <div class="movie-item">Film 3 (örnek)</div>
+
+        {% if items %}
+
+        {% for movie in items %}
+        <div class="movie-item">
+            <h2 class="movie-title">
+                <a href="/movie/{{ movie.tconst }}">{{ movie.genre }} ({{ movie.description }})</a>
+            </h2>
+            <p class="movie-genres">Türler: {{ movie.genres }}</p>
+        </div>
+        {% endfor %}
+        <!-- burada  movie.genre }} ({{ movie.description }  kısmını değiştirdim genreyi çalıştırabilmek için ama gerimovies column isimleri için yazmam gerekecek. -->
+        {% else %}
+        <div class="no-results">
+            {% if request.args.get('q') %}
+            <p>"{{ request.args.get('q') }}" araması için sonuç bulunamadı.</p>
+            {% else %}
+            <p>Gösterilecek film veya dizi bulunmamaktadır.</p>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 
 </body>
