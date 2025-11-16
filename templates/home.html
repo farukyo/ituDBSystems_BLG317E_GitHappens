@@ -2,33 +2,37 @@
 
 {% block title %}BeeMD — Discover movies & series{% endblock %}
 
-{% block content %}
-    <section class="hero">
-        <div class="container hero-inner">
-            <div class="hero-text">
-                <h1>Discover and explore movies & series</h1>
-                <p>Browse our curated picks, learn about cast & crew, and get personalized recommendations.</p>
-                <div class="hero-ctas">
-                    <a class="btn primary" href="{{ url_for('movies') }}">Browse Movies</a>
-                    <a class="btn" href="{{ url_for('recommend') }}">Get Recommendations</a>
-                </div>
-            </div>
-            <div class="hero-art">
-                <div class="poster-grid">
-                    <div class="poster"></div>
-                    <div class="poster small"></div>
-                    <div class="poster small"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
 
-    <section class="featured container">
-        <h2>Featured this week</h2>
-        <div class="cards">
-            <a class="card" href="#">New release: Example Movie</a>
-            <a class="card" href="#">Top rated: Example Drama</a>
-            <a class="card" href="#">Must-see Series: Example Show</a>
+{% block content %}
+<section class="hero">
+    <div class="container hero-inner">
+        <div class="hero-text">
+            <h1>Discover and explore movies & series</h1>
+            <p>Browse our curated picks, learn about cast & crew, and get personalized recommendations.</p>
+            <div class="hero-ctas">
+                <a class="btn primary" href="{{ url_for('movies') }}">Browse Movies</a>
+                <a class="btn" href="{{ url_for('recommend') }}">Get Recommendations</a>
+            </div>
         </div>
-    </section>
+        <div class="hero-art">
+            <div class="poster-grid">
+                <div class="poster"></div>
+                <div class="poster small"></div>
+                <div class="poster small"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="featured container">
+    <h2>Featured this week</h2>
+    <div class="cards">
+        <a class="card" href="#">New release: Example Movie</a>
+        <a class="card" href="#">Top rated: Example Drama</a>
+        <a class="card" href="#">Must-see Series: Example Show</a>
+    </div>
+</section>
 {% endblock %}

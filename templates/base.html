@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <title>{% block title %}BeeMD{% endblock %}</title>
-    
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% block head %}{% endblock %}
 </head>
 
@@ -18,7 +19,7 @@
         <a href="{{ url_for('recommend') }}">💡 Recommend</a>
         <a href="{{ url_for('quiz') }}">❓ Quizes</a>
     </div>
-    
+
     <div id="main-content" class="main-content">
         <header class="site-header">
             <div class="container nav-row">
@@ -33,40 +34,40 @@
                 </form>
 
                 <div class="header-user-links">
-                {% block header_user_links %}
+                    {% block header_user_links %}
                     <div class="about-link">
                         <a href="{{ url_for('about') }}" title="About Us">ℹ️</a>
                     </div>
                     {% if current_user.is_authenticated %}
-                        <div class="user-link">
-                            <a href="{{ url_for('profile') }}" title="Profile">👤</a>
-                        </div>
-                        <div class="user-link">
-                            <a href="{{ url_for('logout') }}" title="Logout">Logout</a>
-                        </div>
+                    <div class="user-link">
+                        <a href="{{ url_for('profile') }}" title="Profile">👤</a>
+                    </div>
+                    <div class="user-link">
+                        <a href="{{ url_for('logout') }}" title="Logout">Logout</a>
+                    </div>
                     {% else %}
-                        <div class="user-link">
-                            <a href="{{ url_for('login') }}" title="Login / Sign Up">
-                                Login
-                            </a>
-                        </div>
+                    <div class="user-link">
+                        <a href="{{ url_for('login') }}" title="Login / Sign Up">
+                            Login
+                        </a>
+                    </div>
                     {% endif %}
-                {% endblock %}
+                    {% endblock %}
                 </div>
             </div>
         </header>
-        
+
         <main class="page-content">
             {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                <ul class="flashes" style="color: red; text-align: center; list-style: none; padding: 1rem;">
+            {% if messages %}
+            <ul class="flashes" style="color: red; text-align: center; list-style: none; padding: 1rem;">
                 {% for message in messages %}
-                  <li>{{ message }}</li>
+                <li>{{ message }}</li>
                 {% endfor %}
-                </ul>
-              {% endif %}
+            </ul>
+            {% endif %}
             {% endwith %}
-        
+
             {% block content %}{% endblock %}
         </main>
 
@@ -75,7 +76,8 @@
         <div class="container">
             <div class="footer-brand-section">
                 <a class="brand-footer" href="{{ url_for('index') }}">BeeMD</a>
-                <p class="muted">Discover movies, series and the people behind them. A course project by ITU BLG317E.</p>
+                <p class="muted">Discover movies, series and the people behind them. A course project by ITU BLG317E.
+                </p>
             </div>
 
             <div class="footer-links-grid">
@@ -106,12 +108,15 @@
                     </ul>
                 </div>
             </div>
-        </div> <div class="container footer-bottom">
+        </div>
+        <div class="container footer-bottom">
             <div>© BeeMD — GitHappens — 2025</div>
         </div>
     </footer>
     {% endblock %}
 
-    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+    {% block scripts %}{% endblock %}
 </body>
+
 </html>

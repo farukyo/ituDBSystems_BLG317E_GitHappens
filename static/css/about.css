@@ -1,79 +1,9 @@
-/* ----------------------------
-   about.css
--------------------------------*/
+/* ---------------------------------
+   about.css — Page-specific styles
+-----------------------------------*/
 
-/* --- :root: global variables --- */
-:root {
-    --accent: #e9601a;
-    --bg: #0b1220;
-    --muted: #94a3b8;
-}
+/* Team Section */
 
-/* --- box-sizing: kutu modelini kolaylaştırma --- */
-* {
-    box-sizing: border-box;
-}
-
-/* --- body: sayfa genel ayarları --- */
-body {
-    font-family: 'Inter', Arial, sans-serif;
-    margin: 0;
-    background: var(--bg);
-    color: #e6eef8;
-}
-
-/* --- container: içerik genişliği sınırlama --- */
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 16px;
-}
-
-/* --- Header / navigation (üst kısım) --- */
-.site-header {
-    background: linear-gradient(90deg, #071026 0%, #0f1724 100%);
-    padding: 16px 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .4);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.nav-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-}
-
-.brand a {
-    color: var(--accent);
-    font-weight: 800;
-    text-decoration: none;
-    font-size: 1.6rem;
-}
-
-.top-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 16px;
-}
-
-.top-nav a {
-    color: #dbeafe;
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-weight: 500;
-}
-
-.top-nav a:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-/* --- Team Section --- */
 .team-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

@@ -1,290 +1,89 @@
-/* ----------------------------
-   home.css
--------------------------------*/
+/* -----------------------------------------
+   HOME PAGE ONLY
+------------------------------------------*/
 
-/* --- :root: global variables ---
-   Burada renkleri ve tekrar kullanmak isteyebileceğimiz değerleri
-   değişken olarak tanımlıyoruz. Değişkenler `var(--accent)` şeklinde
-   kullanılabilir. Bu, stil değişikliklerini merkezi hale getirir.
-*/
-:root {
-    --accent: #e9601a;
-    /* site vurgu rengi (butonlar vb.) */
-    --bg: #0b1220;
-    /* sayfa arka plan rengi */
-    --muted: #94a3b8;
-    /* ikincil metin için soluk renk */
-}
-
-
-/* --- box-sizing: kutu modelini kolaylaştırma ---
-   Tüm elemanlarda `box-sizing: border-box` kullanmak, padding ve border
-   değerlerinin genişlik/yükseklik hesaplarına dahil edilmesini sağlar.
-   Bu, responsive düzenleri kurarken işleri kolaylaştırır.
-*/
-* {
-    box-sizing: border-box
-}
-
-
-/* --- body: sayfa genel ayarları ---
-   - font-family: metinlerin hangi yazı tipinde görüneceğini belirtir
-   - margin: sayfanın etrafındaki boşluğu sıfırlıyoruz
-   - background / color: arka plan ve varsayılan metin rengi
-*/
-body {
-    font-family: 'Inter', Arial, sans-serif;
-    margin: 0;
-    background: var(--bg);
-    color: #e6eef8;
-}
-
-
-/* --- container: içerik genişliği sınırlama ---
-   `.container` sınıfı içeriğin çok geniş ekranlarda çok yayılmasını
-   engeller; aynı zamanda iç kenar boşluğu (padding) verir.
-*/
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 16px
-}
-
-/* ----------------------
-   SOL YAN GEZİNME ÇUBUĞU (SIDEBAR)
------------------------*/
-
-.sidebar {
-    height: 100%;
-    width: 0;
-    /* Sorun giderme: Başlangıçta 0 genişlik */
-    position: fixed;
-    z-index: 100;
-    top: 0;
-    left: 0;
-    background-color: #0d1629;
-    overflow-x: hidden;
-    padding-top: 60px;
-    transition: 0.5s;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, .5);
-}
-
-.sidebar a {
-    padding: 10px 10px 10px 32px;
-    text-decoration: none;
-    font-size: 1.1rem;
-    color: var(--muted);
-    /* Düzeltme: Alt alta çıkması için display: block KULLANILMALI */
-    display: block;
-    transition: 0.3s;
-}
-
-
-/* ----------------------
-   Header (üst kısım)
-   -----------------------*/
-
-/* site-header: arka plan, padding ve gölge */
-.site-header {
-    background: linear-gradient(90deg, #071026 0%, #0f1724 100%);
-    padding: 12px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
-}
-
-/* nav-row: nav içi elemanları yatayda dizeriz */
-.nav-row {
-    display: flex;
-    align-items: center;
-    gap: 16px
-}
-
-/* menu-btn: navigasyon çubuğunu açmak için */
-.menu-btn {
-    font-size: 1.8rem;
-    cursor: pointer;
-    margin-right: 8px;
-    color: #e9601a;
-    /* Buton rengi */
-    padding: 4px;
-    line-height: 1;
-    /* Dikey hizalamayı düzeltir */
-}
-
-/* brand: sol üstte görünen site ismi */
-.brand {
-    display: flex;
-    align-items: center;
-}
-
-.brand a {
-    color: var(--accent);
-    font-weight: 700;
-    text-decoration: none;
-    font-size: 1.4rem
-}
-
-/* search: arama kutusunun görünümü
-   - margin-left: auto ile arama sağa itilir (diğerleri solda kalır)
-*/
-.search {
-    flex-grow: 2;
-    max-width: 450px;
-    /* Maksimum genişliğini ayarladık */
-    margin-right: auto;
-    margin-left: auto;
-    display: flex;
-    gap: 8px
-}
-
-.search input {
-    padding: 8px 10px;
-    border-radius: 8px;
-    border: none;
-    min-width: 150px;
-    /* Header daraldığında hala kullanılabilir kalsın */
-    flex-grow: 1;
-    /* Input'un genişlemesini sağlar */
-}
-
-.search button {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer
-}
-
-/* FIX #1: This rule fixes the overlapping "About" and "Login" buttons.
-*/
-.header-user-links {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-
-/* User Link - About Us Link Stili */
-.user-link a {
-    text-decoration: none;
-    color: #e9601a;
-    font-size: 1rem;
-    padding: 8px 12px;
-    border-radius: 8px;
-    white-space: nowrap;
-    /* Metnin kırılmasını engeller */
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.user-link a:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.about-link a {
-    text-decoration: none;
-    color: #e9601a;
-    font-size: 1rem;
-    padding: 8px 12px;
-    border-radius: 8px;
-    white-space: nowrap;
-    /* Metnin kırılmasını engeller */
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.about-link a:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-/* ----------------------
-   Hero bölümü (sayfanın üst büyük kısmı)
------------------------*/
+/* Hero Section */
 .hero {
     padding: 48px 0;
-    background: linear-gradient(180deg, rgba(14, 22, 34, 0.9), rgba(5, 9, 15, 0.9))
+    background: linear-gradient(180deg, rgba(14, 22, 34, 0.9), rgba(5, 9, 15, 0.9));
 }
 
-/* hero-inner: metin ve görseli yan yana yerleştirir */
 .hero-inner {
     display: flex;
     gap: 24px;
-    align-items: center
+    align-items: center;
 }
 
 .hero-text {
-    flex: 1
+    flex: 1;
 }
 
 .hero-text h1 {
     font-size: 2.4rem;
     margin: 0 0 12px;
-    color: #fff
+    color: #fff;
 }
 
 .hero-text p {
     color: var(--muted);
-    margin: 0 0 18px
+    margin: 0 0 18px;
 }
 
-/* CTA butonları yan yana durur */
 .hero-ctas {
     display: flex;
-    gap: 10px
+    gap: 10px;
 }
 
+/* Buttons */
 .btn {
     display: inline-block;
     padding: 10px 14px;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.06);
     color: #fff;
-    text-decoration: none
+    text-decoration: none;
 }
 
 .btn.primary {
     background: var(--accent);
-    box-shadow: 0 6px 18px rgba(233, 96, 26, 0.14)
+    box-shadow: 0 6px 18px rgba(233, 96, 26, 0.14);
 }
 
-
-/* hero-art: poster benzeri kutular için alan */
+/* Hero Images */
 .hero-art {
-    width: 280px
+    width: 280px;
 }
 
 .poster-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px
+    gap: 12px;
 }
 
 .poster {
     background: linear-gradient(180deg, #1f2937, #111827);
     height: 180px;
     border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .6)
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .6);
 }
 
 .poster.small {
-    height: 84px
+    height: 84px;
 }
 
-
-/* ----------------------
-   Featured bölüm (kartlar)
------------------------*/
+/* Featured Section */
 .featured {
     padding: 28px 0;
-    background: transparent;
-    color: #cfe6ff
+    color: #cfe6ff;
 }
 
 .featured h2 {
-    margin: 0 0 12px
+    margin: 0 0 12px;
 }
 
 .cards {
     display: flex;
-    gap: 12px
+    gap: 12px;
 }
 
 .card {
@@ -293,87 +92,5 @@ body {
     padding: 16px;
     border-radius: 8px;
     text-decoration: none;
-    color: #fff
-}
-
-
-/* ----------------------
-   Footer (alt kısım)
-   FIX #2: This section is updated for the new layout.
------------------------*/
-.site-footer {
-    padding: 28px 0 12px 0;
-    background: #0b1220;
-    color: #b7cfe6;
-}
-
-/* NEW: Styles for the top brand section */
-.footer-brand-section {
-    padding-bottom: 1.5rem;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.brand-footer {
-    color: var(--accent);
-    font-weight: 700;
-    text-decoration: none;
-    font-size: 1.3rem;
-}
-
-.footer-brand-section .muted {
-    color: var(--muted);
-    font-size: 0.95rem;
-    margin-top: 8px;
-    max-width: 450px; /* Stops text from stretching too wide */
-}
-
-/* NEW: This is now a 3-column grid for links */
-.footer-links-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr; /* 3 equal columns */
-    gap: 24px;
-    align-items: start;
-    padding-bottom: 12px;
-}
-
-.footer-col h4 {
-    margin: 0 0 8px;
-    font-size: 0.95rem;
     color: #fff;
-}
-
-.footer-links ul,
-.footer-about ul,
-.footer-user ul {
-    list-style: none;
-    padding: 0;
-    margin: 0
-}
-
-.footer-links li,
-.footer-about li,
-.footer-user li {
-    margin-bottom: 8px
-}
-
-.footer-links a,
-.footer-about a,
-.footer-user a {
-    color: #9fb7de;
-    text-decoration: none
-}
-
-.footer-links a:hover,
-.footer-about a:hover,
-.footer-user a:hover {
-    color: #fff
-}
-
-.footer-bottom {
-    border-top: 1px solid rgba(255, 255, 255, 0.03);
-    padding-top: 12px;
-    color: #93a9c6;
-    font-size: 0.9rem;
-    text-align: center
 }
