@@ -1,0 +1,212 @@
+/* -----------------------------------------
+   BASE.CSS — Shared global styles
+------------------------------------------*/
+
+/* Global Variables */
+:root {
+    --accent: #e9601a;
+    --bg: #0b1220;
+    --muted: #94a3b8;
+}
+
+/* Box sizing */
+* {
+    box-sizing: border-box;
+}
+
+/* Body */
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: #e6eef8;
+}
+
+/* Container */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+/* -----------------------------------------
+   SIDEBAR
+------------------------------------------*/
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    background-color: #0d1629;
+    overflow-x: hidden;
+    padding-top: 60px;
+    transition: 0.5s;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, .5);
+}
+
+.sidebar a {
+    padding: 10px 10px 10px 32px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: var(--muted);
+    display: block;
+    transition: 0.3s;
+}
+
+/* -----------------------------------------
+   HEADER
+------------------------------------------*/
+.site-header {
+    background: linear-gradient(90deg, #071026 0%, #0f1724 100%);
+    padding: 12px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
+}
+
+.nav-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.menu-btn {
+    font-size: 1.8rem;
+    cursor: pointer;
+    margin-right: 8px;
+    color: var(--accent);
+    padding: 4px;
+    line-height: 1;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+}
+
+.brand a {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.4rem;
+}
+
+/* Search Box */
+.search {
+    flex-grow: 2;
+    max-width: 450px;
+    margin: 0 auto;
+    display: flex;
+    gap: 8px;
+}
+
+.search input {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: none;
+    flex-grow: 1;
+    min-width: 150px;
+}
+
+.search button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Header user links */
+.header-user-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-link a,
+.about-link a {
+    text-decoration: none;
+    color: var(--accent);
+    font-size: 1rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.user-link a:hover,
+.about-link a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* -----------------------------------------
+   FOOTER
+------------------------------------------*/
+.site-footer {
+    padding: 28px 0 12px 0;
+    background: #0b1220;
+    color: #b7cfe6;
+}
+
+.footer-brand-section {
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.brand-footer {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.3rem;
+}
+
+.footer-brand-section .muted {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-top: 8px;
+    max-width: 450px;
+}
+
+.footer-links-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    padding-bottom: 12px;
+}
+
+.footer-col h4 {
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.footer-links ul,
+.footer-user ul,
+.footer-about ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links a,
+.footer-user a,
+.footer-about a {
+    color: #9fb7de;
+    text-decoration: none;
+}
+
+.footer-links a:hover,
+.footer-user a:hover,
+.footer-about a:hover {
+    color: #fff;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+    padding-top: 12px;
+    color: #93a9c6;
+    font-size: 0.9rem;
+    text-align: center;
+}

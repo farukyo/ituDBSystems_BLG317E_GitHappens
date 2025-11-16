@@ -2,64 +2,21 @@
 
 {% block title %}BeeMD — Discover movies & series{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
 {% block content %}
-<section class="hero">
-    <div class="container hero-inner">
-        <div class="hero-text">
-            <h1>Discover and explore movies & series</h1>
-            <p>Browse our curated picks, learn about cast & crew, and get personalized recommendations.</p>
-            <div class="hero-ctas">
-                <a class="btn primary" href="{{ url_for('movies') }}">Browse Movies</a>
-                <a class="btn" href="{{ url_for('recommend') }}">Get Recommendations</a>
+    <section class="hero">
+        <div class="container hero-inner">
+            <div class="hero-text">
+                <h1>Discover and explore movies & series</h1>
+                <p>Browse our curated picks, learn about cast & crew, and get personalized recommendations.</p>
+                <div class="hero-ctas">
+                    <a class="btn primary" href="{{ url_for('movies') }}">Browse Movies</a>
+                    <a class="btn" href="{{ url_for('recommend') }}">Get Recommendations</a>
+                </div>
             </div>
-        </div>
-</section>
-
-<section class="featured container">
-    <h2>Featured this week</h2>
-    <div class="cards">
-        <a class="card" href="/movies">New release: Example Movie</a>
-        <a class="card" href="/movies">Top rated: Example Drama</a>
-        <a class="card" href="/series">Must-see Series: Example Show</a>
-    </div>
-</section>
-
-</div>
-
-<footer class="site-footer">
-
-    <div class="footer-col footer-brand">
-        <a class="brand-footer" href="/">BeeMD</a>
-        <p class="muted">Discover movies, series and the people behind them. A course project by ITU BLG317E.
-        </p>
-    </div>
-
-    <div class="container footer-grid">
-
-        <div class="footer-col footer-links">
-            <h4>Explore Data</h4>
-            <ul>
-                <li><a href="/movies">Movies</a></li>
-                <li><a href="/series">Series</a></li>
-                <li><a href="/celebrities">Celebrities</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-col footer-user">
-            <h4>Explore As User</h4>
-            <ul>
-                <li><a href="/user">User</a></li>
-                <li><a href="/quiz">Quizes</a></li>
-                <li><a href="/recommend">Recommendations</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-col footer-about">
-            <h4>About & Contact</h4>
-            <ul>
-                <li><a href="/about">About</a></li>
-                <li><a href="/suggest">Suggestions</a></li>
-            </ul>
             <div class="hero-art">
                 <div class="poster-grid">
                     <div class="poster"></div>
@@ -68,14 +25,14 @@
                 </div>
             </div>
         </div>
-        </section>
+    </section>
 
-        <section class="featured container">
-            <h2>Featured this week</h2>
-            <div class="cards">
-                <a class="card" href="#">New release: Example Movie</a>
-                <a class="card" href="#">Top rated: Example Drama</a>
-                <a class="card" href="#">Must-see Series: Example Show</a>
-            </div>
-        </section>
-        {% endblock %}
+    <section class="featured container">
+        <h2>Featured this week</h2>
+        <div class="cards">
+            <a class="card" href="#">New release: Example Movie</a>
+            <a class="card" href="#">Top rated: Example Drama</a>
+            <a class="card" href="#">Must-see Series: Example Show</a>
+        </div>
+    </section>
+{% endblock %}

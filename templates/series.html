@@ -3,7 +3,7 @@
 {% block title %}Series - BeeMD{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/series.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/series.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -21,9 +21,9 @@
         <input type="text" placeholder="Search series...">
     </div>
 
-    <div class="series-list" style="margin-top: 20px;">
+    <div class="series-list">
         {% for series in series_list %}
-            <div class="series-item" style="background: #222; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+            <div class="series-item">
                 {{ series.title }}
             </div>
         {% else %}
