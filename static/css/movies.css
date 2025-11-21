@@ -19,6 +19,10 @@ select {
     border: none;
 }
 
+button {
+    cursor: pointer;
+}
+
 .movie-list {
     margin-top: 20px;
 }
@@ -28,4 +32,45 @@ select {
     padding: 10px;
     border-radius: 6px;
     margin-bottom: 10px;
+}
+
+.movie-item a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.movie-item a:hover {
+    text-decoration: underline;
+}
+
+.no-results {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+}
+
+/* Responsive design for movies page */
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+    }
+
+    .controls form {
+        width: 100%;
+    }
+
+    .controls select,
+    .controls input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .movie-item {
+        padding: 8px;
+    }
 }

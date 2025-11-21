@@ -93,4 +93,39 @@
     border-radius: 8px;
     text-decoration: none;
     color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(233, 96, 26, 0.2);
+}
+
+/* Responsive design for home page */
+@media (max-width: 768px) {
+    .hero {
+        padding: 32px 0;
+    }
+
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+
+    .poster-grid {
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 24px 0;
+    }
+
+    .featured {
+        padding: 20px 0;
+    }
+
+    .featured h2 {
+        font-size: 1.3rem;
+    }
 }

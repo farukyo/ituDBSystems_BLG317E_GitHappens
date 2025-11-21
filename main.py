@@ -71,7 +71,7 @@ def recommend():
     return render_template("recommend.html")
 
 @app.route("/movies")
-def movies_page():
+def movies():
     search_query = request.args.get('q')  # Kullanıcının girdiği kelimeyi alır (Örn: 'real')
     
     with engine.connect() as conn:

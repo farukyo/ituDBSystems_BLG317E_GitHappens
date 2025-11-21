@@ -15,4 +15,27 @@
     padding: 10px;
     border-radius: 6px;
     margin-bottom: 10px;
+    transition: background 0.3s ease;
+}
+
+.series-item:hover {
+    background: #2a2a2a;
+}
+
+/* Responsive design for series page */
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+    }
+
+    .controls input,
+    .controls select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .series-item {
+        padding: 8px;
+    }
 }

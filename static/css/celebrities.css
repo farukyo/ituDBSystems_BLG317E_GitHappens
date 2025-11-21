@@ -78,3 +78,38 @@
 #results {
     margin-top: 30px;
 }
+
+/* Responsive design for celebrities page */
+@media (max-width: 768px) {
+    .filters {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .popular-celebrities {
+        justify-content: center;
+    }
+
+    .celebrity-card {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .filters {
+        grid-template-columns: 1fr;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    .search-box input,
+    .search-box button {
+        width: 100%;
+    }
+
+    .celebrity-card {
+        width: 100%;
+    }
+}

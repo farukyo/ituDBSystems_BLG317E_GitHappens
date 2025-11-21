@@ -1,88 +1,50 @@
 {% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="/static/css/movies.css" />
-    <title>{{ title | default("Filmler") }} — BeeMD</title>
-</head>
-
-<body>
-    <nav class="site-nav">
-        <li><a href="/">Home</a></li>
-        <li><a href="/movies">Movies</a></li>
-        <li><a href="/series">Series</a></li>
-        <li><a href="/celebrities">Celebrities</a></li>
-        <li><a href="/quiz">Quiz</a></li>
-        <li><a href="/recommend">Recommend</a></li>
-        <li><a href="/about">About</a></li>
-    </nav>
-
-    <h1>{{ title | default("Tüm Filmler") }}</h1>
-    <div class="controls">
-        <select id="genre" name="genre_filter" onchange="this.form.submit()">
-            <option value="">Tür seç</option>
-            <option value="Action">Aksiyon</option>
-            <option value="Drama">Drama</option>
-            <option value="Comedy">Komedi</option>
-            <option value="Sci-Fi">Bilim Kurgu</option>
-        </select>
-
-        <form action="/movies" method="get" class="search-form-inline">
-            <input type="text" name="q" placeholder="Film ara..." value="{{ request.args.get('q') or '' }}">
-            <button type="submit">Ara</button>
-        </form>
-    </div>
-
-    <div class="movie-list">
-
-        {% if items %}
-
-        {% for movie in items %}
-        <div class="movie-item">
-            <h2 class="movie-title">
-                <a href="/movie/{{ movie.tconst }}">{{ movie.genre }} ({{ movie.description }})</a>
-            </h2>
-            <p class="movie-genres">Türler: {{ movie.genres }}</p>
-        </div>
-        {% endfor %}
-        <!-- burada  movie.genre }} ({{ movie.description }  kısmını değiştirdim genreyi çalıştırabilmek için ama gerimovies column isimleri için yazmam gerekecek. -->
-        {% else %}
-        <div class="no-results">
-            {% if request.args.get('q') %}
-            <p>"{{ request.args.get('q') }}" araması için sonuç bulunamadı.</p>
-            {% else %}
-            <p>Gösterilecek film veya dizi bulunmamaktadır.</p>
-            {% endif %}
-        </div>
-        {% endif %}
-{% block title %}Movies - BeeMD{% endblock %}
+{% block title %}{{ title | default("Movies") }} - BeeMD{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/movies.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/movies.css') }}" />
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>Movies</h1>
+    <h1>{{ title | default("All Movies") }}</h1>
 
     <div class="controls">
-        <select id="genre">
-            <option value="">Select Genre</option>
-            <option value="action">Action</option>
-            <option value="drama">Drama</option>
-            <option value="comedy">Comedy</option>
-            <option value="sci-fi">Sci-Fi</option>
-        </select>
+        <form action="{{ url_for('movies') }}" method="get" style="display: flex; gap: 10px; width: 100%;">
+            <select id="genre" name="genre">
+                <option value="">Select Genre</option>
+                <option value="Action">Action</option>
+                <option value="Drama">Drama</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Sci-Fi">Sci-Fi</option>
+            </select>
 
-        <input type="text" placeholder="Search movies...">
+            <input type="text" name="q" placeholder="Search movies..." value="{{ request.args.get('q') or '' }}"
+                style="flex: 1;">
+            <button type="submit"
+                style="background: var(--accent); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Search</button>
+        </form>
     </div>
 
     <div class="movie-list">
-        {% for movie in movies %}
-            <div class="movie-item">{{ movie.title }}</div>
-        {% else %}
-            <p>No movies found.</p>
+        {% if items %}
+        {% for movie in items %}
+        <div class="movie-item">
+            <h3 class="movie-title">
+                <a href="/movie/{{ movie.tconst }}">{{ movie.genre }} ({{ movie.description }})</a>
+            </h3>
+        </div>
         {% endfor %}
+        {% else %}
+        <div class="no-results">
+            {% if request.args.get('q') %}
+            <p>No results found for "{{ request.args.get('q') }}".</p>
+            {% else %}
+            <p>No movies available to display.</p>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

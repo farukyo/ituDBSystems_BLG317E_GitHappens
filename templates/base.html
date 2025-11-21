@@ -3,15 +3,24 @@
 
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BeeMD - Discover movies, series and the people behind them">
     <title>{% block title %}BeeMD{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% block head %}{% endblock %}
 </head>
 
 <body>
-    <div id="sidebar" class="sidebar">
-        <a href="javascript:void(0)" class="closebtn" id="closeMenuBtn">×</a>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div id="sidebar" class="sidebar" role="navigation" aria-label="Main navigation">
+        <a href="javascript:void(0)" class="closebtn" id="closeMenuBtn" aria-label="Close menu">×</a>
         <a href="{{ url_for('index') }}">🏠 Home</a>
         <a href="{{ url_for('movies') }}">🎬 Movies</a>
         <a href="{{ url_for('series') }}">📺 Series</a>
@@ -24,30 +33,30 @@
         <header class="site-header">
             <div class="container nav-row">
                 <div class="brand">
-                    <span class="menu-btn" id="openMenuBtn">☰</span>
+                    <button class="menu-btn" id="openMenuBtn" aria-label="Open menu">☰</button>
                     <a href="{{ url_for('index') }}">BeeMD</a>
                 </div>
 
-                <form class="search" action="{{ url_for('movies') }}" method="get">
-                    <input type="search" name="q" placeholder="Search..." aria-label="Search">
-                    <button type="submit">Search</button>
+                <form class="search" action="{{ url_for('movies') }}" method="get" role="search">
+                    <input type="search" name="q" placeholder="Search..." aria-label="Search movies and series">
+                    <button type="submit" aria-label="Submit search">Search</button>
                 </form>
 
                 <div class="header-user-links">
                     {% block header_user_links %}
                     <div class="about-link">
-                        <a href="{{ url_for('about') }}" title="About Us">ℹ️</a>
+                        <a href="{{ url_for('about') }}" title="About Us" aria-label="About Us">ℹ️</a>
                     </div>
                     {% if current_user.is_authenticated %}
                     <div class="user-link">
-                        <a href="{{ url_for('profile') }}" title="Profile">👤</a>
+                        <a href="{{ url_for('profile') }}" title="Profile" aria-label="View profile">👤</a>
                     </div>
                     <div class="user-link">
-                        <a href="{{ url_for('logout') }}" title="Logout">Logout</a>
+                        <a href="{{ url_for('logout') }}" title="Logout" aria-label="Logout">Logout</a>
                     </div>
                     {% else %}
                     <div class="user-link">
-                        <a href="{{ url_for('login') }}" title="Login / Sign Up">
+                        <a href="{{ url_for('login') }}" title="Login / Sign Up" aria-label="Login or Sign Up">
                             Login
                         </a>
                     </div>
@@ -57,10 +66,10 @@
             </div>
         </header>
 
-        <main class="page-content">
+        <main class="page-content" id="main">
             {% with messages = get_flashed_messages() %}
             {% if messages %}
-            <ul class="flashes" style="color: red; text-align: center; list-style: none; padding: 1rem;">
+            <ul class="flashes" role="alert">
                 {% for message in messages %}
                 <li>{{ message }}</li>
                 {% endfor %}
@@ -70,8 +79,9 @@
 
             {% block content %}{% endblock %}
         </main>
+    </div>
 
-    </div>{% block footer %}
+    {% block footer %}
     <footer class="site-footer">
         <div class="container">
             <div class="footer-brand-section">
