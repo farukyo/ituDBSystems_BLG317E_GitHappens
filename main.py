@@ -114,13 +114,50 @@ def characters():
 def episode():
     return render_template("episode.html")
 
+@app.route("/names")
+def names_page():
+    search_query = request.args.get('q')  # Arama terimini al
+
+    with engine.connect() as conn:
+        if search_query:
+            # İsimlerde arama yap (primaryName sütunu)
+            sql_query = text("SELECT * FROM names WHERE primaryName LIKE :term LIMIT 100")
+            result = conn.execute(sql_query, {"term": f"%{search_query}%"})
+            page_title = f"'{search_query}' için Kişi Sonuçları"
+        else:
+            # Arama yoksa ilk 50 kişiyi getir
+            sql_query = text("SELECT * FROM names LIMIT 50")
+            result = conn.execute(sql_query)
+            page_title = "Tüm Oyuncular ve Çalışanlar"
+
+        data = result.fetchall()
+        # names.html sayfasına gönderiyoruz
+        return render_template("names.html", items=data, title=page_title)
+    
 @app.route("/celebrities")
 def celebrities():
     return render_template("celebrities.html")
 
-@app.route("/suggest")
+@app.route("/suggest", methods=["GET", "POST"])
+@login_required
 def suggest():
-    return redirect(url_for('about'))
+    if request.method == "POST":
+        subject = request.form.get("subject")
+        message_body = request.form.get("message")
+        
+        # Gönderen kişinin bilgileri
+        user_email = current_user.email
+        user_name = current_user.username
+        
+        # -------------------------------------------------------
+        # MAİL GÖNDERME KISMI BURAYA GELECEK
+        # (İleride buraya SMTP veya API kodları eklenecek)
+        # -------------------------------------------------------
+        
+        flash("Thank you! Your suggestion has been sent successfully.")
+        return redirect(url_for('index'))
+        
+    return render_template("suggestion.html")
 
 # --- Authentication Routes ---
 
