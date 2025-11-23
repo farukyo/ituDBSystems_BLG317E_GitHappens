@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
-
+from sqlalchemy import text
+from database import engine 
 # --- App Setup ---
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_super_secret_key_change_this_later' 
@@ -96,6 +97,57 @@ def episode():
 @app.route("/celebrities")
 def celebrities():
     return render_template("celebrities.html")
+def api_celebrities():
+    name_query = request.args.get("q")
+    profession = request.args.get("profession")
+    primary_letter = request.args.get("primary_letter")
+    birth_year = request.args.get("birth_year")
+    death_year = request.args.get("death_year")
+    order_by = request.args.get("order_by")
+
+    sql = "SELECT * FROM people WHERE 1=1"
+    params = {}
+
+    # Search (name)
+    if name_query:
+        sql += " AND primaryName LIKE :name"
+        params["name"] = f"%{name_query}%"
+
+    # Profession filter
+    if profession:
+        sql += " AND primaryProfession LIKE :prof"
+        params["prof"] = f"%{profession}%"
+
+    # Starts with A/B/C ...
+    if primary_letter:
+        sql += " AND primaryName LIKE :letter"
+        params["letter"] = f"{primary_letter}%"
+
+    # Birth year filter
+    if birth_year:
+        sql += " AND birthYear LIKE :byear"
+        params["byear"] = f"{birth_year}%"
+
+    # Death year filter
+    if death_year == "alive":
+        sql += " AND deathYear IS NULL"
+    elif death_year:
+        sql += " AND deathYear >= :dyear"
+        params["dyear"] = death_year
+
+    # Sorting
+    if order_by == "alphabetical":
+        sql += " ORDER BY primaryName ASC"
+    elif order_by == "age-asc":
+        sql += " ORDER BY birthYear ASC"
+    elif order_by == "popularity":
+        sql += " ORDER BY popularity DESC"
+
+    with engine.connect() as conn:
+        result = conn.execute(text(sql), params)
+        data = [dict(row) for row in result]
+
+    return jsonify(data)
 
 @app.route("/suggest")
 def suggest():
