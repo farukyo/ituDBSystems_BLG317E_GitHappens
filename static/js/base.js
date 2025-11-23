@@ -13,12 +13,12 @@ function toggleNav() {
     if (sidebar.style.width === sidebarWidth) {
         // Kapat
         sidebar.style.width = "0";
-        mainContent.style.marginLeft = "0";
+        // Ana içeriği kaydırmıyoruz artık
         return false; // Kapalı durum
     } else {
         // Aç
         sidebar.style.width = sidebarWidth;
-        mainContent.style.marginLeft = sidebarWidth;
+        // Ana içeriği kaydırmıyoruz artık
         return true; // Açık durum
     }
 }

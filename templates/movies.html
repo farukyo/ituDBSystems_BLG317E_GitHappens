@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Movies - BeeMD{% endblock %}
+{% block title %}{{ title | default("Movies") }} - BeeMD{% endblock %}
 
 {% block head %}
+{% extends "layout.html" %} {# Varsa base layout'unuz #}
+
+{% block styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/movies.css') }}">
 {% endblock %}
 
@@ -11,89 +14,106 @@
 
     <h1>Movies</h1>
 
-    <!-- Search Bar (movieTitle) -->
-    <div class="search-box">
-        <input type="text" id="movie-search" placeholder="Search movie title...">
-        <button id="movie-search-btn">Search</button>
-    </div>
+    <form action="{{ url_for('movies') }}" method="get">
+        
+        <div class="search-box">
+            <input type="text" id="movie-search" name="q" placeholder="Search movie title..." value="{{ request.args.get('q') or '' }}">
+            <button type="submit" id="movie-search-btn">Search</button>
+        </div>
 
-    <!-- Filters Section (titleType, startYear, endYear, runtimeMinutes, isAdult, genreId gibi) -->
-    <div class="filters">
+        <div class="filters">
 
-        <!-- titleType -->
-        <select id="movie-title-type">
-            <option value="">Title Type</option>
-            <option value="movie">Movie</option>
-            <option value="short">Short</option>
-            <option value="tvMovie">TV Movie</option>
-        </select>
+            <select id="movie-title-type" name="titleType">
+                <option value="">Title Type</option>
+                <option value="movie" {% if request.args.get('titleType') == 'movie' %}selected{% endif %}>Movie</option>
+                <option value="short" {% if request.args.get('titleType') == 'short' %}selected{% endif %}>Short</option>
+                <option value="tvMovie" {% if request.args.get('titleType') == 'tvMovie' %}selected{% endif %}>TV Movie</option>
+            </select>
 
-        <!-- startYear -->
-        <select id="movie-start-year">
-            <option value="">Start Year</option>
-            <option value="2020">2020s</option>
-            <option value="2010">2010s</option>
-            <option value="2000">2000s</option>
-            <option value="1990">1990s</option>
-        </select>
+            <select id="movie-start-year" name="startYear">
+                <option value="">Start Year</option>
+                <option value="2020" {% if request.args.get('startYear') == '2020' %}selected{% endif %}>2020s</option>
+                <option value="2010" {% if request.args.get('startYear') == '2010' %}selected{% endif %}>2010s</option>
+                <option value="2000" {% if request.args.get('startYear') == '2000' %}selected{% endif %}>2000s</option>
+                <option value="1990" {% if request.args.get('startYear') == '1990' %}selected{% endif %}>1990s</option>
+            </select>
 
-        <!-- endYear (çoğu film için start=end ama yine de bıraktım) -->
-        <select id="movie-end-year">
-            <option value="">End Year</option>
-            <option value="2020">2020+</option>
-            <option value="2010">2010+</option>
-            <option value="2000">2000+</option>
-            <option value="1990">1990+</option>
-        </select>
+            <select id="movie-end-year" name="endYear">
+                <option value="">End Year</option>
+                <option value="2020" {% if request.args.get('endYear') == '2020' %}selected{% endif %}>2020+</option>
+                <option value="2010" {% if request.args.get('endYear') == '2010' %}selected{% endif %}>2010+</option>
+            </select>
 
-        <!-- runtimeMinutes -->
-        <select id="movie-runtime">
-            <option value="">Runtime (minutes)</option>
-            <option value="lt90">&lt; 90</option>
-            <option value="90-120">90 – 120</option>
-            <option value="gt120">&gt; 120</option>
-        </select>
+            <select id="movie-runtime" name="runtime">
+                <option value="">Runtime</option>
+                <option value="lt90" {% if request.args.get('runtime') == 'lt90' %}selected{% endif %}>&lt; 90 min</option>
+                <option value="90-120" {% if request.args.get('runtime') == '90-120' %}selected{% endif %}>90 – 120 min</option>
+                <option value="gt120" {% if request.args.get('runtime') == 'gt120' %}selected{% endif %}>&gt; 120 min</option>
+            </select>
 
-        <!-- isAdult -->
-        <select id="movie-is-adult">
-            <option value="">Adult Content</option>
-            <option value="false">Non-adult (0)</option>
-            <option value="true">Adult (1)</option>
-        </select>
+            <select id="movie-genre" name="genre">
+                <option value="">Genre</option>
+                <option value="Drama" {% if request.args.get('genre') == 'Drama' %}selected{% endif %}>Drama</option>
+                <option value="Comedy" {% if request.args.get('genre') == 'Comedy' %}selected{% endif %}>Comedy</option>
+                <option value="Action" {% if request.args.get('genre') == 'Action' %}selected{% endif %}>Action</option>
+                <option value="Thriller" {% if request.args.get('genre') == 'Thriller' %}selected{% endif %}>Thriller</option>
+                <option value="Sci-Fi" {% if request.args.get('genre') == 'Sci-Fi' %}selected{% endif %}>Sci-Fi</option>
+            </select>
 
-        <!-- genreId -->
-        <select id="movie-genre">
-            <option value="">Genre</option>
-            <option value="drama">Drama</option>
-            <option value="comedy">Comedy</option>
-            <option value="action">Action</option>
-            <option value="thriller">Thriller</option>
-        </select>
+            <button type="submit" id="movie-filter-btn">Apply Filters</button>
+        </div>
+    </form>
+    <hr>
 
-        <button id="movie-filter-btn">Apply Filters</button>
-    </div>
-
-    <!-- Top 3 Popular Movies (kartlar) -->
-    <h2 class="sub-title">Top 3 Most Popular Movies</h2>
+    <h2 class="sub-title">Featured Movies</h2>
     <div class="popular-movies">
-
         <div class="movie-card">
-            <h3>Movie Name 1</h3>
+            <h3>Featured Movie 1</h3>
             <p class="movie-genre">Drama</p>
-            <p class="movie-likes">Liked by 30 users</p>
+            <p class="movie-likes">Top Rated</p>
         </div>
-
         <div class="movie-card">
-            <h3>Movie Name 2</h3>
+            <h3>Featured Movie 2</h3>
             <p class="movie-genre">Action</p>
-            <p class="movie-likes">Liked by 24 users</p>
+            <p class="movie-likes">Editor's Pick</p>
         </div>
-
         <div class="movie-card">
-            <h3>Movie Name 3</h3>
+            <h3>Featured Movie 3</h3>
             <p class="movie-genre">Comedy</p>
-            <p class="movie-likes">Liked by 19 users</p>
+            <p class="movie-likes">Trending</p>
         </div>
+    </div>
+
+    <h2 class="sub-title">All Results</h2>
+
+    <div class="movie-list">
+        {% if items %}
+            {% for movie in items %}
+            <div class="movie-item">
+                <h3 class="movie-title">
+                    <a href="/movie/{{ movie.movieId }}">
+                        {{ movie.primaryTitle }} 
+                        <span style="font-size: 0.8em; color: gray;">({{ movie.startYear }})</span>
+                    </a>
+                </h3>
+                <p class="movie-info">
+                    {{ movie.genres }} | {{ movie.runtimeMinutes }} min
+                </p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-results">
+                {% if request.args.get('q') or request.args.get('genre') %}
+                    <p>No results found matching your criteria.</p>
+                {% else %}
+                    <p>No movies available to display.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
     </div>
 
     <!-- Results After Query (Empty for now) -->

@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from database.db import engine
+from sqlalchemy import text
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from sqlalchemy import text
 from database import engine 
@@ -70,13 +72,32 @@ def recommend():
     return render_template("recommend.html")
 
 @app.route("/movies")
+
 def movies():
-    movie_data = [
-        {"title": "The Shawshank Redemption"},
-        {"title": "The Godfather"},
-        {"title": "The Dark Knight"}
-    ]
-    return render_template("movies.html", movies=movie_data)
+    search_query = request.args.get('q')
+    genre_filter = request.args.get('genre')
+    with engine.connect() as conn:
+        sql = "SELECT * FROM movies WHERE 1=1"
+        params = {}
+
+        if search_query:
+            sql += " AND primaryTitle LIKE :q"
+            params["q"] = f"%{search_query}%"
+        # Genre filtresi
+        if genre_filter:
+            sql += " AND genres LIKE :genre"
+            params["genre"] = f"%{genre_filter}%"
+        # Limit ekle
+        sql += " LIMIT 100;"
+        result = conn.execute(text(sql), params)
+        data = result.fetchall()
+    # Title
+    if search_query:
+        page_title = f"Results for '{search_query}'"
+    else:
+        page_title = "All Movies"
+    return render_template("movies.html", items=data, title=page_title)
+
 
 @app.route("/series")
 def series():
@@ -94,6 +115,26 @@ def characters():
 def episode():
     return render_template("episode.html")
 
+@app.route("/names")
+def names_page():
+    search_query = request.args.get('q')  # Arama terimini al
+
+    with engine.connect() as conn:
+        if search_query:
+            # İsimlerde arama yap (primaryName sütunu)
+            sql_query = text("SELECT * FROM names WHERE primaryName LIKE :term LIMIT 100")
+            result = conn.execute(sql_query, {"term": f"%{search_query}%"})
+            page_title = f"'{search_query}' için Kişi Sonuçları"
+        else:
+            # Arama yoksa ilk 50 kişiyi getir
+            sql_query = text("SELECT * FROM names LIMIT 50")
+            result = conn.execute(sql_query)
+            page_title = "Tüm Oyuncular ve Çalışanlar"
+
+        data = result.fetchall()
+        # names.html sayfasına gönderiyoruz
+        return render_template("names.html", items=data, title=page_title)
+    
 @app.route("/celebrities")
 def celebrities():
     return render_template("celebrities.html")
@@ -149,9 +190,26 @@ def api_celebrities():
 
     return jsonify(data)
 
-@app.route("/suggest")
+@app.route("/suggest", methods=["GET", "POST"])
+@login_required
 def suggest():
-    return redirect(url_for('about'))
+    if request.method == "POST":
+        subject = request.form.get("subject")
+        message_body = request.form.get("message")
+        
+        # Gönderen kişinin bilgileri
+        user_email = current_user.email
+        user_name = current_user.username
+        
+        # -------------------------------------------------------
+        # MAİL GÖNDERME KISMI BURAYA GELECEK
+        # (İleride buraya SMTP veya API kodları eklenecek)
+        # -------------------------------------------------------
+        
+        flash("Thank you! Your suggestion has been sent successfully.")
+        return redirect(url_for('index'))
+        
+    return render_template("suggestion.html")
 
 # --- Authentication Routes ---
 
