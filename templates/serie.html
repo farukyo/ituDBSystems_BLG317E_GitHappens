@@ -1,56 +1,52 @@
-<!DOCTYPE html>
-<html lang="tr">
+{% extends "base.html" %}
 
-<head>
-  <meta charset="UTF-8" />
+{% block title %}Series Detail - BeeMD{% endblock %}
 
-  <link rel="stylesheet" href="/static/css/series.css" />
-  <title>Dizi Detayı</title>
-</head>
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/serie.css') }}">
+{% endblock %}
 
-<body>
+{% block content %}
+<div class="container serie-page">
 
-  <nav class="site-nav">
-    <li><a href="/">Home</a></li>
-    <li><a href="/movies">Movies</a></li>
-    <li><a href="/series">Series</a></li>
-    <li><a href="/celebrities">Celebrities</a></li>
-    <li><a href="/quiz">Quiz</a></li>
-    <li><a href="/recommend">Recommend</a></li>
-    <li><a href="/about">About</a></li>
-  </nav>
+    <!-- Burayı daha sonra backend verileriyle dinamik yapabilirsiniz -->
+    <header class="serie-header">
+        <h1>Breaking Bad</h1>
+        <p class="serie-meta">Genre: Drama / Crime • Season 1</p>
+        <p class="serie-desc">
+            High school chemistry teacher Walter White turns to cooking methamphetamine
+            to secure his family's future after a terminal diagnosis.
+        </p>
+    </header>
 
+    <section class="episodes">
+        <h2>Episodes</h2>
+        <ul class="episode-list">
+            <li class="episode-item">
+                <span class="ep-title">Episode 1 – Pilot</span>
+                <span class="ep-duration">58 min</span>
+                <a class="ep-link" href="#">Detail</a>
+            </li>
+            <li class="episode-item">
+                <span class="ep-title">Episode 2 – Cat’s in the Bag...</span>
+                <span class="ep-duration">47 min</span>
+                <a class="ep-link" href="#">Detail</a>
+            </li>
+            <li class="episode-item">
+                <span class="ep-title">Episode 3 – ...And the Bag’s in the River</span>
+                <span class="ep-duration">46 min</span>
+                <a class="ep-link" href="#">Detail</a>
+            </li>
+        </ul>
+    </section>
 
-  <header class="series-header">
-    <h1>Breaking Bad</h1>
-    <p class="series-meta">Tür: Drama / Suç • Sezon: 1</p>
-    <p class="series-desc">
-      Liseden kimya öğretmeni Walter White, ailesinin geleceği için...
-    </p>
-  </header>
+    <div class="back-to-series">
+        <a href="{{ url_for('series') }}" class="back-button">← Back to Series</a>
+    </div>
 
+</div>
+{% endblock %}
 
-  <section class="episodes">
-    <h2>Bölümler</h2>
-    <ul class="episode-list">
-      <li class="episode-item">
-        <span class="ep-title">1. Bölüm – Pilot</span>
-        <span class="ep-duration">58 dk</span>
-        <a class="ep-link" href="/templates/episode.html">Detail</a>
-      </li>
-      <li class="episode-item">
-        <span class="ep-title">2. Bölüm – Cat’s in the Bag...</span>
-        <span class="ep-duration">47 dk</span>
-        <a class="ep-link" href="/templates/episode.html">Detail</a>
-      </li>
-      <li class="episode-item">
-        <span class="ep-title">3. Bölüm – ...And the Bag’s in the River</span>
-        <span class="ep-duration">46 dk</span>
-        <a class="ep-link" href="/templates/episode.html">Detail</a>
-
-        <div class="back-to-series">
-          <a href="/templates/series.html" class="back-button">Back</a>
-        </div>
-</body>
-
-</html>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/serie.js') }}"></script>
+{% endblock %}
