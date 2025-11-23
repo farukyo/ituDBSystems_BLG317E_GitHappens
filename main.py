@@ -134,9 +134,26 @@ def names_page():
 def celebrities():
     return render_template("celebrities.html")
 
-@app.route("/suggest")
+@app.route("/suggest", methods=["GET", "POST"])
+@login_required
 def suggest():
-    return redirect(url_for('about'))
+    if request.method == "POST":
+        subject = request.form.get("subject")
+        message_body = request.form.get("message")
+        
+        # Gönderen kişinin bilgileri
+        user_email = current_user.email
+        user_name = current_user.username
+        
+        # -------------------------------------------------------
+        # MAİL GÖNDERME KISMI BURAYA GELECEK
+        # (İleride buraya SMTP veya API kodları eklenecek)
+        # -------------------------------------------------------
+        
+        flash("Thank you! Your suggestion has been sent successfully.")
+        return redirect(url_for('index'))
+        
+    return render_template("suggestion.html")
 
 # --- Authentication Routes ---
 

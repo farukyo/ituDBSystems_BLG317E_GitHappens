@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Suggestions - BeeMD{% endblock %}
+
+{% block head %}
+<style>
+    /* Bu sayfaya özel stiller */
+    .suggestion-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: linear-gradient(180deg, #1f2937, #111827);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .suggestion-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .suggestion-header h1 {
+        color: var(--accent);
+        margin-bottom: 10px;
+    }
+
+    .suggestion-header p {
+        color: var(--muted);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #e6eef8;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        background-color: #0b1220;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #fff;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(233, 96, 26, 0.1);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 150px;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 14px;
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s;
+    }
+
+    .btn-submit:hover {
+        background: #d65211;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="suggestion-container">
+        <div class="suggestion-header">
+            <h1>We Value Your Feedback</h1>
+            <p>Help us improve BeeMD by sharing your thoughts, feature requests, or reporting bugs.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('suggest') }}">
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <select name="subject" id="subject" class="form-control" required>
+                    <option value="General Feedback">General Feedback</option>
+                    <option value="Feature Request">Feature Request</option>
+                    <option value="Bug Report">Bug Report</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Your Suggestion</label>
+                <textarea name="message" id="message" class="form-control" placeholder="Type your suggestion here..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Send Suggestion</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
