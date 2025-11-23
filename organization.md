@@ -22,7 +22,7 @@
 
     - quiz.html: ???
     - recommend.html: ???
-    - suggestion.html: ???-connection to mail adres- // ceyda
+    - suggestion.html: ???-connection to mail adres OR chatbox- // EMRE
     - episodes.html: ??? // şevval
     - charachters.html: // emre
     
