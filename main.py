@@ -71,26 +71,30 @@ def recommend():
     return render_template("recommend.html")
 
 @app.route("/movies")
+
 def movies():
-    search_query = request.args.get('q')  # Kullanıcının girdiği kelimeyi alır (Örn: 'real')
-    
+    search_query = request.args.get('q')
+    genre_filter = request.args.get('genre')
     with engine.connect() as conn:
+        sql = "SELECT * FROM movies WHERE 1=1"
+        params = {}
+
         if search_query:
-            # 1. SQL Sorgusu: ':term' adında bir değişken bekler.
-            sql_query = text("SELECT * FROM genre WHERE description LIKE :term LIMIT 100")
-            
-            # SQL'e gönderilen parametre adı 'term' olmalıdır.
-            result = conn.execute(sql_query, {"term": f"%{search_query}%"})
-            
-            page_title = f"'{search_query}' için sonuçlar"
-        
-        else:
-            # Arama yapılmazsa...
-            sql_query = text("SELECT * FROM genre LIMIT 50")
-            result = conn.execute(sql_query)
-            page_title = "Tüm Film Türleri"
-        
+            sql += " AND primaryTitle LIKE :q"
+            params["q"] = f"%{search_query}%"
+        # Genre filtresi
+        if genre_filter:
+            sql += " AND genres LIKE :genre"
+            params["genre"] = f"%{genre_filter}%"
+        # Limit ekle
+        sql += " LIMIT 100;"
+        result = conn.execute(text(sql), params)
         data = result.fetchall()
+    # Title
+    if search_query:
+        page_title = f"Results for '{search_query}'"
+    else:
+        page_title = "All Movies"
     return render_template("movies.html", items=data, title=page_title)
 
 

@@ -32,7 +32,7 @@
         {% for movie in items %}
         <div class="movie-item">
             <h3 class="movie-title">
-                <a href="/movie/{{ movie.tconst }}">{{ movie.genre }} ({{ movie.description }})</a>
+                <a href="/movie/{{ movie.movieId }}">{{ movie.primaryTitle }} ({{ movie.genres }})</a>
             </h3>
         </div>
         {% endfor %}
