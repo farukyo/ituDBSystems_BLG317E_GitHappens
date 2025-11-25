@@ -3,7 +3,7 @@ from database.db import engine
 from sqlalchemy import text
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from sqlalchemy import text
-from database import engine 
+#from database import engine 
 # --- App Setup ---
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_super_secret_key_change_this_later' 
@@ -111,9 +111,9 @@ def series():
 def characters():
     return render_template("characters.html")
 
-@app.route("/episode")
-def episode():
-    return render_template("episode.html")
+@app.route("/episodes")
+def episodes():
+    return render_template("episodes.html")
 
 @app.route("/names")
 def names_page():
