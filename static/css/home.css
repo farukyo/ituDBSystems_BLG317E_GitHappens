@@ -155,11 +155,10 @@
 
 .floating-posters .poster {
     position: absolute;
-    background-size: cover;
-    background-position: center;
     border-radius: 12px;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     transition: transform 0.4s ease, box-shadow 0.4s ease;
+    object-fit: cover;
 }
 
 .floating-posters .poster:hover {

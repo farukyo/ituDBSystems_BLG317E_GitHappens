@@ -50,7 +50,10 @@
                 <div class="header-user-links">
                     {% block header_user_links %}
                     <div class="about-link">
-                        <a href="{{ url_for('about') }}" title="About Us" aria-label="About Us">ℹ️</a>
+                        <a href="{{ url_for('about') }}" title="About Us" aria-label="About Us">
+                            <span>ℹ️</span>
+                            <span class="about-text">About Us</span>
+                        </a>
                     </div>
                     {% if current_user.is_authenticated %}
                     <div class="user-link">
@@ -129,6 +132,27 @@
         </div>
     </footer>
     {% endblock %}
+
+    <!-- Bee Loading Popup -->
+    <div id="beeLoadingPopup" class="bee-loading-popup">
+        <div class="bee-loading-content">
+            <div class="bee-loading-text">🍯 Buzzing through the database...</div>
+            <div class="bee-container">
+                <span class="bee">🐝</span>
+                <span class="bee">🐝</span>
+                <span class="bee">🐝</span>
+                <span class="bee">🐝</span>
+                <div class="bee-trail"></div>
+            </div>
+            <div class="honeycomb-loader">
+                <div class="honeycomb-dot"></div>
+                <div class="honeycomb-dot"></div>
+                <div class="honeycomb-dot"></div>
+                <div class="honeycomb-dot"></div>
+                <div class="honeycomb-dot"></div>
+            </div>
+        </div>
+    </div>
 
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
     {% block scripts %}{% endblock %}
