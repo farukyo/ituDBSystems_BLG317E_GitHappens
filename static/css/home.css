@@ -2,130 +2,311 @@
    HOME PAGE ONLY
 ------------------------------------------*/
 
-/* Hero Section */
-.hero {
-    padding: 48px 0;
-    background: linear-gradient(180deg, rgba(14, 22, 34, 0.9), rgba(5, 9, 15, 0.9));
-}
-
-.hero-inner {
+/* Tilted Background Tiles */
+.tilted-bg {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 200vw;
+    height: 200vh;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    z-index: -1;
+    overflow: hidden;
     display: flex;
-    gap: 24px;
-    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    pointer-events: none;
 }
 
-.hero-text {
-    flex: 1;
-}
-
-.hero-text h1 {
-    font-size: 2.4rem;
-    margin: 0 0 12px;
-    color: #fff;
-}
-
-.hero-text p {
-    color: var(--muted);
-    margin: 0 0 18px;
-}
-
-.hero-ctas {
+.tiles-track {
     display: flex;
-    gap: 10px;
+    gap: 20px;
+    animation: scroll-tiles 60s linear infinite;
+    width: max-content;
 }
 
-/* Buttons */
-.btn {
-    display: inline-block;
-    padding: 10px 14px;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.06);
-    color: #fff;
-    text-decoration: none;
+.tiles-track.reverse {
+    animation: scroll-tiles-reverse 60s linear infinite;
 }
 
-.btn.primary {
-    background: var(--accent);
-    box-shadow: 0 6px 18px rgba(233, 96, 26, 0.14);
-}
+.tile {
+    flex-shrink: 0;
+    width: 200px;
 
-/* Hero Images */
-.hero-art {
-    width: 280px;
-}
-
-.poster-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.poster {
-    background: linear-gradient(180deg, #1f2937, #111827);
-    height: 180px;
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, .6);
-}
-
-.poster.small {
-    height: 84px;
-}
-
-/* Featured Section */
-.featured {
-    padding: 28px 0;
-    color: #cfe6ff;
-}
-
-.featured h2 {
-    margin: 0 0 12px;
-}
-
-.cards {
-    display: flex;
-    gap: 12px;
-}
-
-.card {
-    flex: 1;
-    background: linear-gradient(180deg, #071028, #07141c);
-    padding: 16px;
-    border-radius: 8px;
-    text-decoration: none;
-    color: #fff;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(233, 96, 26, 0.2);
-}
-
-/* Responsive design for home page */
-@media (max-width: 768px) {
-    .hero {
-        padding: 32px 0;
+    .hexagon-posters {
+        /* place the hexagon group to the left of the hero area */
+        position: absolute;
+        left: 40px;
+        top: 50%;
+        transform: translateY(-50%) rotate(-8deg);
+        width: 340px;
+        height: 340px;
+        pointer-events: none;
+        /* decorative only */
     }
 
-    .hero-text h1 {
-        font-size: 2rem;
+    .tile img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(30%);
     }
 
-    .poster-grid {
-        gap: 8px;
-    }
-}
+    @keyframes scroll-tiles {
+        0% {
+            transform: translateX(0);
+        }
 
-@media (max-width: 480px) {
-    .hero {
-        padding: 24px 0;
-    }
+        100% {
+            .triangle {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 150px;
+                height: 150px;
+                transform-origin: center center;
+                background-size: cover;
+                background-position: center;
+                clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+                opacity: 0.95;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+            }
 
-    .featured {
-        padding: 20px 0;
-    }
+            /* Hero Section */
+            .hero {
+                position: relative;
+                padding: 48px 0;
+                /* Reduced opacity so background tiles are more visible */
+                background: linear-gradient(180deg, rgba(14, 22, 34, 0.35), rgba(5, 9, 15, 0.375));
+            }
 
-    .featured h2 {
-        font-size: 1.3rem;
-    }
-}
+            .hero-inner {
+                display: flex;
+                gap: 24px;
+                align-items: center;
+            }
+
+            .hero-text {
+                flex: 1;
+            }
+
+            .triangle.t1 {
+                transform: rotate(0deg) translateY(-140px) rotate(0deg);
+            }
+
+            .triangle.t2 {
+                transform: rotate(60deg) translateY(-140px) rotate(-60deg);
+            }
+
+            .triangle.t3 {
+                transform: rotate(120deg) translateY(-140px) rotate(-120deg);
+            }
+
+            .triangle.t4 {
+                transform: rotate(180deg) translateY(-140px) rotate(-180deg);
+            }
+
+            .triangle.t5 {
+                transform: rotate(240deg) translateY(-140px) rotate(-240deg);
+            }
+
+            .triangle.t6 {
+                transform: rotate(300deg) translateY(-140px) rotate(-300deg);
+            }
+
+            .hero-text p {
+                color: var(--muted);
+                margin: 0 0 18px;
+            }
+
+            .hero-ctas {
+                display: flex;
+                gap: 10px;
+            }
+
+            /* Buttons */
+            .btn {
+                display: inline-block;
+                padding: 10px 14px;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.06);
+                color: #fff;
+                text-decoration: none;
+            }
+
+            .btn.primary {
+                background: var(--accent);
+                box-shadow: 0 6px 18px rgba(233, 96, 26, 0.14);
+            }
+
+            /* Hero Images */
+            .hero-art {
+                width: 280px;
+            }
+
+            .poster-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .poster {
+                background-size: cover;
+                background-position: center;
+                height: 180px;
+                border-radius: 8px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, .6);
+            }
+
+            /* Hexagon triangular posters */
+            .hexagon-posters {
+                position: relative;
+                width: 260px;
+                height: 260px;
+                margin: 0 auto;
+            }
+
+            .triangle {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 120px;
+                height: 120px;
+                transform-origin: center center;
+                background-size: cover;
+                background-position: center;
+                clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+                opacity: 0.9;
+                transition: transform 0.35s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+            }
+
+            /* Position 6 triangles around a circle (each 60deg apart). rotate(angle) translateY(-r) rotate(-angle) keeps image upright */
+            .triangle.t1 {
+                transform: rotate(0deg) translateY(-96px) rotate(0deg);
+            }
+
+            .triangle.t2 {
+                transform: rotate(60deg) translateY(-96px) rotate(-60deg);
+            }
+
+            .triangle.t3 {
+                transform: rotate(120deg) translateY(-96px) rotate(-120deg);
+            }
+
+            .triangle.t4 {
+                transform: rotate(180deg) translateY(-96px) rotate(-180deg);
+            }
+
+            .triangle.t5 {
+                transform: rotate(240deg) translateY(-96px) rotate(-240deg);
+            }
+
+            .triangle.t6 {
+                transform: rotate(300deg) translateY(-96px) rotate(-300deg);
+            }
+
+            .triangle:hover {
+                transform: scale(1.06) translateZ(0);
+                opacity: 1;
+                box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+            }
+
+            @media (max-width: 768px) {
+                .hexagon-posters {
+                    width: 200px;
+                    height: 200px;
+                }
+
+                .triangle {
+                    width: 90px;
+                    height: 90px;
+                }
+
+                .triangle.t1,
+                .triangle.t2,
+                .triangle.t3,
+                .triangle.t4,
+                .triangle.t5,
+                .triangle.t6 {
+                    transform: none;
+                }
+
+                /* fallback: arrange in a grid for small screens */
+                .hexagon-posters {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    grid-gap: 8px;
+                    align-items: center;
+                    justify-items: center;
+                }
+
+                .triangle {
+                    position: static;
+                    transform: none;
+                    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+                }
+            }
+
+            .poster.small {
+                height: 84px;
+            }
+
+            /* Featured Section */
+            .featured {
+                padding: 28px 0;
+                color: #cfe6ff;
+            }
+
+            .featured h2 {
+                margin: 0 0 12px;
+            }
+
+            .cards {
+                display: flex;
+                gap: 12px;
+            }
+
+            .card {
+                flex: 1;
+                background: linear-gradient(180deg, rgba(7, 16, 40, 0.4), rgba(7, 20, 28, 0.4));
+                padding: 16px;
+                border-radius: 8px;
+                text-decoration: none;
+                color: #fff;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+
+            .card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 24px rgba(233, 96, 26, 0.2);
+            }
+
+            /* Responsive design for home page */
+            @media (max-width: 768px) {
+                .hero {
+                    padding: 32px 0;
+                }
+
+                .hero-text h1 {
+                    font-size: 2rem;
+                }
+
+                .poster-grid {
+                    gap: 8px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .hero {
+                    padding: 24px 0;
+                }
+
+                .featured {
+                    padding: 20px 0;
+                }
+
+                .featured h2 {
+                    font-size: 1.3rem;
+                }
+            }
