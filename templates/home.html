@@ -9,9 +9,9 @@
 {% block content %}
 <!-- Tilted Background Tiles -->
 <div class="tilted-bg">
+    {% set images = ['gibi.jpg', 'himym.jpg', 'house.jpg', 'inter.jpg', 'trans.jpg', 'wd.jpeg', 'mentalist.jpg'] %}
     <div class="tiles-track">
-        {% set images = ['gibi.jpg', 'himym.jpg', 'house.jpg', 'inter.jpg', 'trans.jpg', 'wd.jpeg'] %}
-        {% for i in range(3) %}
+        {% for i in range(4) %}
         {% for img in images %}
         <div class="tile">
             <img src="{{ url_for('static', filename='img/' ~ img) }}" alt="">
@@ -20,7 +20,7 @@
         {% endfor %}
     </div>
     <div class="tiles-track reverse">
-        {% for i in range(3) %}
+        {% for i in range(4) %}
         {% for img in images|reverse %}
         <div class="tile">
             <img src="{{ url_for('static', filename='img/' ~ img) }}" alt="">
@@ -29,17 +29,8 @@
         {% endfor %}
     </div>
     <div class="tiles-track">
-        {% for i in range(3) %}
+        {% for i in range(4) %}
         {% for img in images %}
-        <div class="tile">
-            <img src="{{ url_for('static', filename='img/' ~ img) }}" alt="">
-        </div>
-        {% endfor %}
-        {% endfor %}
-    </div>
-    <div class="tiles-track reverse">
-        {% for i in range(3) %}
-        {% for img in images|reverse %}
         <div class="tile">
             <img src="{{ url_for('static', filename='img/' ~ img) }}" alt="">
         </div>
@@ -59,12 +50,15 @@
             </div>
         </div>
         <div class="hero-art">
-            <div class="hexagon-posters" aria-hidden="true">
-                {% set tri_images = ['house.jpg', 'himym.jpg', 'gibi.jpg', 'inter.jpg', 'trans.jpg', 'wd.jpeg'] %}
-                {% for img in tri_images %}
-                <div class="triangle t{{ loop.index }}"
-                    style="background-image: url('{{ url_for('static', filename='img/' ~ img) }}');"></div>
-                {% endfor %}
+            <div class="floating-posters" aria-hidden="true">
+                <div class="poster p1"
+                    style="background-image: url('{{ url_for('static', filename='img/house.jpg') }}');"></div>
+                <div class="poster p2"
+                    style="background-image: url('{{ url_for('static', filename='img/himym.jpg') }}');"></div>
+                <div class="poster p3"
+                    style="background-image: url('{{ url_for('static', filename='img/inter.jpg') }}');"></div>
+                <div class="poster p4"
+                    style="background-image: url('{{ url_for('static', filename='img/gibi.jpg') }}');"></div>
             </div>
         </div>
     </div>

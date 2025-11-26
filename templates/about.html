@@ -7,39 +7,158 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>About Us</h1>
-    <p>This project was developed as part of the ITU BLG317E Database Systems course.</p>
-    <p>Dataset: <a href="https://developer.imdb.com/non-commercial-datasets/">IMDb Non-Commercial Datasets</a></p>
-    <p>Developed by GitHappens.</p>
-</div>
+<!-- Hero Section -->
+<section class="about-hero">
+    <div class="container hero-content">
+        <div class="hero-text">
+            <h1>About BeeMD</h1>
+            <p class="lead">Discover movies, series, and the people behind them. A comprehensive database exploration
+                platform built for film enthusiasts.</p>
+        </div>
+    </div>
+</section>
 
-<h2 style="text-align: center; margin-top: 2rem;">Team</h2>
-<div class="team-grid">
-    <div class="team-member">
-        <div class="placeholder-img">👤</div>
-        <h3>Faruk Yiğit Oluşan</h3>
-        <p>No: 1</p>
+<!-- Project Info Section -->
+<section class="project-info container">
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="info-icon">📚</div>
+            <h3>Course Project</h3>
+            <p>Developed as part of ITU BLG317E Database Systems course, showcasing real-world database design and
+                implementation.</p>
+        </div>
+        <div class="info-card">
+            <div class="info-icon">📊</div>
+            <h3>Rich Dataset</h3>
+            <p>Powered by <a href="https://developer.imdb.com/non-commercial-datasets/" target="_blank">IMDb
+                    Non-Commercial Datasets</a>, containing thousands of movies, series, and professionals.</p>
+        </div>
+        <div class="info-card">
+            <div class="info-icon">💻</div>
+            <h3>Modern Stack</h3>
+            <p>Built with Flask, MySQL, and modern web technologies to deliver a fast, intuitive user experience.</p>
+        </div>
+        <div class="info-card">
+            <div class="info-icon">🎯</div>
+            <h3>Our Mission</h3>
+            <p>Make entertainment data accessible and engaging, providing personalized recommendations and comprehensive
+                information.</p>
+        </div>
     </div>
-    <div class="team-member">
-        <div class="placeholder-img">👤</div>
-        <h3>Turgut Emre Sürenkök</h3>
-        <p>No: 2</p>
+</section>
+
+<!-- Team Section -->
+<section class="team-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Meet Our Team</h2>
+            <p>The talented developers behind BeeMD</p>
+        </div>
+
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Ceyda Nur Akalın">
+                </div>
+                <div class="member-info">
+                    <h3>Ceyda Nur Akalın</h3>
+                    <p class="role">Database Architect</p>
+                    <p class="student-id">820230xxx</p>
+                    <p class="bio">Designs and optimizes database schemas for efficient data retrieval.</p>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Faruk Yiğit Oluşan">
+                </div>
+                <div class="member-info">
+                    <h3>Faruk Yiğit Oluşan</h3>
+                    <p class="role">Full Stack Developer</p>
+                    <p class="student-id">820230308</p>
+                    <p class="bio">Lead developer focusing on backend architecture and database optimization.</p>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Eylül Ebrar Gülbeyaz">
+                </div>
+                <div class="member-info">
+                    <h3>Eylül Ebrar Gülbeyaz</h3>
+                    <p class="role">Backend Developer</p>
+                    <p class="student-id">820230xxx</p>
+                    <p class="bio">Specializes in API development and data processing pipelines.</p>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Turgut Emre Sürenkök">
+                </div>
+                <div class="member-info">
+                    <h3>Turgut Emre Sürenkök</h3>
+                    <p class="role">Frontend Developer</p>
+                    <p class="student-id">820230xxx</p>
+                    <p class="bio">Creates beautiful and responsive user interfaces for seamless browsing.</p>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Şevval Hayyar">
+                </div>
+                <div class="member-info">
+                    <h3>Şevval Hayyar</h3>
+                    <p class="role">Frontend Developer</p>
+                    <p class="student-id">820230xxx</p>
+                    <p class="bio">Creates beautiful and responsive user interfaces for seamless browsing.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="team-member">
-        <div class="placeholder-img">👤</div>
-        <h3>Ceyda Nur Akalın</h3>
-        <p>No: 3</p>
+</section>
+
+<!-- Instructors Section -->
+<section class="instructors-section container">
+    <div class="section-header">
+        <h2>Course Instructors & TA</h2>
+        <p>Guided by experienced faculty</p>
     </div>
-    <div class="team-member">
-        <div class="placeholder-img">👤</div>
-        <h3>Eylül Ebrar Gülbeyaz</h3>
-        <p>No: 4</p>
+
+    <div class="instructors-content">
+        <div class="instructors-group">
+            <h3>Instructors</h3>
+            <div class="instructor-list">
+                <div class="instructor-item">
+                    <span class="instructor-star">⭐</span>
+                    <div class="instructor-details">
+                        <p class="instructor-name">Kadir Özlem</p>
+                    </div>
+                </div>
+                <div class="instructor-item">
+                    <span class="instructor-star">⭐</span>
+                    <div class="instructor-details">
+                        <p class="instructor-name">Ali Çakmak</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructors-group">
+            <h3>Teaching Assistant</h3>
+            <div class="instructor-list">
+                <div class="instructor-item">
+                    <span class="instructor-badge">TA</span>
+                    <div class="instructor-details">
+                        <p class="instructor-name">Elif</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="team-member">
-        <div class="placeholder-img">👤</div>
-        <h3>Şevval Hayyar</h3>
-        <p>No: 5</p>
-    </div>
-</div>
+</section>
+
+</section>
+
 {% endblock %}
