@@ -115,80 +115,90 @@ def characters():
 def episodes():
     return render_template("episodes.html")
 
-@app.route("/names")
-def names_page():
-    search_query = request.args.get('q')  # Arama terimini al
 
-    with engine.connect() as conn:
-        if search_query:
-            # İsimlerde arama yap (primaryName sütunu)
-            sql_query = text("SELECT * FROM names WHERE primaryName LIKE :term LIMIT 100")
-            result = conn.execute(sql_query, {"term": f"%{search_query}%"})
-            page_title = f"'{search_query}' için Kişi Sonuçları"
-        else:
-            # Arama yoksa ilk 50 kişiyi getir
-            sql_query = text("SELECT * FROM names LIMIT 50")
-            result = conn.execute(sql_query)
-            page_title = "Tüm Oyuncular ve Çalışanlar"
-
-        data = result.fetchall()
-        # names.html sayfasına gönderiyoruz
-        return render_template("names.html", items=data, title=page_title)
     
 @app.route("/celebrities")
 def celebrities():
-    return render_template("celebrities.html")
-def api_celebrities():
-    name_query = request.args.get("q")
-    profession = request.args.get("profession")
-    primary_letter = request.args.get("primary_letter")
-    birth_year = request.args.get("birth_year")
-    death_year = request.args.get("death_year")
-    order_by = request.args.get("order_by")
-
-    sql = "SELECT * FROM people WHERE 1=1"
-    params = {}
-
-    # Search (name)
-    if name_query:
-        sql += " AND primaryName LIKE :name"
-        params["name"] = f"%{name_query}%"
-
-    # Profession filter
-    if profession:
-        sql += " AND primaryProfession LIKE :prof"
-        params["prof"] = f"%{profession}%"
-
-    # Starts with A/B/C ...
-    if primary_letter:
-        sql += " AND primaryName LIKE :letter"
-        params["letter"] = f"{primary_letter}%"
-
-    # Birth year filter
-    if birth_year:
-        sql += " AND birthYear LIKE :byear"
-        params["byear"] = f"{birth_year}%"
-
-    # Death year filter
-    if death_year == "alive":
-        sql += " AND deathYear IS NULL"
-    elif death_year:
-        sql += " AND deathYear >= :dyear"
-        params["dyear"] = death_year
-
-    # Sorting
-    if order_by == "alphabetical":
-        sql += " ORDER BY primaryName ASC"
-    elif order_by == "age-asc":
-        sql += " ORDER BY birthYear ASC"
-    elif order_by == "popularity":
-        sql += " ORDER BY popularity DESC"
+    # 1. URL'den Parametreleri Al
+    search_query = request.args.get('q')
+    profession_list = request.args.getlist('profession')
+    primary_letter = request.args.get('primary_name') # HTML'deki name="primary_name"
+    birth_filter = request.args.get('birth_year')
+    death_filter = request.args.get('death_year')
+    order_filter = request.args.get('order_by')
 
     with engine.connect() as conn:
-        result = conn.execute(text(sql), params)
-        data = [dict(row) for row in result]
+        sql = """
+            SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, pr.professionName 
+            FROM people p
+            LEFT JOIN profession pr ON p.professionId = pr.professionId
+            WHERE 1=1
+        """
+        params = {}
 
-    return jsonify(data)
+
+        if not search_query and not primary_letter:
+            sql += " AND p.primaryName REGEXP '^[A-Za-z]'"
+            sql += " AND CHAR_LENGTH(p.primaryName) >= 3"
+            sql += " AND p.primaryName REGEXP '[A-Za-z]{2,}'"
+            sql += " AND p.primaryName NOT REGEXP '^[A-Za-z][ ._$/0-9\\'-]'"
+    
+        if search_query:
+            sql += " AND p.primaryName LIKE :q"
+            params["q"] = f"%{search_query}%"
+
+        if profession_list:
+            prof_conditions = []
+            for i, prof in enumerate(profession_list):
+                key = f"prof_{i}" 
+                prof_conditions.append(f"pr.professionName LIKE :{key}")
+                params[key] = f"%{prof}%"
+            sql += " AND (" + " AND ".join(prof_conditions) + ")"
+            
+        if primary_letter:
+            sql += " AND p.primaryName LIKE :letter"
+            params["letter"] = f"{primary_letter}%"
+
+        if birth_filter:
+            sql += " AND p.birthYear = :byear"
+            params["byear"] = int(birth_filter)
+
+        if death_filter:
+            sql += " AND p.deathYear = :dyear"
+            params["dyear"] = int(death_filter)
+
+        if order_filter == "alphabetical":
+            sql += " ORDER BY p.primaryName ASC"
+        
+        elif order_filter == "age-asc":
+            sql += """ 
+                ORDER BY (
+                    CASE 
+                        WHEN p.deathYear IS NOT NULL THEN (p.deathYear - p.birthYear)
+                        ELSE (2025 - p.birthYear)
+                    END
+                ) ASC
+            """
+        
+        elif order_filter == "age-desc":
+             sql += """ 
+                ORDER BY (
+                    CASE 
+                        WHEN p.deathYear IS NOT NULL THEN (p.deathYear - p.birthYear)
+                        ELSE (2025 - p.birthYear)
+                    END
+                ) DESC
+            """
+        else:
+            sql += " ORDER BY p.primaryName ASC"
+
+        sql += " LIMIT 50"
+
+        result = conn.execute(text(sql), params)
+        data = result.fetchall()
+
+    title = f"Results for '{search_query}'" if search_query else "Celebrities"
+    return render_template("celebrities.html", items=data, title=title)
 
 @app.route("/suggest", methods=["GET", "POST"])
 @login_required
