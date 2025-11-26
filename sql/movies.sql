@@ -1,20 +1,91 @@
-CREATE TABLE movies (
-    movieId VARCHAR(20),
-    titleType VARCHAR(20),
-    primaryTitle VARCHAR(500),
-    isAdult INT,
-    startYear INT,
-    runtimeMinutes INT,
-    genre VARCHAR(20)
+-- =============================================
+-- MOVIES TABLE
+-- movie.genreId kaldırıldı, ara tablo Movie_Genres oluşturuldu
+-- =============================================
+
+-- Ana tablo
+CREATE TABLE movies ( 
+    movieId VARCHAR(20) PRIMARY KEY, 
+    movieTitle VARCHAR(512) NOT NULL, 
+    titleType VARCHAR(50), 
+    startYear INT, 
+    runtimeMinutes INT, 
+    isAdult BOOLEAN,
+
+    CONSTRAINT fk_movies_parent FOREIGN KEY (movieId) REFERENCES all_titles(titleId) 
+    ON DELETE CASCADE ON UPDATE CASCADE 
 );
 
-LOAD DATA LOCAL INFILE 'C:/Users/faruk/Desktop/Code/ituDBSystems_BLG317E_GitHappens/data/movies.csv'
-INTO TABLE movies
+-- Ara tablo (Many-to-Many ilişki)
+CREATE TABLE Movie_Genres ( 
+    movieId VARCHAR(20), 
+    genreId INT, 
+
+    PRIMARY KEY (movieId, genreId), 
+    
+    FOREIGN KEY (movieId) REFERENCES Movies(movieId) 
+    ON DELETE CASCADE, 
+
+    FOREIGN KEY (genreId) REFERENCES Genres(genreId) 
+    ON DELETE CASCADE 
+);
+
+-- Geçici tablo (veri yükleme için)
+CREATE TABLE temp_movies_load ( 
+    movieId VARCHAR(20), 
+    titleType VARCHAR(50), 
+    movieTitle VARCHAR(512), 
+    isAdult VARCHAR(10), 
+    startYear VARCHAR(10), 
+    runtimeMinutes VARCHAR(10), 
+    genres_string TEXT 
+);
+
+-- CSV'den geçici tabloya yükle
+LOAD DATA LOCAL INFILE 'movies.csv'
+INTO TABLE temp_movies_load
 FIELDS TERMINATED BY ',' 
 ENCLOSED BY '"' 
-LINES TERMINATED BY '\r\n'
-IGNORE 1 LINES
-(movieId, titleType, primaryTitle, isAdult, @v_startYear, @v_runtimeMinutes, genres)
-SET 
-    startYear = NULLIF(@v_startYear, '0'),
-    runtimeMinutes = NULLIF(@v_runtimeMinutes, '0');
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(movieId, titleType, movieTitle, isAdult, startYear, runtimeMinutes, genres_string);
+
+-- Geçici tablodan ana tabloya aktar
+INSERT INTO Movies (movieId, movieTitle, titleType, startYear, runtimeMinutes, isAdult) 
+SELECT 
+    movieId, 
+    movieTitle, 
+    titleType, 
+    NULLIF(startYear, '\\N'), 
+    NULLIF(runtimeMinutes, '\\N'), 
+    IF(isAdult = '1', TRUE, FALSE) 
+FROM temp_movies_load;
+
+-- Genre ilişkilerini ara tabloya ekle (recursive CTE ile virgülle ayrılmış değerleri parse et)
+INSERT IGNORE INTO Movie_Genres (movieId, genreId)
+WITH RECURSIVE genre_split AS (
+    -- 1. Adım: İlk parçayı al (Base Case)
+    SELECT 
+        movieId,
+        SUBSTRING_INDEX(genres_string, ',', 1) AS genreId_raw,
+        SUBSTRING(genres_string, LENGTH(SUBSTRING_INDEX(genres_string, ',', 1)) + 2) AS remainder
+    FROM temp_movies_load
+    WHERE genres_string IS NOT NULL AND genres_string != '' AND genres_string NOT LIKE '%\\N%'
+    
+    UNION ALL
+    
+    -- 2. Adım: Kalan parçaları döngüyle al (Recursive Case)
+    SELECT 
+        movieId,
+        SUBSTRING_INDEX(remainder, ',', 1),
+        SUBSTRING(remainder, LENGTH(SUBSTRING_INDEX(remainder, ',', 1)) + 2)
+    FROM genre_split
+    WHERE remainder != ''
+)
+-- 3. Adım: Temizle ve kaydet
+SELECT movieId, CAST(genreId_raw AS UNSIGNED) 
+FROM genre_split
+WHERE genreId_raw != '';
+
+-- Geçici tabloyu sil
+DROP TABLE temp_movies_load;
