@@ -1,28 +1,196 @@
 {% extends "base.html" %}
 
-{% block title %}Episode Detail - BeeMD{% endblock %}
+{% block title %}{{ episode.epTitle or 'Episode' }} - BeeMD{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/series.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/episodes.css') }}" />
+<style>
+    .episode-detail-page {
+        padding: 40px 0;
+    }
+
+    .episode-header {
+        margin-bottom: 30px;
+    }
+
+    .episode-header h1 {
+        color: #fff;
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .episode-header .series-info {
+        color: var(--accent);
+        font-size: 1.1rem;
+    }
+
+    .episode-header .series-info a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .episode-header .series-info a:hover {
+        text-decoration: underline;
+    }
+
+    .episode-details-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .detail-label {
+        color: #cfe6ff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        color: #fff;
+        font-size: 1.1rem;
+    }
+
+    .detail-value.highlight {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    .episode-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: background 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-series {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: var(--accent);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: background 0.3s ease;
+    }
+
+    .btn-series:hover {
+        background: #d65a1a;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <section class="episode-detail">
-        <h1>Breaking Bad – Season 1, Episode 1</h1>
+<div class="container episode-detail-page">
 
-        <div class="episode-info">
-            <p><strong>Episode Title:</strong> Pilot</p>
-            <p><strong>Runtime:</strong> 58 minutes</p>
-            <p><strong>Air Date:</strong> January 20, 2008</p>
-            <p><strong>Summary:</strong> Walter White, struggling with financial problems, learns he has cancer. He decides to enter an illegal business with his former student, Jesse Pinkman.</p>
-        </div>
+    <!-- Episode Header -->
+    <div class="episode-header">
+        <h1>{{ episode.epTitle or 'Untitled Episode' }}</h1>
+        {% if episode.seriesTitle %}
+        <p class="series-info">
+            <a href="/serie/{{ episode.seriesId }}">{{ episode.seriesTitle }}</a>
+            {% if episode.seNumber and episode.epNumber %}
+            – Season {{ episode.seNumber }}, Episode {{ episode.epNumber }}
+            {% endif %}
+        </p>
+        {% endif %}
+    </div>
 
-        <div class="episode-buttons" style="margin-top: 20px;">
-            <a href="{{ url_for('series') }}" class="back-button" style="color: #f5c518; text-decoration: none; background: #333; padding: 10px 15px; border-radius: 5px;">
-                Back to Series
-            </a>
+    <!-- Episode Details Card -->
+    <div class="episode-details-card">
+        <div class="detail-grid">
+
+            <div class="detail-item">
+                <span class="detail-label">Episode ID</span>
+                <span class="detail-value">{{ episode.episodeId }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Title</span>
+                <span class="detail-value highlight">{{ episode.epTitle or 'N/A' }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Season</span>
+                <span class="detail-value">{{ episode.seNumber if episode.seNumber else 'N/A' }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Episode</span>
+                <span class="detail-value">{{ episode.epNumber if episode.epNumber else 'N/A' }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Runtime</span>
+                <span class="detail-value">
+                    {% if episode.runtimeMinutes %}
+                    {{ episode.runtimeMinutes }} minutes
+                    {% else %}
+                    N/A
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Series</span>
+                <span class="detail-value">
+                    {% if episode.seriesId %}
+                    <a href="/serie/{{ episode.seriesId }}" style="color: var(--accent); text-decoration: none;">
+                        {{ episode.seriesTitle or episode.seriesId }}
+                    </a>
+                    {% else %}
+                    N/A
+                    {% endif %}
+                </span>
+            </div>
+
         </div>
-    </section>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="episode-actions">
+        <a href="{{ url_for('episodes') }}" class="btn-back">
+            ← Back to Episodes
+        </a>
+        {% if episode.seriesId %}
+        <a href="/serie/{{ episode.seriesId }}" class="btn-series">
+            View Series
+        </a>
+        {% endif %}
+    </div>
+
 </div>
 {% endblock %}

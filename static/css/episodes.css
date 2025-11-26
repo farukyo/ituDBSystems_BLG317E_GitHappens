@@ -20,7 +20,7 @@ h1 {
 /* Filter Grid */
 .filter-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap: 20px;
     margin-bottom: 20px;
 }
@@ -29,6 +29,7 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 6px;
+    min-width: 0;
 }
 
 .filter-group label {
@@ -54,19 +55,21 @@ h1 {
 }
 
 .filter-group input::placeholder {
-    color: var(--muted);
+    color: rgba(255, 255, 255, 0.4);
+    opacity: 1;
 }
 
 /* Runtime Range Inputs */
 .range-inputs {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .range-inputs input {
     flex: 1;
-    padding: 10px 14px;
+    min-width: 0;
+    padding: 10px 8px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
@@ -134,7 +137,7 @@ hr {
 /* Episode Table Header */
 .episode-table-header {
     display: grid;
-    grid-template-columns: 120px 1fr 100px 180px 80px 80px;
+    grid-template-columns: 1fr 100px 180px 80px 80px;
     gap: 10px;
     padding: 12px 15px;
     background: rgba(255, 255, 255, 0.08);
@@ -153,7 +156,7 @@ hr {
 
 .episode-item {
     display: grid;
-    grid-template-columns: 120px 1fr 100px 180px 80px 80px;
+    grid-template-columns: 1fr 100px 180px 80px 80px;
     gap: 10px;
     align-items: center;
     background: rgba(255, 255, 255, 0.03);
@@ -254,8 +257,8 @@ hr {
         margin-right: 8px;
     }
 
-    .col-id::before {
-        content: "ID: ";
+    .col-title::before {
+        content: "Title: ";
     }
 
     .col-runtime::before {
@@ -281,9 +284,15 @@ hr {
     }
 }
 
+@media (max-width: 1200px) {
+    .filter-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .filter-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .filter-buttons {
@@ -298,6 +307,10 @@ hr {
 }
 
 @media (max-width: 480px) {
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+
     h1 {
         font-size: 1.8rem;
     }

@@ -16,13 +16,6 @@
         <!-- Filter Grid -->
         <div class="filter-grid">
 
-            <!-- Episode ID -->
-            <div class="filter-group">
-                <label for="episodeId">Episode ID</label>
-                <input type="text" id="episodeId" name="episodeId" placeholder="e.g. tt1234567"
-                    value="{{ request.args.get('episodeId') or '' }}">
-            </div>
-
             <!-- Episode Title -->
             <div class="filter-group">
                 <label for="epTitle">Episode Title</label>
@@ -42,11 +35,11 @@
                 </div>
             </div>
 
-            <!-- Series ID -->
+            <!-- Series Name -->
             <div class="filter-group">
-                <label for="seriesId">Series ID</label>
-                <input type="text" id="seriesId" name="seriesId" placeholder="e.g. tt0944947"
-                    value="{{ request.args.get('seriesId') or '' }}">
+                <label for="seriesName">Series Name</label>
+                <input type="text" id="seriesName" name="seriesName" placeholder="Search series..."
+                    value="{{ request.args.get('seriesName') or '' }}">
             </div>
 
             <!-- Season Number -->
@@ -82,7 +75,6 @@
 
         <!-- Table Header -->
         <div class="episode-table-header">
-            <span class="col-id">Episode ID</span>
             <span class="col-title">Title</span>
             <span class="col-runtime">Runtime</span>
             <span class="col-series">Series</span>
@@ -92,10 +84,9 @@
 
         {% for episode in items %}
         <div class="episode-item">
-            <span class="col-id episode-id">{{ episode.episodeId }}</span>
             <span class="col-title">
                 <a href="/episode/{{ episode.episodeId }}" class="episode-title-link">
-                    {{ episode.primaryTitle or 'Untitled' }}
+                    {{ episode.epTitle or 'Untitled' }}
                 </a>
             </span>
             <span class="col-runtime">
@@ -115,15 +106,15 @@
                 {% endif %}
             </span>
             <span class="col-season">
-                {% if episode.seasonNumber %}
-                S{{ episode.seasonNumber }}
+                {% if episode.seNumber %}
+                S{{ episode.seNumber }}
                 {% else %}
                 -
                 {% endif %}
             </span>
             <span class="col-episode">
-                {% if episode.episodeNumber %}
-                E{{ episode.episodeNumber }}
+                {% if episode.epNumber %}
+                E{{ episode.epNumber }}
                 {% else %}
                 -
                 {% endif %}
@@ -132,13 +123,13 @@
         {% endfor %}
         {% else %}
         <div class="no-results">
-            {% if request.args.get('epTitle') or request.args.get('episodeId') or request.args.get('seriesId') or
+            {% if request.args.get('epTitle') or request.args.get('seriesName') or
             request.args.get('seNumber') or request.args.get('epNumber') %}
             <p>No episodes found matching your criteria.</p>
             <p class="hint">Try adjusting your filters or use fewer search terms.</p>
             {% else %}
             <p>Use the filters above to search for episodes.</p>
-            <p class="hint">You can filter by Episode ID, Title, Runtime, Series ID, Season, or Episode number.</p>
+            <p class="hint">You can filter by Title, Runtime, Series Name, Season, or Episode number.</p>
             {% endif %}
         </div>
         {% endif %}
