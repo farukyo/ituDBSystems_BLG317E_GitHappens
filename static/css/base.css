@@ -252,10 +252,13 @@ body {
 ------------------------------------------*/
 .site-footer {
     padding: 24px 0;
-    background: linear-gradient(180deg, #0a0f1a 0%, #060a12 100%);
+    background: linear-gradient(180deg, rgba(10, 15, 26, 0.7), rgba(6, 10, 18, 0.7));
+    backdrop-filter: blur(10px);
     border-top: 1px solid rgba(233, 96, 26, 0.2);
     color: #b7cfe6;
     margin-top: auto;
+    position: relative;
+    z-index: 10;
 }
 
 .footer-brand-section {
