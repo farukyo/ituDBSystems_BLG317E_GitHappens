@@ -41,6 +41,15 @@
         margin-bottom: 30px;
     }
 
+    .card-title {
+        color: #cfe6ff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
     .detail-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -71,10 +80,118 @@
         font-weight: 600;
     }
 
+    /* Genre Tags */
+    .genre-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .genre-tag {
+        background: rgba(233, 96, 26, 0.2);
+        color: var(--accent);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    /* Cast Section */
+    .cast-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 15px;
+    }
+
+    .cast-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: background 0.3s ease;
+    }
+
+    .cast-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .cast-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #ff7a3d);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .cast-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .cast-name {
+        color: #fff;
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+
+    .cast-name a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .cast-name a:hover {
+        color: var(--accent);
+    }
+
+    .cast-role {
+        color: var(--muted);
+        font-size: 0.85rem;
+    }
+
+    .cast-character {
+        color: #7eb8ff;
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+
+    /* Series Stats */
+    .series-stats {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        color: var(--accent);
+        font-size: 2rem;
+        font-weight: 700;
+        display: block;
+    }
+
+    .stat-label {
+        color: var(--muted);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+
     .episode-actions {
         display: flex;
         gap: 15px;
         flex-wrap: wrap;
+        margin-top: 30px;
     }
 
     .btn-back {
@@ -110,6 +227,11 @@
     .btn-series:hover {
         background: #d65a1a;
     }
+
+    .no-data {
+        color: var(--muted);
+        font-style: italic;
+    }
 </style>
 {% endblock %}
 
@@ -131,6 +253,7 @@
 
     <!-- Episode Details Card -->
     <div class="episode-details-card">
+        <h3 class="card-title">Episode Information</h3>
         <div class="detail-grid">
 
             <div class="detail-item">
@@ -178,6 +301,88 @@
             </div>
 
         </div>
+    </div>
+
+    <!-- Series Info Card -->
+    <div class="episode-details-card">
+        <h3 class="card-title">Series Information</h3>
+        <div class="detail-grid">
+
+            <!-- Genre'lar -->
+            <div class="detail-item">
+                <span class="detail-label">Genres</span>
+                {% if genres %}
+                <div class="genre-tags">
+                    {% for genre in genres %}
+                    <span class="genre-tag">{{ genre }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <span class="no-data">No genres available</span>
+                {% endif %}
+            </div>
+
+            <!-- Dizi İstatistikleri -->
+            <div class="detail-item">
+                <span class="detail-label">Series Stats</span>
+                {% if stats %}
+                <div class="series-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ stats.total_seasons or 0 }}</span>
+                        <span class="stat-label">Seasons</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ stats.total_episodes or 0 }}</span>
+                        <span class="stat-label">Episodes</span>
+                    </div>
+                </div>
+                {% else %}
+                <span class="no-data">No stats available</span>
+                {% endif %}
+            </div>
+
+            <!-- Dizi Yılları -->
+            <div class="detail-item">
+                <span class="detail-label">Years</span>
+                <span class="detail-value">
+                    {% if episode.startYear %}
+                    {{ episode.startYear }}{% if episode.endYear %} - {{ episode.endYear }}{% else %} - Present{% endif
+                    %}
+                    {% else %}
+                    N/A
+                    {% endif %}
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Cast & Crew Card -->
+    <div class="episode-details-card">
+        <h3 class="card-title">Cast & Crew</h3>
+        {% if cast %}
+        <div class="cast-grid">
+            {% for person in cast %}
+            <div class="cast-item">
+                <div class="cast-avatar">
+                    {{ person.primaryName[0] if person.primaryName else '?' }}
+                </div>
+                <div class="cast-info">
+                    <div class="cast-name">
+                        <a href="/celebrities?q={{ person.primaryName }}">{{ person.primaryName }}</a>
+                    </div>
+                    <div class="cast-role">{{ person.category or 'Unknown role' }}</div>
+                    {% if person.characters and person.characters != '\\N' %}
+                    <div class="cast-character">as {{ person.characters | replace('[', '') | replace(']', '') |
+                        replace('"', '') }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-data">No cast information available for this episode.</p>
+        {% endif %}
     </div>
 
     <!-- Action Buttons -->

@@ -42,4 +42,41 @@ document.addEventListener('DOMContentLoaded', function () {
             this.focus();
         });
     });
+
+    // SQL Query Popup functionality
+    const showSqlBtn = document.getElementById('showSqlBtn');
+    const sqlPopup = document.getElementById('sqlPopup');
+    const closeSqlBtn = document.getElementById('closeSqlBtn');
+
+    if (showSqlBtn && sqlPopup) {
+        // Open popup
+        showSqlBtn.addEventListener('click', function () {
+            sqlPopup.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+
+        // Close popup with X button
+        if (closeSqlBtn) {
+            closeSqlBtn.addEventListener('click', function () {
+                sqlPopup.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Close popup when clicking overlay
+        sqlPopup.addEventListener('click', function (e) {
+            if (e.target === sqlPopup) {
+                sqlPopup.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && sqlPopup.classList.contains('active')) {
+                sqlPopup.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    }
 });

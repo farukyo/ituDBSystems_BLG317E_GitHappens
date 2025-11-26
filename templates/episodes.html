@@ -68,7 +68,30 @@
 
     <hr>
 
-    <h2 class="sub-title">Results ({{ items|length if items else 0 }} episodes)</h2>
+    <div class="results-header">
+        <h2 class="sub-title">Results ({{ items|length if items else 0 }} episodes)</h2>
+        <button type="button" class="info-btn" id="showSqlBtn" title="Show SQL Query">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- SQL Query Popup -->
+    <div class="sql-popup-overlay" id="sqlPopup">
+        <div class="sql-popup">
+            <div class="sql-popup-header">
+                <h3>Executed SQL Query</h3>
+                <button type="button" class="close-btn" id="closeSqlBtn">&times;</button>
+            </div>
+            <div class="sql-popup-content">
+                <pre><code>{{ sql_query | default('No query executed') }}</code></pre>
+            </div>
+        </div>
+    </div>
 
     <div class="episode-list">
         {% if items %}
