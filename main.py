@@ -113,7 +113,71 @@ def characters():
 
 @app.route("/episodes")
 def episodes():
-    return render_template("episodes.html")
+    # URL'den parametreleri al
+    episode_id = request.args.get('episodeId')
+    ep_title = request.args.get('epTitle')
+    runtime_min = request.args.get('runtimeMin')
+    runtime_max = request.args.get('runtimeMax')
+    series_id = request.args.get('seriesId')
+    season_number = request.args.get('seNumber')
+    episode_number = request.args.get('epNumber')
+    
+    with engine.connect() as conn:
+        sql = """
+            SELECT e.episodeId, e.primaryTitle, e.runtimeMinutes, 
+                   e.seriesId, e.seasonNumber, e.episodeNumber,
+                   s.primaryTitle as seriesTitle
+            FROM episodes e
+            LEFT JOIN series s ON e.seriesId = s.seriesId
+            WHERE 1=1
+        """
+        params = {}
+        
+        # Episode ID filtresi
+        if episode_id:
+            sql += " AND e.episodeId LIKE :episodeId"
+            params["episodeId"] = f"%{episode_id}%"
+        
+        # Episode Title filtresi
+        if ep_title:
+            sql += " AND e.primaryTitle LIKE :epTitle"
+            params["epTitle"] = f"%{ep_title}%"
+        
+        # Runtime filtresi (min)
+        if runtime_min:
+            sql += " AND e.runtimeMinutes >= :runtimeMin"
+            params["runtimeMin"] = int(runtime_min)
+        
+        # Runtime filtresi (max)
+        if runtime_max:
+            sql += " AND e.runtimeMinutes <= :runtimeMax"
+            params["runtimeMax"] = int(runtime_max)
+        
+        # Series ID filtresi
+        if series_id:
+            sql += " AND e.seriesId LIKE :seriesId"
+            params["seriesId"] = f"%{series_id}%"
+        
+        # Season Number filtresi
+        if season_number:
+            sql += " AND e.seasonNumber = :seNumber"
+            params["seNumber"] = int(season_number)
+        
+        # Episode Number filtresi
+        if episode_number:
+            sql += " AND e.episodeNumber = :epNumber"
+            params["epNumber"] = int(episode_number)
+        
+        sql += " LIMIT 100"
+        
+        result = conn.execute(text(sql), params)
+        data = result.fetchall()
+    
+    title = "Episodes"
+    if ep_title:
+        title = f"Episodes matching '{ep_title}'"
+    
+    return render_template("episodes.html", items=data, title=title)
 
 
     
