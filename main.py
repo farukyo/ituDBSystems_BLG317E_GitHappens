@@ -139,41 +139,134 @@ def movie(movie_id):
                            cast=cast, 
                            title=page_title)
 
+# ---------------------------------------------------------
+# 1. Dizi Listeleme Rotası (All Series)
+# ---------------------------------------------------------
 @app.route("/series")
 def series():
+    # 1. URL Parametrelerini Al
     search_query = request.args.get('q')
-    # Genre filtresini şimdilik kaldırıyoruz
-    # genre_filter = request.args.get('genre')
+    title_type = request.args.get('titleType')
+    start_year = request.args.get('startYear')
+    end_year = request.args.get('endYear')
+    runtime = request.args.get('runtime')
+    is_adult = request.args.get('isAdult')
 
     with engine.connect() as conn:
-        sql = "SELECT seriesId, seriesTitle, titleType, startYear, endYear, runtimeMinutes, isAdult FROM series WHERE 1=1"
+        # 2. Temel Sorgu
+        sql = """
+            SELECT seriesId, seriesTitle, titleType, startYear, endYear, runtimeMinutes, isAdult 
+            FROM series 
+            WHERE 1=1
+        """
         params = {}
 
+        # 3. Filtreleme Mantığı (Doğrudan Sayısal Karşılaştırma)
+        
+        # -- Title Search --
         if search_query:
             sql += " AND seriesTitle LIKE :q"
             params["q"] = f"%{search_query}%"
+        
+        # -- Title Type --
+        if title_type:
+            sql += " AND titleType = :tType"
+            params["tType"] = title_type
 
-        sql += " ORDER BY seriesTitle LIMIT 100;"
+        # -- Start Year --
+        # Veri zaten INT olduğu için doğrudan büyüktür/küçüktür kullanıyoruz.
+        if start_year and start_year.isdigit():
+            sql += " AND startYear >= :sYear"
+            params["sYear"] = int(start_year)
+
+        # -- End Year --
+        # DİKKAT: Verilerinde endYear genelde NULL görünüyor.
+        # Filtre seçildiğinde sadece DOLU olanlar ve tarihi uyanlar gelir.
+        if end_year and end_year.isdigit():
+            sql += " AND endYear >= :eYear"
+            params["eYear"] = int(end_year)
+
+        # -- Runtime --
+        # JSON verinde runtimeMinutes 1947, 1955 gibi garip (yıl gibi) sayılar var.
+        # Bu filtre mantıken doğru çalışır ama verin bozuk olabilir.
+        if runtime:
+            if runtime == "lt30":
+                sql += " AND runtimeMinutes < 30"
+            elif runtime == "30-60":
+                sql += " AND runtimeMinutes BETWEEN 30 AND 60"
+            elif runtime == "gt60":
+                sql += " AND runtimeMinutes > 60"
+
+        # -- Adult Content --
+        if is_adult is not None and is_adult != "":
+            sql += " AND isAdult = :adult"
+            params["adult"] = int(is_adult)
+
+        # 4. Sıralama ve Limit
+        sql += " ORDER BY startYear DESC, seriesTitle ASC LIMIT 100;"
+
+        # Terminalde sorguyu görmek için (Hata ayıklama)
+        print(f"SQL: {sql}")
+        print(f"PARAMS: {params}")
+
         result = conn.execute(text(sql), params)
         data = result.fetchall()
 
-    # AJAX isteği kontrolü
-    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        html_snippets = ""
-        for row in data:
-            html_snippets += f"""
-            <div class="series-card">
-                <h3>{row.seriesTitle}</h3>
-                <p class="series-genre">N/A</p>
-                <p class="series-likes">Liked by 0 users</p>
-            </div>
-            """
-        return html_snippets
-
-    # Normal sayfa render
-    page_title = f"Results for '{search_query}'" if search_query else "All Series"
+    page_title = f"Results for '{search_query}'" if search_query else "Series Results"
     return render_template("series.html", items=data, title=page_title)
 
+# ---------------------------------------------------------
+# 2. Tekil Dizi Detay Rotası (Single Series Detail)
+# ---------------------------------------------------------
+@app.route("/series/<series_id>")
+def serie_detail(series_id):
+    with engine.connect() as conn:
+        # 1. Dizi Temel Bilgileri
+        sql_series = """
+            SELECT seriesId, seriesTitle, titleType, startYear, endYear, runtimeMinutes, isAdult
+            FROM series
+            WHERE seriesId = :id
+        """
+        series = conn.execute(text(sql_series), {"id": series_id}).fetchone()
+
+        if not series:
+            flash("Series not found.")
+            return redirect(url_for('series'))
+
+        # 2. Türler (Genres)
+        sql_genres = """
+            SELECT g.genreName
+            FROM Series_Genres sg
+            JOIN genres g ON sg.genreId = g.genreId
+            WHERE sg.seriesId = :id
+        """
+        genres = [r.genreName for r in conn.execute(text(sql_genres), {"id": series_id}).fetchall()]
+
+        # 3. Oyuncular (Cast)
+        sql_cast = """
+            SELECT p.peopleId, p.primaryName, pr.category, pr.characters
+            FROM principals pr
+            JOIN people p ON pr.peopleId = p.peopleId
+            WHERE pr.titleId = :id
+            ORDER BY pr.category, p.primaryName
+        """
+        cast = conn.execute(text(sql_cast), {"id": series_id}).fetchall()
+
+        # 4. İstatistikler
+        sql_stats = """
+            SELECT 
+                COUNT(DISTINCT seNumber) as total_seasons,
+                COUNT(*) as total_episodes
+            FROM Episode
+            WHERE seriesId = :id
+        """
+        stats_result = conn.execute(text(sql_stats), {"id": series_id}).fetchone()
+
+    return render_template("serie.html", 
+                           series=series, 
+                           genres=genres, 
+                           cast=cast, 
+                           stats=stats_result)
 @app.route("/characters")
 def characters():
     return render_template("characters.html")
@@ -499,6 +592,7 @@ def signup():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
 
 # --- User Profile Route ---
 
