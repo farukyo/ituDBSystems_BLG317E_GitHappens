@@ -11,16 +11,14 @@
 
     <h1>Series</h1>
 
-    <!-- Search Bar (seriesTitle) -->
+    <!-- Search Bar -->
     <div class="search-box">
         <input type="text" id="series-search" placeholder="Search series title...">
         <button id="series-search-btn">Search</button>
     </div>
 
-    <!-- Filters Section (titleType, startYear, endYear, runtimeMinutes, isAdult, genreId) -->
+    <!-- Filters -->
     <div class="filters">
-
-        <!-- titleType -->
         <select id="title-type">
             <option value="">Title Type</option>
             <option value="tvSeries">TV Series</option>
@@ -28,7 +26,6 @@
             <option value="tvEpisode">TV Episode</option>
         </select>
 
-        <!-- startYear -->
         <select id="start-year">
             <option value="">Start Year</option>
             <option value="2020">2020s</option>
@@ -37,16 +34,13 @@
             <option value="1990">1990s</option>
         </select>
 
-        <!-- endYear -->
         <select id="end-year">
             <option value="">End Year</option>
-            <option value="ongoing">Ongoing</option>
+            <option value="2025">Ended 2025+</option>
             <option value="2020">Ended 2020+</option>
             <option value="2010">Ended 2010+</option>
-            <option value="2000">Ended 2000+</option>
         </select>
 
-        <!-- runtimeMinutes (kabaca aralıklar) -->
         <select id="runtime">
             <option value="">Runtime (minutes)</option>
             <option value="lt30">&lt; 30</option>
@@ -54,50 +48,25 @@
             <option value="gt60">&gt; 60</option>
         </select>
 
-        <!-- isAdult -->
         <select id="is-adult">
             <option value="">Adult Content</option>
-            <option value="false">Non-adult (0)</option>
-            <option value="true">Adult (1)</option>
-        </select>
-
-        <!-- genreId -->
-        <select id="genre">
-            <option value="">Genre</option>
-            <option value="drama">Drama</option>
-            <option value="comedy">Comedy</option>
-            <option value="crime">Crime</option>
-            <option value="fantasy">Fantasy</option>
+            <option value="false">Non-adult</option>
+            <option value="true">Adult</option>
         </select>
 
         <button id="series-filter-btn">Apply Filters</button>
     </div>
 
-    <!-- Top 3 Popular Series (kartlar) -->
-    <h2 class="sub-title">Top 3 Most Popular Series</h2>
-    <div class="popular-series">
-
-        <div class="series-card">
-            <h3>Series Name 1</h3>
-            <p class="series-genre">Drama</p>
-            <p class="series-likes">Liked by 25 users</p>
-        </div>
-
-        <div class="series-card">
-            <h3>Series Name 2</h3>
-            <p class="series-genre">Crime / Thriller</p>
-            <p class="series-likes">Liked by 20 users</p>
-        </div>
-
-        <div class="series-card">
-            <h3>Series Name 3</h3>
-            <p class="series-genre">Comedy</p>
-            <p class="series-likes">Liked by 18 users</p>
-        </div>
+    <h2 class="sub-title">Series List</h2>
+    <div id="series-results">
+        {% for row in items %}
+            <div class="series-card">
+                <h3>{{ row.seriesTitle }}</h3>
+                <p class="series-genre">N/A</p>
+                <p class="series-likes">Liked by 0 users</p>
+            </div>
+        {% endfor %}
     </div>
-
-    <!-- Results After Query (Empty for now) -->
-    <div id="series-results"></div>
 
 </div>
 {% endblock %}

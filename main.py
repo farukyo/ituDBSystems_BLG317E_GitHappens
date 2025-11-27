@@ -141,11 +141,38 @@ def movie(movie_id):
 
 @app.route("/series")
 def series():
-    series_data = [
-        {"title": "Breaking Bad"},
-        {"title": "Game of Thrones"},
-    ]
-    return render_template("series.html", series_list=series_data)
+    search_query = request.args.get('q')
+    # Genre filtresini şimdilik kaldırıyoruz
+    # genre_filter = request.args.get('genre')
+
+    with engine.connect() as conn:
+        sql = "SELECT seriesId, seriesTitle, titleType, startYear, endYear, runtimeMinutes, isAdult FROM series WHERE 1=1"
+        params = {}
+
+        if search_query:
+            sql += " AND seriesTitle LIKE :q"
+            params["q"] = f"%{search_query}%"
+
+        sql += " ORDER BY seriesTitle LIMIT 100;"
+        result = conn.execute(text(sql), params)
+        data = result.fetchall()
+
+    # AJAX isteği kontrolü
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        html_snippets = ""
+        for row in data:
+            html_snippets += f"""
+            <div class="series-card">
+                <h3>{row.seriesTitle}</h3>
+                <p class="series-genre">N/A</p>
+                <p class="series-likes">Liked by 0 users</p>
+            </div>
+            """
+        return html_snippets
+
+    # Normal sayfa render
+    page_title = f"Results for '{search_query}'" if search_query else "All Series"
+    return render_template("series.html", items=data, title=page_title)
 
 @app.route("/characters")
 def characters():
