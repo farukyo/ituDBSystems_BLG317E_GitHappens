@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ 'Edit' if person else 'New' }} Person</h1>
+<form method="post">
+  <label>Name</label><br>
+  <input name="primaryName" value="{{ person.primaryName if person else '' }}"><br>
+  <label>Birth Year</label><br>
+  <input name="birthYear" value="{{ person.birthYear if person else '' }}"><br>
+  <label>Death Year</label><br>
+  <input name="deathYear" value="{{ person.deathYear if person else '' }}"><br>
+  <button type="submit">Save</button>
+</form>
+{% endblock %}

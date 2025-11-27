@@ -3,10 +3,15 @@ from database.db import engine
 from sqlalchemy import text
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from sqlalchemy import text
+from admin import admin_bp
 #from database import engine 
 # --- App Setup ---
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_super_secret_key_change_this_later' 
+
+# BLUEPRINT KAYDI  -----------------------------
+app.register_blueprint(admin_bp, url_prefix="/admin")
+# ---------------------------------------------
 
 # --- Login Manager Setup ---
 login_manager = LoginManager()
