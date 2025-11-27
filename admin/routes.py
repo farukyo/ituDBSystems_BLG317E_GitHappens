@@ -3,6 +3,10 @@ from flask_login import login_required, current_user
 from . import admin_bp
 from database.db import engine
 from sqlalchemy import text
+import random
+import string
+def generate_people_id():
+    return "nm" + "".join(random.choices(string.digits, k=8))
 
 # Yardımcı: admin kontrolü decorator'ü
 #def admin_required(fn):
@@ -41,15 +45,16 @@ def people_list():
 #@admin_required
 def person_new():
     if request.method == "POST":
+        people_id = generate_people_id()
         name = request.form.get("primaryName")
         birth = request.form.get("birthYear") or None
         death = request.form.get("deathYear") or None
 
         with engine.connect() as conn:
             insert_sql = text(
-                "INSERT INTO people (primaryName, birthYear, deathYear) VALUES (:name, :birth, :death)"
+                "INSERT INTO people (peopleId, primaryName, birthYear, deathYear) VALUES (:id, :name, :birth, :death)"
             )
-            conn.execute(insert_sql, {"name": name, "birth": birth, "death": death})
+            conn.execute(insert_sql, {"id": people_id, "name": name, "birth": birth, "death": death})
             conn.commit()
         flash("Person created.")
         return redirect(url_for("admin.people_list"))
