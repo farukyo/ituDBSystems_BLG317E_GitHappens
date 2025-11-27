@@ -27,7 +27,6 @@
         <a href="{{ url_for('celebrities') }}">⭐ Celebrities</a>
         <a href="{{ url_for('recommend') }}">💡 Recommend</a>
         <a href="{{ url_for('quiz') }}">❓ Quizes</a>
-        <a href="{{ url_for('suggest') }}">🗳️ Suggestions</a>
     </div>
 
     <div id="main-content" class="main-content">
@@ -50,18 +49,20 @@
                 <div class="header-user-links">
                     {% block header_user_links %}
                     <div class="about-link">
-                        <a href="{{ url_for('about') }}" title="About Us" aria-label="About Us">
-                            <span>ℹ️</span>
-                            <span class="about-text">About Us</span>
-                        </a>
+                        <a href="{{ url_for('about') }}" title="About Us" aria-label="About Us">ℹ️</a>
                     </div>
                     {% if current_user.is_authenticated %}
+
+                    <div class="user-link">
+                        <a href="{{ url_for('suggest') }}" title="suggest" aria-label="Suggestions">🗳️</a>
+                    </div>
                     <div class="user-link">
                         <a href="{{ url_for('profile') }}" title="Profile" aria-label="View profile">👤</a>
                     </div>
                     <div class="user-link">
                         <a href="{{ url_for('logout') }}" title="Logout" aria-label="Logout">Logout</a>
                     </div>
+                    
                     {% else %}
                     <div class="user-link">
                         <a href="{{ url_for('login') }}" title="Login / Sign Up" aria-label="Login or Sign Up">
