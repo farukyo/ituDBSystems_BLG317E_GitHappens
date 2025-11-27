@@ -86,7 +86,7 @@ def movies():
         params = {}
 
         if search_query:
-            sql += " AND primaryTitle LIKE :q"
+            sql += " AND movieTitle LIKE :q"
             params["q"] = f"%{search_query}%"
         # Genre filtresi
         if genre_filter:
@@ -103,6 +103,41 @@ def movies():
         page_title = "All Movies"
     return render_template("movies.html", items=data, title=page_title)
 
+# --- Movie Detail Route ---
+@app.route("/movie/<movie_id>")
+def movie(movie_id):
+    with engine.connect() as conn:
+        # Filmin temel bilgilerini çekin
+        sql = """
+            SELECT movieId, movieTitle, titleType, startYear, runtimeMinutes
+            FROM movies
+            WHERE movieId = :movieId
+        """
+        result = conn.execute(text(sql), {"movieId": movie_id})
+        movie = result.fetchone()
+        
+        if not movie:
+            flash(f"Movie with ID {movie_id} not found.")
+            return redirect(url_for('movies'))
+        
+        # O filmde yer alan oyuncuları ve rolleri çekin (principals tablosu kullanarak)
+        cast_sql = """
+            SELECT p.peopleId, p.primaryName, pr.category, pr.characters
+            FROM principals pr
+            JOIN people p ON pr.peopleId = p.peopleId
+            WHERE pr.titleId = :movieId
+            ORDER BY pr.category, p.primaryName
+        """
+        cast_result = conn.execute(text(cast_sql), {"movieId": movie_id})
+        cast = cast_result.fetchall()
+        
+    # Sayfa başlığını filmin adına göre ayarlıyoruz (istediğiniz gibi)
+    page_title = f"{movie.movieTitle} ({movie.startYear})"
+    
+    return render_template("movie.html", 
+                           movie=movie, 
+                           cast=cast, 
+                           title=page_title)
 
 @app.route("/series")
 def series():

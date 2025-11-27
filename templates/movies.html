@@ -32,7 +32,9 @@
         {% for movie in items %}
         <div class="movie-item">
             <h3 class="movie-title">
-                <a href="/movie/{{ movie.movieId }}">{{ movie.primaryTitle }} ({{ movie.genres }})</a>
+                <a href="{{ url_for('movie', movie_id=movie.movieId) }}">
+                    {{ movie.movieTitle }} ({{ movie.titleType }})
+                </a>
             </h3>
         </div>
         {% endfor %}
