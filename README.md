@@ -13,6 +13,7 @@
 # Web Design 
 - Home Page:
 - Movies Page:
+   >  Shows all movies fetched from the database and provides navigation to individual movie detail pages.
 - Series Page: 
     - Serie Page - connected to episodes
 - Episodes Page: 
