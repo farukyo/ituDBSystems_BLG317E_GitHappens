@@ -124,3 +124,119 @@
         font-size: 0.9rem;
     }
 }
+/* --- RESULTS HEADER & INFO BUTTON (Episodes Style) --- */
+.results-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.results-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+.info-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #cfe6ff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.info-btn:hover {
+    background: #e67e22; /* Turuncu vurgu */
+    color: #fff;
+    transform: scale(1.1);
+}
+
+/* --- SQL POPUP OVERLAY --- */
+.sql-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+}
+
+.sql-popup-overlay.active {
+    display: flex;
+}
+
+.sql-popup {
+    background: #1a1f2e;
+    border-radius: 12px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sql-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sql-popup-header h3 {
+    margin: 0;
+    color: #cfe6ff;
+    font-size: 1.1rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #e67e22;
+}
+
+.sql-popup-content {
+    padding: 20px;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: calc(80vh - 60px);
+    background-color: #111;
+}
+
+.sql-popup-content pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.sql-popup-content code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    color: #7eb8ff;
+    line-height: 1.6;
+}
