@@ -1,28 +1,401 @@
 {% extends "base.html" %}
 
-{% block title %}Episode Detail - BeeMD{% endblock %}
+{% block title %}{{ episode.epTitle or 'Episode' }} - BeeMD{% endblock %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/series.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/episodes.css') }}" />
+<style>
+    .episode-detail-page {
+        padding: 40px 0;
+    }
+
+    .episode-header {
+        margin-bottom: 30px;
+    }
+
+    .episode-header h1 {
+        color: #fff;
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    .episode-header .series-info {
+        color: var(--accent);
+        font-size: 1.1rem;
+    }
+
+    .episode-header .series-info a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .episode-header .series-info a:hover {
+        text-decoration: underline;
+    }
+
+    .episode-details-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .card-title {
+        color: #cfe6ff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .detail-label {
+        color: #cfe6ff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        color: #fff;
+        font-size: 1.1rem;
+    }
+
+    .detail-value.highlight {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    /* Genre Tags */
+    .genre-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .genre-tag {
+        background: rgba(233, 96, 26, 0.2);
+        color: var(--accent);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    /* Cast Section */
+    .cast-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 15px;
+    }
+
+    .cast-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: background 0.3s ease;
+    }
+
+    .cast-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .cast-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #ff7a3d);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .cast-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .cast-name {
+        color: #fff;
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+
+    .cast-name a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .cast-name a:hover {
+        color: var(--accent);
+    }
+
+    .cast-role {
+        color: var(--muted);
+        font-size: 0.85rem;
+    }
+
+    .cast-character {
+        color: #7eb8ff;
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+
+    /* Series Stats */
+    .series-stats {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-number {
+        color: var(--accent);
+        font-size: 2rem;
+        font-weight: 700;
+        display: block;
+    }
+
+    .stat-label {
+        color: var(--muted);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+
+    .episode-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 30px;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: background 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-series {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: var(--accent);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: background 0.3s ease;
+    }
+
+    .btn-series:hover {
+        background: #d65a1a;
+    }
+
+    .no-data {
+        color: var(--muted);
+        font-style: italic;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <section class="episode-detail">
-        <h1>Breaking Bad – Season 1, Episode 1</h1>
+<div class="container episode-detail-page">
 
-        <div class="episode-info">
-            <p><strong>Episode Title:</strong> Pilot</p>
-            <p><strong>Runtime:</strong> 58 minutes</p>
-            <p><strong>Air Date:</strong> January 20, 2008</p>
-            <p><strong>Summary:</strong> Walter White, struggling with financial problems, learns he has cancer. He decides to enter an illegal business with his former student, Jesse Pinkman.</p>
-        </div>
+    <!-- Episode Header -->
+    <div class="episode-header">
+        <h1>{{ episode.epTitle or 'Untitled Episode' }}</h1>
+        {% if episode.seriesTitle %}
+        <p class="series-info">
+            <a href="/serie/{{ episode.seriesId }}">{{ episode.seriesTitle }}</a>
+            {% if episode.seNumber and episode.epNumber %}
+            – Season {{ episode.seNumber }}, Episode {{ episode.epNumber }}
+            {% endif %}
+        </p>
+        {% endif %}
+    </div>
 
-        <div class="episode-buttons" style="margin-top: 20px;">
-            <a href="{{ url_for('series') }}" class="back-button" style="color: #f5c518; text-decoration: none; background: #333; padding: 10px 15px; border-radius: 5px;">
-                Back to Series
-            </a>
+    <!-- Episode Details Card -->
+    <div class="episode-details-card">
+        <h3 class="card-title">Episode Information</h3>
+        <div class="detail-grid">
+
+            <div class="detail-item">
+                <span class="detail-label">Episode ID</span>
+                <span class="detail-value">{{ episode.episodeId }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Title</span>
+                <span class="detail-value highlight">{{ episode.epTitle or 'N/A' }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Season</span>
+                <span class="detail-value">{{ episode.seNumber if episode.seNumber else 'N/A' }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Episode</span>
+                <span class="detail-value">{{ episode.epNumber if episode.epNumber else 'N/A' }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Runtime</span>
+                <span class="detail-value">
+                    {% if episode.runtimeMinutes %}
+                    {{ episode.runtimeMinutes }} minutes
+                    {% else %}
+                    N/A
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Series</span>
+                <span class="detail-value">
+                    {% if episode.seriesId %}
+                    <a href="/serie/{{ episode.seriesId }}" style="color: var(--accent); text-decoration: none;">
+                        {{ episode.seriesTitle or episode.seriesId }}
+                    </a>
+                    {% else %}
+                    N/A
+                    {% endif %}
+                </span>
+            </div>
+
         </div>
-    </section>
+    </div>
+
+    <!-- Series Info Card -->
+    <div class="episode-details-card">
+        <h3 class="card-title">Series Information</h3>
+        <div class="detail-grid">
+
+            <!-- Genre'lar -->
+            <div class="detail-item">
+                <span class="detail-label">Genres</span>
+                {% if genres %}
+                <div class="genre-tags">
+                    {% for genre in genres %}
+                    <span class="genre-tag">{{ genre }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <span class="no-data">No genres available</span>
+                {% endif %}
+            </div>
+
+            <!-- Dizi İstatistikleri -->
+            <div class="detail-item">
+                <span class="detail-label">Series Stats</span>
+                {% if stats %}
+                <div class="series-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">{{ stats.total_seasons or 0 }}</span>
+                        <span class="stat-label">Seasons</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">{{ stats.total_episodes or 0 }}</span>
+                        <span class="stat-label">Episodes</span>
+                    </div>
+                </div>
+                {% else %}
+                <span class="no-data">No stats available</span>
+                {% endif %}
+            </div>
+
+            <!-- Dizi Yılları -->
+            <div class="detail-item">
+                <span class="detail-label">Years</span>
+                <span class="detail-value">
+                    {% if episode.startYear %}
+                    {{ episode.startYear }}{% if episode.endYear %} - {{ episode.endYear }}{% else %} - Present{% endif
+                    %}
+                    {% else %}
+                    N/A
+                    {% endif %}
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Cast & Crew Card -->
+    <div class="episode-details-card">
+        <h3 class="card-title">Cast & Crew</h3>
+        {% if cast %}
+        <div class="cast-grid">
+            {% for person in cast %}
+            <div class="cast-item">
+                <div class="cast-avatar">
+                    {{ person.primaryName[0] if person.primaryName else '?' }}
+                </div>
+                <div class="cast-info">
+                    <div class="cast-name">
+                        <a href="/celebrities?q={{ person.primaryName }}">{{ person.primaryName }}</a>
+                    </div>
+                    <div class="cast-role">{{ person.category or 'Unknown role' }}</div>
+                    {% if person.characters and person.characters != '\\N' %}
+                    <div class="cast-character">as {{ person.characters | replace('[', '') | replace(']', '') |
+                        replace('"', '') }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="no-data">No cast information available for this episode.</p>
+        {% endif %}
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="episode-actions">
+        <a href="{{ url_for('episodes') }}" class="btn-back">
+            ← Back to Episodes
+        </a>
+        {% if episode.seriesId %}
+        <a href="/serie/{{ episode.seriesId }}" class="btn-series">
+            View Series
+        </a>
+        {% endif %}
+    </div>
+
 </div>
 {% endblock %}

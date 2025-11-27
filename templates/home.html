@@ -7,32 +7,66 @@
 {% endblock %}
 
 {% block content %}
-    <section class="hero">
-        <div class="container hero-inner">
-            <div class="hero-text">
-                <h1>Discover and explore movies & series</h1>
-                <p>Browse our curated picks, learn about cast & crew, and get personalized recommendations.</p>
-                <div class="hero-ctas">
-                    <a class="btn primary" href="{{ url_for('movies') }}">Browse Movies</a>
-                    <a class="btn" href="{{ url_for('recommend') }}">Get Recommendations</a>
-                </div>
-            </div>
-            <div class="hero-art">
-                <div class="poster-grid">
-                    <div class="poster"></div>
-                    <div class="poster small"></div>
-                    <div class="poster small"></div>
-                </div>
-            </div>
+<!-- Tilted Background Tiles -->
+<div class="tilted-bg">
+    {% set images = ['gibi.jpg', 'himym.jpg', 'house.jpg', 'inter.jpg', 'trans.jpg', 'wd.jpeg', 'mentalist.jpg',
+    'gilmoregirls.png', 'cruealla.jpg'] %}
+    <div class="tiles-track">
+        {% for i in range(4) %}
+        {% for img in images %}
+        <div class="tile">
+            <img src="{{ url_for('static', filename='img/' ~ img) }}" alt="">
         </div>
-    </section>
+        {% endfor %}
+        {% endfor %}
+    </div>
+    <div class="tiles-track reverse">
+        {% for i in range(4) %}
+        {% for img in images|reverse %}
+        <div class="tile">
+            <img src="{{ url_for('static', filename='img/' ~ img) }}" alt="">
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+    <div class="tiles-track">
+        {% for i in range(4) %}
+        {% for img in images %}
+        <div class="tile">
+            <img src="{{ url_for('static', filename='img/' ~ img) }}" alt="">
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+</div>
 
-    <section class="featured container">
-        <h2>Featured this week</h2>
-        <div class="cards">
-            <a class="card" href="#">New release: Example Movie</a>
-            <a class="card" href="#">Top rated: Example Drama</a>
-            <a class="card" href="#">Must-see Series: Example Show</a>
+<section class="hero">
+    <div class="container hero-inner">
+        <div class="hero-text">
+            <h1>Discover and explore movies & series</h1>
+            <p>Browse our curated picks, learn about cast & crew, and get personalized recommendations.</p>
+            <div class="hero-ctas">
+                <a class="btn primary" href="{{ url_for('movies') }}">Browse Movies</a>
+                <a class="btn" href="{{ url_for('recommend') }}">Get Recommendations</a>
+            </div>
         </div>
-    </section>
+        <div class="hero-art">
+            <div class="floating-posters" aria-hidden="true">
+                <img class="poster p1" src="{{ url_for('static', filename='img/house.jpg') }}" alt="">
+                <img class="poster p2" src="{{ url_for('static', filename='img/mentalist.jpg') }}" alt="">
+                <img class="poster p3" src="{{ url_for('static', filename='img/gilmoregirls.png') }}" alt="">
+                <img class="poster p4" src="{{ url_for('static', filename='img/gibi.jpg') }}" alt="">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="featured container">
+    <h2>Featured this week</h2>
+    <div class="cards">
+        <a class="card" href="#">New release: Example Movie</a>
+        <a class="card" href="#">Top rated: Example Drama</a>
+        <a class="card" href="#">Must-see Series: Example Show</a>
+    </div>
+</section>
 {% endblock %}

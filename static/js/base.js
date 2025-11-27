@@ -6,6 +6,22 @@ const closeBtn = document.querySelector(".sidebar .closebtn");
 // Menü durumunu CSS'teki genişlik üzerinden kontrol edeceğiz.
 const sidebarWidth = "250px";
 
+// Bee Loading Popup
+const beeLoadingPopup = document.getElementById("beeLoadingPopup");
+
+// Pop-up'ı göster
+function showBeeLoading() {
+    if (beeLoadingPopup) {
+        beeLoadingPopup.classList.add("show");
+    }
+}
+
+// Pop-up'ı gizle
+function hideBeeLoading() {
+    if (beeLoadingPopup) {
+        beeLoadingPopup.classList.remove("show");
+    }
+}
 
 // Sidebar'ı açıp kapatmayı yöneten tek fonksiyon
 function toggleNav() {
@@ -50,4 +66,47 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // 4. Navigasyon linkleri için bee loading popup göster
+    // Veritabanı sorgularına yol açan sayfalara giderken popup göster
+    const dbPages = ['/movies', '/series', '/episodes', '/celebrities', '/recommend', '/quiz'];
+
+    document.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+
+            // Sadece veritabanı sorgusu yapan sayfalara giderken popup göster
+            if (href && dbPages.some(page => href.includes(page))) {
+                // Sidebar içi linklerse hariç tut (aynı sayfa içi navigasyon)
+                if (!href.startsWith('#') && !href.startsWith('javascript:')) {
+                    showBeeLoading();
+                }
+            }
+        });
+    });
+
+    // Form submit'lerde de popup göster (search, filter vs.)
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', function () {
+            showBeeLoading();
+        });
+    });
+
+    // Sayfa tamamen yüklendiğinde popup'ı gizle
+    hideBeeLoading();
+});
+
+// Sayfa yüklenmeden önce (back/forward navigasyonlar için)
+window.addEventListener('pageshow', function (event) {
+    hideBeeLoading();
+});
+
+// Sayfa değiştirilmeden önce (tarayıcı cache'den gelirse)
+window.addEventListener('pagehide', function (event) {
+    // Sayfa kapanırken popup'ı sıfırla
+});
+
+// Sayfa yüklenmeye başladığında popup'ı gizle
+window.addEventListener('load', function () {
+    hideBeeLoading();
 });

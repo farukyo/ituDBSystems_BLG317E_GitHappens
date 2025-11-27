@@ -11,133 +11,148 @@
 
     <h1>TV Episodes</h1>
 
-    <form action="{{ url_for('episodes') }}" method="get">
+    <form action="{{ url_for('episodes') }}" method="get" id="episode-filter-form">
 
-        <div class="search-box">
-            <input type="text" id="episode-search" name="q" placeholder="Search episode title..."
-                value="{{ request.args.get('q') or '' }}">
-            <button type="submit" id="episode-search-btn">Search</button>
+        <!-- Filter Grid -->
+        <div class="filter-grid">
+
+            <!-- Episode Title -->
+            <div class="filter-group">
+                <label for="epTitle">Episode Title</label>
+                <input type="text" id="epTitle" name="epTitle" placeholder="Search title..."
+                    value="{{ request.args.get('epTitle') or '' }}">
+            </div>
+
+            <!-- Runtime Range -->
+            <div class="filter-group">
+                <label for="runtimeMin">Runtime (min)</label>
+                <div class="range-inputs">
+                    <input type="number" id="runtimeMin" name="runtimeMin" placeholder="Min" min="0"
+                        value="{{ request.args.get('runtimeMin') or '' }}">
+                    <span>-</span>
+                    <input type="number" id="runtimeMax" name="runtimeMax" placeholder="Max" min="0"
+                        value="{{ request.args.get('runtimeMax') or '' }}">
+                </div>
+            </div>
+
+            <!-- Series Name -->
+            <div class="filter-group">
+                <label for="seriesName">Series Name</label>
+                <input type="text" id="seriesName" name="seriesName" placeholder="Search series..."
+                    value="{{ request.args.get('seriesName') or '' }}">
+            </div>
+
+            <!-- Season Number -->
+            <div class="filter-group">
+                <label for="seNumber">Season Number</label>
+                <input type="number" id="seNumber" name="seNumber" placeholder="Season" min="1"
+                    value="{{ request.args.get('seNumber') or '' }}">
+            </div>
+
+            <!-- Episode Number -->
+            <div class="filter-group">
+                <label for="epNumber">Episode Number</label>
+                <input type="number" id="epNumber" name="epNumber" placeholder="Episode" min="1"
+                    value="{{ request.args.get('epNumber') or '' }}">
+            </div>
+
         </div>
 
-        <div class="filters">
-
-            <select id="episode-start-year" name="startYear">
-                <option value="">Start Year</option>
-                <option value="2020" {% if request.args.get('startYear')=='2020' %}selected{% endif %}>2020s</option>
-                <option value="2010" {% if request.args.get('startYear')=='2010' %}selected{% endif %}>2010s</option>
-                <option value="2000" {% if request.args.get('startYear')=='2000' %}selected{% endif %}>2000s</option>
-                <option value="1990" {% if request.args.get('startYear')=='1990' %}selected{% endif %}>1990s</option>
-                <option value="1980" {% if request.args.get('startYear')=='1980' %}selected{% endif %}>1980s</option>
-                <option value="1970" {% if request.args.get('startYear')=='1970' %}selected{% endif %}>1970s</option>
-                <option value="1960" {% if request.args.get('startYear')=='1960' %}selected{% endif %}>1960s</option>
-                <option value="1950" {% if request.args.get('startYear')=='1950' %}selected{% endif %}>1950s</option>
-                <option value="1940" {% if request.args.get('startYear')=='1940' %}selected{% endif %}>1940s</option>
-            </select>
-
-            <select id="episode-runtime" name="runtime">
-                <option value="">Runtime</option>
-                <option value="lt20" {% if request.args.get('runtime')=='lt20' %}selected{% endif %}>&lt; 20 min
-                </option>
-                <option value="20-40" {% if request.args.get('runtime')=='20-40' %}selected{% endif %}>20 – 40 min
-                </option>
-                <option value="40-60" {% if request.args.get('runtime')=='40-60' %}selected{% endif %}>40 – 60 min
-                </option>
-                <option value="gt60" {% if request.args.get('runtime')=='gt60' %}selected{% endif %}>&gt; 60 min
-                </option>
-            </select>
-
-            <select id="episode-genre" name="genre">
-                <option value="">Genre</option>
-                <option value="Drama" {% if request.args.get('genre')=='Drama' %}selected{% endif %}>Drama</option>
-                <option value="Comedy" {% if request.args.get('genre')=='Comedy' %}selected{% endif %}>Comedy</option>
-                <option value="Action" {% if request.args.get('genre')=='Action' %}selected{% endif %}>Action</option>
-                <option value="Documentary" {% if request.args.get('genre')=='Documentary' %}selected{% endif %}>
-                    Documentary</option>
-                <option value="News" {% if request.args.get('genre')=='News' %}selected{% endif %}>News</option>
-                <option value="Talk-Show" {% if request.args.get('genre')=='Talk-Show' %}selected{% endif %}>Talk-Show
-                </option>
-            </select>
-
-            <select id="episode-season" name="season">
-                <option value="">Season</option>
-                <option value="1" {% if request.args.get('season')=='1' %}selected{% endif %}>Season 1</option>
-                <option value="2" {% if request.args.get('season')=='2' %}selected{% endif %}>Season 2</option>
-                <option value="3" {% if request.args.get('season')=='3' %}selected{% endif %}>Season 3</option>
-                <option value="4" {% if request.args.get('season')=='4' %}selected{% endif %}>Season 4</option>
-                <option value="5" {% if request.args.get('season')=='5' %}selected{% endif %}>Season 5+</option>
-            </select>
-
-            <select id="episode-adult" name="isAdult">
-                <option value="">Adult Content</option>
-                <option value="0" {% if request.args.get('isAdult')=='0' %}selected{% endif %}>Non-Adult</option>
-                <option value="1" {% if request.args.get('isAdult')=='1' %}selected{% endif %}>Adult</option>
-            </select>
-
-            <button type="submit" id="episode-filter-btn">Apply Filters</button>
-            <a href="{{ url_for('episodes') }}" class="btn-reset">Reset</a>
+        <!-- Buttons -->
+        <div class="filter-buttons">
+            <button type="submit" id="episode-filter-btn">Search</button>
+            <a href="{{ url_for('episodes') }}" class="btn-reset">Reset Filters</a>
         </div>
+
     </form>
+
     <hr>
 
-    <h2 class="sub-title">Featured Episodes</h2>
-    <div class="popular-episodes">
-        <div class="episode-card">
-            <h3>Featured Episode 1</h3>
-            <p class="episode-genre">Drama</p>
-            <p class="episode-info">Season 1, Episode 1</p>
-        </div>
-        <div class="episode-card">
-            <h3>Featured Episode 2</h3>
-            <p class="episode-genre">Comedy</p>
-            <p class="episode-info">Season 2, Episode 5</p>
-        </div>
-        <div class="episode-card">
-            <h3>Featured Episode 3</h3>
-            <p class="episode-genre">Action</p>
-            <p class="episode-info">Season 3, Episode 10</p>
+    <div class="results-header">
+        <h2 class="sub-title">Results ({{ items|length if items else 0 }} episodes)</h2>
+        <button type="button" class="info-btn" id="showSqlBtn" title="Show SQL Query">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- SQL Query Popup -->
+    <div class="sql-popup-overlay" id="sqlPopup">
+        <div class="sql-popup">
+            <div class="sql-popup-header">
+                <h3>Executed SQL Query</h3>
+                <button type="button" class="close-btn" id="closeSqlBtn">&times;</button>
+            </div>
+            <div class="sql-popup-content">
+                <pre><code>{{ sql_query | default('No query executed') }}</code></pre>
+            </div>
         </div>
     </div>
 
-    <h2 class="sub-title">All Results ({{ items|length if items else 0 }} episodes)</h2>
-
     <div class="episode-list">
         {% if items %}
+
+        <!-- Table Header -->
+        <div class="episode-table-header">
+            <span class="col-title">Title</span>
+            <span class="col-runtime">Runtime</span>
+            <span class="col-series">Series</span>
+            <span class="col-season">Season</span>
+            <span class="col-episode">Episode</span>
+        </div>
+
         {% for episode in items %}
         <div class="episode-item">
-            <h3 class="episode-title">
-                <a href="/episode/{{ episode.episodeId }}">
-                    {{ episode.primaryTitle }}
-                    <span style="font-size: 0.8em; color: gray;">
-                        ({{ episode.startYear if episode.startYear and episode.startYear != '0' else 'N/A' }})
-                    </span>
+            <span class="col-title">
+                <a href="/episode/{{ episode.episodeId }}" class="episode-title-link">
+                    {{ episode.epTitle or 'Untitled' }}
                 </a>
-            </h3>
-            <p class="episode-info">
-                {% if episode.seasonNumber and episode.episodeNumber %}
-                S{{ episode.seasonNumber }}E{{ episode.episodeNumber }}
+            </span>
+            <span class="col-runtime">
+                {% if episode.runtimeMinutes %}
+                {{ episode.runtimeMinutes }} min
                 {% else %}
-                Episode info unavailable
+                N/A
                 {% endif %}
-                {% if episode.genres and episode.genres != '0' %}
-                | {{ episode.genres }}
+            </span>
+            <span class="col-series">
+                {% if episode.seriesId %}
+                <a href="/serie/{{ episode.seriesId }}" class="series-link">
+                    {{ episode.seriesTitle or episode.seriesId }}
+                </a>
+                {% else %}
+                N/A
                 {% endif %}
-                {% if episode.runtimeMinutes and episode.runtimeMinutes != '0' %}
-                | {{ episode.runtimeMinutes }} min
+            </span>
+            <span class="col-season">
+                {% if episode.seNumber %}
+                S{{ episode.seNumber }}
+                {% else %}
+                -
                 {% endif %}
-            </p>
-            {% if episode.seriesId %}
-            <p class="episode-series">
-                <small>Series ID: {{ episode.seriesId }}</small>
-            </p>
-            {% endif %}
+            </span>
+            <span class="col-episode">
+                {% if episode.epNumber %}
+                E{{ episode.epNumber }}
+                {% else %}
+                -
+                {% endif %}
+            </span>
         </div>
         {% endfor %}
         {% else %}
         <div class="no-results">
-            {% if request.args.get('q') or request.args.get('genre') or request.args.get('startYear') %}
+            {% if request.args.get('epTitle') or request.args.get('seriesName') or
+            request.args.get('seNumber') or request.args.get('epNumber') %}
             <p>No episodes found matching your criteria.</p>
+            <p class="hint">Try adjusting your filters or use fewer search terms.</p>
             {% else %}
-            <p>No episodes available to display.</p>
+            <p>Use the filters above to search for episodes.</p>
+            <p class="hint">You can filter by Title, Runtime, Series Name, Season, or Episode number.</p>
             {% endif %}
         </div>
         {% endif %}

@@ -8,8 +8,7 @@
     <title>{% block title %}BeeMD{% endblock %}</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/beemd.png') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     {% block head %}{% endblock %}
@@ -28,7 +27,6 @@
         <a href="{{ url_for('celebrities') }}">⭐ Celebrities</a>
         <a href="{{ url_for('recommend') }}">💡 Recommend</a>
         <a href="{{ url_for('quiz') }}">❓ Quizes</a>
-        <a href="{{ url_for('suggest') }}">🗳️ Suggestions</a>
     </div>
 
     <div id="main-content" class="main-content">
@@ -36,7 +34,11 @@
             <div class="container nav-row">
                 <div class="brand">
                     <button class="menu-btn" id="openMenuBtn" aria-label="Open menu">☰</button>
-                    <a href="{{ url_for('index') }}">BeeMD</a>
+                    <a href="{{ url_for('index') }}" class="brand-link">
+                        <img src="{{ url_for('static', filename='img/beemd.png') }}" alt="BeeMD Logo"
+                            class="brand-logo">
+                        <span>BeeMD</span>
+                    </a>
                 </div>
 
                 <form class="search" action="{{ url_for('movies') }}" method="get" role="search">
@@ -50,16 +52,21 @@
                         <a href="{{ url_for('about') }}" title="About Us" aria-label="About Us">ℹ️</a>
                     </div>
                     {% if current_user.is_authenticated %}
+
+                    <div class="user-link">
+                        <a href="{{ url_for('suggest') }}" title="suggest" aria-label="Suggestions">🗳️</a>
+                    </div>
                     <div class="user-link">
                         <a href="{{ url_for('profile') }}" title="Profile" aria-label="View profile">👤</a>
                     </div>
                     <div class="user-link">
                         <a href="{{ url_for('logout') }}" title="Logout" aria-label="Logout">Logout</a>
                     </div>
+                    
                     {% else %}
                     <div class="user-link">
                         <a href="{{ url_for('login') }}" title="Login / Sign Up" aria-label="Login or Sign Up">
-                            Login
+                            👤 Login
                         </a>
                     </div>
                     {% endif %}
@@ -126,6 +133,27 @@
         </div>
     </footer>
     {% endblock %}
+
+    <!-- Bee Loading Popup -->
+    <div id="beeLoadingPopup" class="bee-loading-popup">
+        <div class="bee-loading-content">
+            <div class="bee-loading-text">🍯 Buzzing through the database...</div>
+            <div class="bee-container">
+                <span class="bee">🐝</span>
+                <span class="bee">🐝</span>
+                <span class="bee">🐝</span>
+                <span class="bee">🐝</span>
+                <div class="bee-trail"></div>
+            </div>
+            <div class="honeycomb-loader">
+                <div class="honeycomb-dot"></div>
+                <div class="honeycomb-dot"></div>
+                <div class="honeycomb-dot"></div>
+                <div class="honeycomb-dot"></div>
+                <div class="honeycomb-dot"></div>
+            </div>
+        </div>
+    </div>
 
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
     {% block scripts %}{% endblock %}
