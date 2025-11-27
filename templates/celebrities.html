@@ -451,6 +451,34 @@
             <button type="submit" id="filter-btn">Apply Filters</button>
         </div>
     </form>
+    </form>
+
+    <hr style="border-color: rgba(255,255,255,0.1); margin: 25px 0;">
+
+    <div class="results-header">
+        <h2>Results ({{ items|length if items else 0 }})</h2>
+        <button type="button" class="info-btn" id="showSqlBtn" title="Show SQL Query">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+        </button>
+    </div>
+
+    <div class="sql-popup-overlay" id="sqlPopup">
+        <div class="sql-popup">
+            <div class="sql-popup-header">
+                <h3>Executed SQL Query</h3>
+                <button type="button" class="close-btn" id="closeSqlBtn">&times;</button>
+            </div>
+            <div class="sql-popup-content">
+                <pre><code>{{ sql_query | default('No query executed yet.') }}</code></pre>
+            </div>
+        </div>
+    </div>
+
 
     <div class="celebrity-list">
         {% if items %}
@@ -484,12 +512,14 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- 1. BÖLÜM: ÇOKLU SEÇİM (MULTISELECT) MANTIĞI ---
     let expanded = false;
     const selectBox = document.querySelector('.selectBox');
     const checkboxes = document.getElementById("checkboxes");
     const resetBtn = document.getElementById("reset-professions-btn");
 
-    // 1. Kutucuğa tıklanınca menüyü aç/kapat
+    // Kutucuğa tıklanınca menüyü aç/kapat
     if (selectBox) {
         selectBox.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -503,14 +533,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Menünün içine tıklanınca kapanmasın
+    // Menünün içine tıklanınca kapanmasın
     if (checkboxes) {
         checkboxes.addEventListener('click', (e) => {
             e.stopPropagation();
         });
     }
 
-    // 3. Reset butonuna tıklanınca seçimleri kaldır
+    // Reset butonuna tıklanınca seçimleri kaldır
     if (resetBtn) {
         resetBtn.addEventListener('click', (e) => {
             e.stopPropagation(); 
@@ -521,13 +551,52 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. Dışarı tıklayınca kapat
+    // Sayfanın boş bir yerine tıklanırsa menüyü kapat
     document.addEventListener('click', (e) => {
         if (expanded) {
             checkboxes.style.display = "none";
             expanded = false;
         }
     });
+
+
+    // --- 2. BÖLÜM: SQL POPUP (EPISODES SAYFASI MANTIĞI) ---
+    const showSqlBtn = document.getElementById('showSqlBtn');
+    const sqlPopup = document.getElementById('sqlPopup');
+    const closeSqlBtn = document.getElementById('closeSqlBtn');
+
+    if (showSqlBtn && sqlPopup) {
+        // İkon butonuna basınca Popup'ı aç
+        showSqlBtn.addEventListener('click', function () {
+            sqlPopup.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Arka plan kaymasını engelle
+        });
+
+        // Kapatma fonksiyonu (Tekrar tekrar yazmamak için)
+        const closePopup = () => {
+            sqlPopup.classList.remove('active');
+            document.body.style.overflow = ''; // Kaydırmayı geri aç
+        };
+
+        // X butonuna basınca kapat
+        if (closeSqlBtn) {
+            closeSqlBtn.addEventListener('click', closePopup);
+        }
+
+        // Siyah arka plana (Overlay) basınca kapat
+        sqlPopup.addEventListener('click', function (e) {
+            if (e.target === sqlPopup) {
+                closePopup();
+            }
+        });
+
+        // ESC tuşuna basınca kapat
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && sqlPopup.classList.contains('active')) {
+                closePopup();
+            }
+        });
+    }
 });
 </script>
 {% endblock %}

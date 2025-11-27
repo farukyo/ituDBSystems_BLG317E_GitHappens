@@ -245,15 +245,17 @@ def episode_detail(episode_id):
     
 @app.route("/celebrities")
 def celebrities():
-    # 1. URL'den Parametreleri Al
+    # 1. Parametreleri Al
     search_query = request.args.get('q')
     profession_list = request.args.getlist('profession')
-    primary_letter = request.args.get('primary_name') # HTML'deki name="primary_name"
+    primary_letter = request.args.get('primary_name')
     birth_filter = request.args.get('birth_year')
     death_filter = request.args.get('death_year')
     order_filter = request.args.get('order_by')
 
     data = [] 
+    display_sql = "No query executed yet." # Varsayılan mesaj
+
     has_filters = any([
         search_query, 
         profession_list, 
@@ -273,7 +275,7 @@ def celebrities():
             """
             params = {}
 
-
+            # --- Filtreler ---
             if not search_query and not primary_letter:
                 sql += " AND p.primaryName REGEXP '^[A-Za-z]'"
                 sql += " AND CHAR_LENGTH(p.primaryName) >= 3"
@@ -304,39 +306,39 @@ def celebrities():
                 sql += " AND p.deathYear = :dyear"
                 params["dyear"] = int(death_filter)
 
+            # --- Sıralama ---
             if order_filter == "alphabetical":
                 sql += " ORDER BY p.primaryName ASC"
-            
             elif order_filter == "age-asc":
-                sql += """ 
-                    ORDER BY (
-                        CASE 
-                            WHEN p.deathYear IS NOT NULL THEN (p.deathYear - p.birthYear)
-                            ELSE (2025 - p.birthYear)
-                        END
-                    ) ASC
-                """
-            
+                sql += " ORDER BY (CASE WHEN p.deathYear IS NOT NULL THEN (p.deathYear - p.birthYear) ELSE (2025 - p.birthYear) END) ASC"
             elif order_filter == "age-desc":
-                sql += """ 
-                    ORDER BY (
-                        CASE 
-                            WHEN p.deathYear IS NOT NULL THEN (p.deathYear - p.birthYear)
-                            ELSE (2025 - p.birthYear)
-                        END
-                    ) DESC
-                """
+                sql += " ORDER BY (CASE WHEN p.deathYear IS NOT NULL THEN (p.deathYear - p.birthYear) ELSE (2025 - p.birthYear) END) DESC"
             else:
                 sql += " ORDER BY p.primaryName ASC"
 
             sql += " LIMIT 50"
+
+            # --- SQL GÖRÜNTÜLEME MANTIĞI (Episodes Sayfası Gibi) ---
+            # Parametreleri (:q, :byear vb.) gerçek değerleriyle değiştiriyoruz
+            display_sql = sql
+            for key, value in params.items():
+                if isinstance(value, str):
+                    display_sql = display_sql.replace(f":{key}", f"'{value}'")
+                else:
+                    display_sql = display_sql.replace(f":{key}", str(value))
+            # -------------------------------------------------------
 
             result = conn.execute(text(sql), params)
             data = result.fetchall()
 
     title = f"Results for '{search_query}'" if search_query else "Celebrities"
     
-    return render_template("celebrities.html", items=data, title=title, selected_professions=profession_list)
+    # sql_query değişkenini template'e gönderiyoruz
+    return render_template("celebrities.html", 
+                           items=data, 
+                           title=title, 
+                           selected_professions=profession_list,
+                           sql_query=display_sql)
 
 @app.route("/suggest", methods=["GET", "POST"])
 @login_required
