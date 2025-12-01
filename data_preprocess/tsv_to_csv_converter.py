@@ -1,3 +1,11 @@
+# ==============================================================================
+# tsv_to_csv_converter.py - TSV to CSV Converter
+# ==============================================================================
+# This script converts TSV (Tab-Separated Values) files downloaded from IMDb
+# to CSV (Comma-Separated Values) format.
+# Includes progress indicator for large files and supports batch conversion.
+# ==============================================================================
+
 import csv
 import os
 from pathlib import Path

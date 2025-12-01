@@ -1,3 +1,12 @@
+# ==============================================================================
+# title_type_splitter.py - Movie/Series Splitter Script
+# ==============================================================================
+# This script splits title.basics.csv into two files based on titleType:
+# - Movies: movie, short, tvMovie, video types
+# - Series: tvSeries, tvMiniSeries, tvEpisode, tvPilot, tvShort, tvSpecial types
+# Categorizes data for storage in separate tables.
+# ==============================================================================
+
 import os
 import pandas as pd
 
