@@ -6,14 +6,14 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/celebrities.css') }}">
 <style>
     :root {
-        --vurgu-mavi: #3498db; 
+        --vurgu-mavi: #3498db;
     }
 
     .multiselect {
         position: relative;
         display: inline-block;
-        min-width: 150px; 
-        width: 100%; 
+        min-width: 150px;
+        width: 100%;
     }
 
     .selectBox {
@@ -39,7 +39,10 @@
 
     .overSelect {
         position: absolute;
-        left: 0; right: 0; top: 0; bottom: 0;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
     }
 
     #checkboxes {
@@ -54,7 +57,7 @@
         overflow-y: auto;
         z-index: 1000;
         border-radius: 6px;
-        box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
     }
 
     #reset-professions-btn {
@@ -70,7 +73,7 @@
         font-weight: bold;
         transition: all 0.2s;
     }
-    
+
     #reset-professions-btn:hover {
         background-color: #444;
         color: white;
@@ -99,15 +102,14 @@
         cursor: pointer;
     }
 
-    #checkboxes input:checked + span {
+    #checkboxes input:checked+span {
         color: var(--vurgu-mavi);
         font-weight: bold;
     }
-    
-    #checkboxes label:has(input:checked) {
-         background-color: rgba(52, 152, 219, 0.08);
-    }
 
+    #checkboxes label:has(input:checked) {
+        background-color: rgba(52, 152, 219, 0.08);
+    }
 </style>
 {% endblock %}
 
@@ -116,15 +118,15 @@
 
     <h1>{{ title }}</h1>
 
-    <form action="{{ url_for('celebrities') }}" method="get">
-        
+    <form action="{{ url_for('celebrity.celebrities') }}" method="get">
+
         <div class="search-box">
             <input type="text" name="q" placeholder="Search celebrities..." value="{{ request.args.get('q', '') }}">
             <button type="submit">Search</button>
         </div>
 
         <div class="filters">
-            
+
             <div class="multiselect">
                 <div class="selectBox">
                     <select>
@@ -137,278 +139,278 @@
 
                     <label>
                         <span>Accountant</span>
-                        <input type="checkbox" name="profession" value="accountant"
-                        {% if 'accountant' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="accountant" {% if 'accountant' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Actor</span>
-                        <input type="checkbox" name="profession" value="actor"
-                        {% if 'actor' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="actor" {% if 'actor' in selected_professions
+                            %}checked{% endif %} />
                     </label>
-                    
+
                     <label>
                         <span>Actress</span>
-                        <input type="checkbox" name="profession" value="actress"
-                        {% if 'actress' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="actress" {% if 'actress' in selected_professions
+                            %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Animation Dept.</span>
-                        <input type="checkbox" name="profession" value="animation_department"
-                        {% if 'animation_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="animation_department" {%
+                            if 'animation_department' in selected_professions %}checked{% endif %} />
                     </label>
-                    
+
                     <label>
                         <span>Archive Footage</span>
-                        <input type="checkbox" name="profession" value="archive_footage"
-                        {% if 'archive_footage' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="archive_footage" {% if 'archive_footage' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Archive Sound</span>
-                        <input type="checkbox" name="profession" value="archive_sound"
-                        {% if 'archive_sound' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="archive_sound" {% if 'archive_sound' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Art Department</span>
-                        <input type="checkbox" name="profession" value="art_department"
-                        {% if 'art_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="art_department" {% if 'art_department' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Art Director</span>
-                        <input type="checkbox" name="profession" value="art_director"
-                        {% if 'art_director' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="art_director" {% if 'art_director' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Assistant</span>
-                        <input type="checkbox" name="profession" value="assistant"
-                        {% if 'assistant' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="assistant" {% if 'assistant' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Assistant Director</span>
-                        <input type="checkbox" name="profession" value="assistant_director"
-                        {% if 'assistant_director' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="assistant_director" {% if 'assistant_director'
+                            in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Camera Department</span>
-                        <input type="checkbox" name="profession" value="camera_department"
-                        {% if 'camera_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="camera_department" {% if 'camera_department' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Casting Department</span>
-                        <input type="checkbox" name="profession" value="casting_department"
-                        {% if 'casting_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="casting_department" {% if 'casting_department'
+                            in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Casting Director</span>
-                        <input type="checkbox" name="profession" value="casting_director"
-                        {% if 'casting_director' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="casting_director" {% if 'casting_director' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Choreographer</span>
-                        <input type="checkbox" name="profession" value="choreographer"
-                        {% if 'choreographer' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="choreographer" {% if 'choreographer' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Cinematographer</span>
-                        <input type="checkbox" name="profession" value="cinematographer"
-                        {% if 'cinematographer' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="cinematographer" {% if 'cinematographer' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Composer</span>
-                        <input type="checkbox" name="profession" value="composer"
-                        {% if 'composer' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="composer" {% if 'composer' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Costume Department</span>
-                        <input type="checkbox" name="profession" value="costume_department"
-                        {% if 'costume_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="costume_department" {% if 'costume_department'
+                            in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Costume Designer</span>
-                        <input type="checkbox" name="profession" value="costume_designer"
-                        {% if 'costume_designer' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="costume_designer" {% if 'costume_designer' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Director</span>
-                        <input type="checkbox" name="profession" value="director"
-                        {% if 'director' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="director" {% if 'director' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Editor</span>
-                        <input type="checkbox" name="profession" value="editor"
-                        {% if 'editor' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="editor" {% if 'editor' in selected_professions
+                            %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Editorial Department</span>
-                        <input type="checkbox" name="profession" value="editorial_department"
-                        {% if 'editorial_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="editorial_department" {%
+                            if 'editorial_department' in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Electrical Department</span>
-                        <input type="checkbox" name="profession" value="electrical_department"
-                        {% if 'electrical_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="electrical_department" {%
+                            if 'electrical_department' in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Executive</span>
-                        <input type="checkbox" name="profession" value="executive"
-                        {% if 'executive' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="executive" {% if 'executive' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Legal</span>
-                        <input type="checkbox" name="profession" value="legal"
-                        {% if 'legal' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="legal" {% if 'legal' in selected_professions
+                            %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Location Management</span>
-                        <input type="checkbox" name="profession" value="location_management"
-                        {% if 'location_management' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="location_management" {% if 'location_management'
+                            in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Make Up Department</span>
-                        <input type="checkbox" name="profession" value="make_up_department"
-                        {% if 'make_up_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="make_up_department" {% if 'make_up_department'
+                            in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Manager</span>
-                        <input type="checkbox" name="profession" value="manager"
-                        {% if 'manager' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="manager" {% if 'manager' in selected_professions
+                            %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Miscellaneous</span>
-                        <input type="checkbox" name="profession" value="miscellaneous"
-                        {% if 'miscellaneous' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="miscellaneous" {% if 'miscellaneous' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Music Artist</span>
-                        <input type="checkbox" name="profession" value="music_artist"
-                        {% if 'music_artist' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="music_artist" {% if 'music_artist' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Music Department</span>
-                        <input type="checkbox" name="profession" value="music_department"
-                        {% if 'music_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="music_department" {% if 'music_department' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Podcaster</span>
-                        <input type="checkbox" name="profession" value="podcaster"
-                        {% if 'podcaster' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="podcaster" {% if 'podcaster' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Producer</span>
-                        <input type="checkbox" name="profession" value="producer"
-                        {% if 'producer' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="producer" {% if 'producer' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Production Department</span>
-                        <input type="checkbox" name="profession" value="production_department"
-                        {% if 'production_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="production_department" {%
+                            if 'production_department' in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Production Designer</span>
-                        <input type="checkbox" name="profession" value="production_designer"
-                        {% if 'production_designer' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="production_designer" {% if 'production_designer'
+                            in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Production Manager</span>
-                        <input type="checkbox" name="profession" value="production_manager"
-                        {% if 'production_manager' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="production_manager" {% if 'production_manager'
+                            in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Publicist</span>
-                        <input type="checkbox" name="profession" value="publicist"
-                        {% if 'publicist' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="publicist" {% if 'publicist' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Script Department</span>
-                        <input type="checkbox" name="profession" value="script_department"
-                        {% if 'script_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="script_department" {% if 'script_department' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Set Decorator</span>
-                        <input type="checkbox" name="profession" value="set_decorator"
-                        {% if 'set_decorator' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="set_decorator" {% if 'set_decorator' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Sound Department</span>
-                        <input type="checkbox" name="profession" value="sound_department"
-                        {% if 'sound_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="sound_department" {% if 'sound_department' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Soundtrack</span>
-                        <input type="checkbox" name="profession" value="soundtrack"
-                        {% if 'soundtrack' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="soundtrack" {% if 'soundtrack' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Special Effects</span>
-                        <input type="checkbox" name="profession" value="special_effects"
-                        {% if 'special_effects' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="special_effects" {% if 'special_effects' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Stunts</span>
-                        <input type="checkbox" name="profession" value="stunts"
-                        {% if 'stunts' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="stunts" {% if 'stunts' in selected_professions
+                            %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Talent Agent</span>
-                        <input type="checkbox" name="profession" value="talent_agent"
-                        {% if 'talent_agent' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="talent_agent" {% if 'talent_agent' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Transportation Department</span>
-                        <input type="checkbox" name="profession" value="transportation_department"
-                        {% if 'transportation_department' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="transportation_department" {%
+                            if 'transportation_department' in selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Visual Effects</span>
-                        <input type="checkbox" name="profession" value="visual_effects"
-                        {% if 'visual_effects' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="visual_effects" {% if 'visual_effects' in
+                            selected_professions %}checked{% endif %} />
                     </label>
 
                     <label>
                         <span>Writer</span>
-                        <input type="checkbox" name="profession" value="writer"
-                        {% if 'writer' in selected_professions %}checked{% endif %} />
+                        <input type="checkbox" name="profession" value="writer" {% if 'writer' in selected_professions
+                            %}checked{% endif %} />
                     </label>
                 </div>
             </div>
@@ -417,35 +419,38 @@
                 <option value="">All Names</option>
                 {% set letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' %}
                 {% for letter in letters %}
-                    <option value="{{ letter }}" {% if request.args.get('primary_name') == letter %}selected{% endif %}>
-                        Starts with {{ letter }}
-                    </option>
+                <option value="{{ letter }}" {% if request.args.get('primary_name')==letter %}selected{% endif %}>
+                    Starts with {{ letter }}
+                </option>
                 {% endfor %}
             </select>
 
             <select name="birth_year">
                 <option value="">Birth Year</option>
                 {% for year in range(2025, 1799, -1) %}
-                    <option value="{{ year }}" {% if request.args.get('birth_year') == year|string %}selected{% endif %}>
-                        {{ year }}
-                    </option>
+                <option value="{{ year }}" {% if request.args.get('birth_year')==year|string %}selected{% endif %}>
+                    {{ year }}
+                </option>
                 {% endfor %}
             </select>
 
             <select name="death_year">
                 <option value="">Death Year</option>
                 {% for year in range(2025, 1799, -1) %}
-                    <option value="{{ year }}" {% if request.args.get('death_year') == year|string %}selected{% endif %}>
-                        {{ year }}
-                    </option>
+                <option value="{{ year }}" {% if request.args.get('death_year')==year|string %}selected{% endif %}>
+                    {{ year }}
+                </option>
                 {% endfor %}
             </select>
 
             <select name="order_by">
                 <option value="">Order By</option>
-                <option value="alphabetical" {% if request.args.get('order_by') == 'alphabetical' %}selected{% endif %}>Name (A-Z)</option>
-                <option value="age-asc" {% if request.args.get('order_by') == 'age-asc' %}selected{% endif %}>Age (Youngest First)</option>
-                <option value="age-desc" {% if request.args.get('order_by') == 'age-desc' %}selected{% endif %}>Age (Oldest First)</option>
+                <option value="alphabetical" {% if request.args.get('order_by')=='alphabetical' %}selected{% endif %}>
+                    Name (A-Z)</option>
+                <option value="age-asc" {% if request.args.get('order_by')=='age-asc' %}selected{% endif %}>Age
+                    (Youngest First)</option>
+                <option value="age-desc" {% if request.args.get('order_by')=='age-desc' %}selected{% endif %}>Age
+                    (Oldest First)</option>
             </select>
 
             <button type="submit" id="filter-btn">Apply Filters</button>
@@ -482,121 +487,122 @@
 
     <div class="celebrity-list">
         {% if items %}
-            {% for person in items %}
-            <a href="#" class="celebrity-item-row">
-                
-                <div class="info-left">
-                    <h3 class="name">{{ person.primaryName }}</h3>
-                    <span class="profession">
-                        {{ person.professionName | replace('_', ' ') | replace(',', ', ') | title if (person.professionName and person.professionName != '0') else 'Profession Unknown' }}
-                    </span>
-                </div>
+        {% for person in items %}
+        <a href="#" class="celebrity-item-row">
 
-                <div class="info-right">
-                    {% if person.deathYear %}
-                        <span class="year" style="color: #666;">{{ person.birthYear }} - {{ person.deathYear }}</span>
-                    {% else %}
-                        <span class="year">Born: {{ person.birthYear if person.birthYear else '?' }}</span>
-                    {% endif %}
-                </div>
-            </a>
-            {% endfor %}
-        {% else %}
-            <div style="width: 100%; text-align: center; margin-top: 40px; color: #aaa;">
-                <p>No celebrities found matching your criteria.</p>
+            <div class="info-left">
+                <h3 class="name">{{ person.primaryName }}</h3>
+                <span class="profession">
+                    {{ person.professionName | replace('_', ' ') | replace(',', ', ') | title if (person.professionName
+                    and person.professionName != '0') else 'Profession Unknown' }}
+                </span>
             </div>
+
+            <div class="info-right">
+                {% if person.deathYear %}
+                <span class="year" style="color: #666;">{{ person.birthYear }} - {{ person.deathYear }}</span>
+                {% else %}
+                <span class="year">Born: {{ person.birthYear if person.birthYear else '?' }}</span>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+        {% else %}
+        <div style="width: 100%; text-align: center; margin-top: 40px; color: #aaa;">
+            <p>No celebrities found matching your criteria.</p>
+        </div>
         {% endif %}
     </div>
 
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    
-    // --- 1. BÖLÜM: ÇOKLU SEÇİM (MULTISELECT) MANTIĞI ---
-    let expanded = false;
-    const selectBox = document.querySelector('.selectBox');
-    const checkboxes = document.getElementById("checkboxes");
-    const resetBtn = document.getElementById("reset-professions-btn");
+    document.addEventListener('DOMContentLoaded', () => {
 
-    // Kutucuğa tıklanınca menüyü aç/kapat
-    if (selectBox) {
-        selectBox.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!expanded) {
-                checkboxes.style.display = "block";
-                expanded = true;
-            } else {
+        // --- 1. BÖLÜM: ÇOKLU SEÇİM (MULTISELECT) MANTIĞI ---
+        let expanded = false;
+        const selectBox = document.querySelector('.selectBox');
+        const checkboxes = document.getElementById("checkboxes");
+        const resetBtn = document.getElementById("reset-professions-btn");
+
+        // Kutucuğa tıklanınca menüyü aç/kapat
+        if (selectBox) {
+            selectBox.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!expanded) {
+                    checkboxes.style.display = "block";
+                    expanded = true;
+                } else {
+                    checkboxes.style.display = "none";
+                    expanded = false;
+                }
+            });
+        }
+
+        // Menünün içine tıklanınca kapanmasın
+        if (checkboxes) {
+            checkboxes.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+
+        // Reset butonuna tıklanınca seçimleri kaldır
+        if (resetBtn) {
+            resetBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const inputs = checkboxes.querySelectorAll('input[type="checkbox"]');
+                inputs.forEach(input => {
+                    input.checked = false;
+                });
+            });
+        }
+
+        // Sayfanın boş bir yerine tıklanırsa menüyü kapat
+        document.addEventListener('click', (e) => {
+            if (expanded) {
                 checkboxes.style.display = "none";
                 expanded = false;
             }
         });
-    }
 
-    // Menünün içine tıklanınca kapanmasın
-    if (checkboxes) {
-        checkboxes.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-    }
 
-    // Reset butonuna tıklanınca seçimleri kaldır
-    if (resetBtn) {
-        resetBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            const inputs = checkboxes.querySelectorAll('input[type="checkbox"]');
-            inputs.forEach(input => {
-                input.checked = false;
+        // --- 2. BÖLÜM: SQL POPUP (EPISODES SAYFASI MANTIĞI) ---
+        const showSqlBtn = document.getElementById('showSqlBtn');
+        const sqlPopup = document.getElementById('sqlPopup');
+        const closeSqlBtn = document.getElementById('closeSqlBtn');
+
+        if (showSqlBtn && sqlPopup) {
+            // İkon butonuna basınca Popup'ı aç
+            showSqlBtn.addEventListener('click', function () {
+                sqlPopup.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Arka plan kaymasını engelle
             });
-        });
-    }
 
-    // Sayfanın boş bir yerine tıklanırsa menüyü kapat
-    document.addEventListener('click', (e) => {
-        if (expanded) {
-            checkboxes.style.display = "none";
-            expanded = false;
+            // Kapatma fonksiyonu (Tekrar tekrar yazmamak için)
+            const closePopup = () => {
+                sqlPopup.classList.remove('active');
+                document.body.style.overflow = ''; // Kaydırmayı geri aç
+            };
+
+            // X butonuna basınca kapat
+            if (closeSqlBtn) {
+                closeSqlBtn.addEventListener('click', closePopup);
+            }
+
+            // Siyah arka plana (Overlay) basınca kapat
+            sqlPopup.addEventListener('click', function (e) {
+                if (e.target === sqlPopup) {
+                    closePopup();
+                }
+            });
+
+            // ESC tuşuna basınca kapat
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && sqlPopup.classList.contains('active')) {
+                    closePopup();
+                }
+            });
         }
     });
-
-
-    // --- 2. BÖLÜM: SQL POPUP (EPISODES SAYFASI MANTIĞI) ---
-    const showSqlBtn = document.getElementById('showSqlBtn');
-    const sqlPopup = document.getElementById('sqlPopup');
-    const closeSqlBtn = document.getElementById('closeSqlBtn');
-
-    if (showSqlBtn && sqlPopup) {
-        // İkon butonuna basınca Popup'ı aç
-        showSqlBtn.addEventListener('click', function () {
-            sqlPopup.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Arka plan kaymasını engelle
-        });
-
-        // Kapatma fonksiyonu (Tekrar tekrar yazmamak için)
-        const closePopup = () => {
-            sqlPopup.classList.remove('active');
-            document.body.style.overflow = ''; // Kaydırmayı geri aç
-        };
-
-        // X butonuna basınca kapat
-        if (closeSqlBtn) {
-            closeSqlBtn.addEventListener('click', closePopup);
-        }
-
-        // Siyah arka plana (Overlay) basınca kapat
-        sqlPopup.addEventListener('click', function (e) {
-            if (e.target === sqlPopup) {
-                closePopup();
-            }
-        });
-
-        // ESC tuşuna basınca kapat
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && sqlPopup.classList.contains('active')) {
-                closePopup();
-            }
-        });
-    }
-});
 </script>
 {% endblock %}

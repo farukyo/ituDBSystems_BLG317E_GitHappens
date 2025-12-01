@@ -11,7 +11,7 @@
     <h1>{{ title | default("All Movies") }}</h1>
 
     <div class="controls">
-        <form action="{{ url_for('movies') }}" method="get" style="display: flex; gap: 10px; width: 100%;">
+        <form action="{{ url_for('movie.movies') }}" method="get" style="display: flex; gap: 10px; width: 100%;">
             <select id="genre" name="genre">
                 <option value="">Select Genre</option>
                 <option value="Action">Action</option>
@@ -32,7 +32,7 @@
         {% for movie in items %}
         <div class="movie-item">
             <h3 class="movie-title">
-                <a href="{{ url_for('movie', movie_id=movie.movieId) }}">
+                <a href="{{ url_for('movie.movie', movie_id=movie.movieId) }}">
                     {{ movie.movieTitle }} ({{ movie.titleType }})
                 </a>
             </h3>

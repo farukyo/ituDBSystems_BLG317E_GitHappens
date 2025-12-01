@@ -20,13 +20,13 @@
 
     <div id="sidebar" class="sidebar" role="navigation" aria-label="Main navigation">
         <a href="javascript:void(0)" class="closebtn" id="closeMenuBtn" aria-label="Close menu">×</a>
-        <a href="{{ url_for('index') }}">🏠 Home</a>
-        <a href="{{ url_for('movies') }}">🎬 Movies</a>
-        <a href="{{ url_for('series') }}">📺 Series</a>
-        <a href="{{ url_for('episodes') }}">📹 Episodes</a>
-        <a href="{{ url_for('celebrities') }}">⭐ Celebrities</a>
-        <a href="{{ url_for('recommend') }}">💡 Recommend</a>
-        <a href="{{ url_for('quiz') }}">❓ Quizes</a>
+        <a href="{{ url_for('main.index') }}">🏠 Home</a>
+        <a href="{{ url_for('movie.movies') }}">🎬 Movies</a>
+        <a href="{{ url_for('series.series') }}">📺 Series</a>
+        <a href="{{ url_for('episode.episodes') }}">📹 Episodes</a>
+        <a href="{{ url_for('celebrity.celebrities') }}">⭐ Celebrities</a>
+        <a href="{{ url_for('main.recommend') }}">💡 Recommend</a>
+        <a href="{{ url_for('main.quiz') }}">❓ Quizes</a>
     </div>
 
     <div id="main-content" class="main-content">
@@ -34,14 +34,14 @@
             <div class="container nav-row">
                 <div class="brand">
                     <button class="menu-btn" id="openMenuBtn" aria-label="Open menu">☰</button>
-                    <a href="{{ url_for('index') }}" class="brand-link">
+                    <a href="{{ url_for('main.index') }}" class="brand-link">
                         <img src="{{ url_for('static', filename='img/beemd.png') }}" alt="BeeMD Logo"
                             class="brand-logo">
                         <span>BeeMD</span>
                     </a>
                 </div>
 
-                <form class="search" action="{{ url_for('movies') }}" method="get" role="search">
+                <form class="search" action="{{ url_for('movie.movies') }}" method="get" role="search">
                     <input type="search" name="q" placeholder="Search..." aria-label="Search movies and series">
                     <button type="submit" aria-label="Submit search">Search</button>
                 </form>
@@ -49,23 +49,23 @@
                 <div class="header-user-links">
                     {% block header_user_links %}
                     <div class="about-link">
-                        <a href="{{ url_for('about') }}" title="About Us" aria-label="About Us">ℹ️</a>
+                        <a href="{{ url_for('main.about') }}" title="About Us" aria-label="About Us">ℹ️</a>
                     </div>
                     {% if current_user.is_authenticated %}
 
                     <div class="user-link">
-                        <a href="{{ url_for('suggest') }}" title="suggest" aria-label="Suggestions">🗳️</a>
+                        <a href="{{ url_for('main.suggest') }}" title="suggest" aria-label="Suggestions">🗳️</a>
                     </div>
                     <div class="user-link">
-                        <a href="{{ url_for('profile') }}" title="Profile" aria-label="View profile">👤</a>
+                        <a href="{{ url_for('user.profile') }}" title="Profile" aria-label="View profile">👤</a>
                     </div>
                     <div class="user-link">
-                        <a href="{{ url_for('logout') }}" title="Logout" aria-label="Logout">Logout</a>
+                        <a href="{{ url_for('auth.logout') }}" title="Logout" aria-label="Logout">Logout</a>
                     </div>
-                    
+
                     {% else %}
                     <div class="user-link">
-                        <a href="{{ url_for('login') }}" title="Login / Sign Up" aria-label="Login or Sign Up">
+                        <a href="{{ url_for('auth.login') }}" title="Login / Sign Up" aria-label="Login or Sign Up">
                             👤 Login
                         </a>
                     </div>
@@ -94,7 +94,7 @@
     <footer class="site-footer">
         <div class="container">
             <div class="footer-brand-section">
-                <a class="brand-footer" href="{{ url_for('index') }}">BeeMD</a>
+                <a class="brand-footer" href="{{ url_for('main.index') }}">BeeMD</a>
                 <p class="muted">Discover movies, series and the people behind them. A course project by ITU BLG317E.
                 </p>
             </div>
@@ -104,26 +104,26 @@
                 <div class="footer-col footer-links">
                     <h4>Explore Data</h4>
                     <ul>
-                        <li><a href="{{ url_for('movies') }}">Movies</a></li>
-                        <li><a href="{{ url_for('series') }}">Series</a></li>
-                        <li><a href="{{ url_for('celebrities') }}">Celebrities</a></li>
+                        <li><a href="{{ url_for('movie.movies') }}">Movies</a></li>
+                        <li><a href="{{ url_for('series.series') }}">Series</a></li>
+                        <li><a href="{{ url_for('celebrity.celebrities') }}">Celebrities</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col footer-user">
                     <h4>Explore As User</h4>
                     <ul>
-                        <li><a href="{{ url_for('profile') }}">User</a></li>
-                        <li><a href="{{ url_for('quiz') }}">Quizes</a></li>
-                        <li><a href="{{ url_for('recommend') }}">Recommendations</a></li>
+                        <li><a href="{{ url_for('user.profile') }}">User</a></li>
+                        <li><a href="{{ url_for('main.quiz') }}">Quizes</a></li>
+                        <li><a href="{{ url_for('main.recommend') }}">Recommendations</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-col footer-about">
                     <h4>About & Contact</h4>
                     <ul>
-                        <li><a href="{{ url_for('about') }}">About</a></li>
-                        <li><a href="{{ url_for('suggest') }}">Suggestions</a></li>
+                        <li><a href="{{ url_for('main.about') }}">About</a></li>
+                        <li><a href="{{ url_for('main.suggest') }}">Suggestions</a></li>
                     </ul>
                 </div>
             </div>
