@@ -16,3 +16,4 @@ instance/       # Flask instance klasörü (yerel ayarlar)
 *.csv
 *.env
 
+*.pyc
