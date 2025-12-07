@@ -1,5 +1,10 @@
 from flask import Blueprint
 
-admin_bp = Blueprint("admin", __name__, template_folder="../templates/admin", url_prefix="/admin")
+admin_bp = Blueprint(
+    "admin",
+    __name__,
+    url_prefix="/admin",
+    template_folder="../templates/admin"
+)
 
-from . import routes  # routes dosyasını yükle
+from admin import routes   # blueprint tanımlandıktan sonra import edilir
