@@ -1,0 +1,30 @@
+{% extends "admin_base.html" %}
+{% block content %}
+
+<h1>Delete Person</h1>
+
+<form method="post">
+    <input type="text" name="search" placeholder="Search person...">
+    <button type="submit">Search</button>
+</form>
+
+<table>
+  <thead>
+    <tr><th>ID</th><th>Name</th><th>Delete</th></tr>
+  </thead>
+  <tbody>
+    {% for p in people %}
+    <tr>
+      <td>{{ p.peopleId }}</td>
+      <td>{{ p.primaryName }}</td>
+      <td>
+        <form action="{{ url_for('admin.person_delete', people_id=p.peopleId) }}" method="post">
+          <button type="submit" onclick="return confirm('Delete this person?')">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
