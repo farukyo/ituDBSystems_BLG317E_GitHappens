@@ -112,10 +112,10 @@ def episode_detail(episode_id):
             FROM principals pr
             JOIN people p ON pr.peopleId = p.peopleId
             LEFT JOIN profession prof ON p.professionId = prof.professionId
-            WHERE pr.titleId = :episodeId
+            WHERE pr.titleId = :seriesId
             ORDER BY pr.category
         """
-        cast_result = conn.execute(text(cast_sql), {"episodeId": episode_id})
+        cast_result = conn.execute(text(cast_sql), {"seriesId": episode.seriesId})
         cast = cast_result.fetchall()
     
     return render_template("episode.html", 
