@@ -116,7 +116,57 @@ def episode_detail(episode_id):
             ORDER BY pr.category
         """
         cast_result = conn.execute(text(cast_sql), {"seriesId": episode.seriesId})
-        cast = cast_result.fetchall()
+        raw_cast = cast_result.fetchall()
+        
+        # Workaround for corrupted data: parse embedded CSV rows from characters field
+        cast = []
+        if raw_cast:
+            first_row = raw_cast[0]
+            if first_row.characters and '\n' in first_row.characters:
+                # Data is corrupted - parse embedded CSV
+                import re
+                lines = first_row.characters.replace('\r\n', '\n').split('\n')
+                
+                # First entry is the actual first character
+                first_char = lines[0] if lines else None
+                cast.append({
+                    'peopleId': first_row.peopleId,
+                    'primaryName': first_row.primaryName,
+                    'category': first_row.category,
+                    'characters': first_char,
+                    'professionName': first_row.professionName
+                })
+                
+                # Parse remaining lines as CSV rows for the same series
+                series_id = episode.seriesId
+                for line in lines[1:]:
+                    if line.startswith(series_id + ','):
+                        # Parse CSV: titleId,ordering,peopleId,category,job,characters
+                        parts = line.split(',', 5)
+                        if len(parts) >= 6:
+                            char_value = parts[5].strip('"').replace('["', '').replace('"]', '')
+                            # Get person name from database
+                            person_sql = text("SELECT primaryName FROM people WHERE peopleId = :pid")
+                            person_result = conn.execute(person_sql, {"pid": parts[2]})
+                            person = person_result.fetchone()
+                            if person:
+                                cast.append({
+                                    'peopleId': parts[2],
+                                    'primaryName': person.primaryName,
+                                    'category': parts[3],
+                                    'characters': char_value if char_value != '0' else None,
+                                    'professionName': None
+                                })
+            else:
+                # Data is not corrupted, use as-is
+                for row in raw_cast:
+                    cast.append({
+                        'peopleId': row.peopleId,
+                        'primaryName': row.primaryName,
+                        'category': row.category,
+                        'characters': row.characters,
+                        'professionName': row.professionName
+                    })
     
     return render_template("episode.html", 
                            episode=episode, 
