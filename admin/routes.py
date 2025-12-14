@@ -15,9 +15,15 @@ def admin_home():
 # ------------------------------------------------------------------
 @admin_bp.route("/people/menu")
 def person_menu():
-    return render_template("admin/manage_people.html")
-
-
+    return render_template(
+        "admin/manage_generic.html",
+        title="People",
+        singular="Person",
+        add_route="admin.person_new",
+        edit_route="admin.person_edit_menu",
+        delete_route="admin.person_delete_menu"
+    )
+    
 # ------------------------------------------------------------------
 # NEW PERSON
 # ------------------------------------------------------------------
@@ -80,16 +86,35 @@ def person_edit_menu():
     with engine.connect() as conn:
         if query:
             people = conn.execute(
-                text("SELECT peopleId, primaryName FROM people "
-                     "WHERE primaryName LIKE :q LIMIT 50"),
+                text("""
+                    SELECT peopleId, primaryName
+                    FROM people
+                    WHERE primaryName LIKE :q
+                    LIMIT 50
+                """),
                 {"q": f"%{query}%"}
-            ).fetchall()
+            ).mappings().all()
         else:
             people = conn.execute(
-                text("SELECT peopleId, primaryName FROM people ORDER BY primaryName LIMIT 20")
-            ).fetchall()
+                text("""
+                    SELECT peopleId, primaryName
+                    FROM people
+                    ORDER BY primaryName
+                    LIMIT 20
+                """)
+            ).mappings().all()
 
-    return render_template("edit_person_menu.html", people=people)
+    return render_template(
+        "admin/edit_generic_menu.html",
+        title="Person",
+        singular="Person",
+        items=people,
+        id_field="peopleId",
+        name_field="primaryName",
+        name_label="Name",
+        edit_route="admin.person_edit",
+        id_param="people_id"
+    )
 
 
 # ------------------------------------------------------------------
@@ -102,17 +127,35 @@ def person_delete_menu():
     with engine.connect() as conn:
         if query:
             people = conn.execute(
-                text("SELECT peopleId, primaryName FROM people "
-                     "WHERE primaryName LIKE :q LIMIT 50"),
+                text("""
+                    SELECT peopleId, primaryName
+                    FROM people
+                    WHERE primaryName LIKE :q
+                    LIMIT 50
+                """),
                 {"q": f"%{query}%"}
-            ).fetchall()
+            ).mappings().all()
         else:
             people = conn.execute(
-                text("SELECT peopleId, primaryName FROM people ORDER BY primaryName LIMIT 20")
-            ).fetchall()
+                text("""
+                    SELECT peopleId, primaryName
+                    FROM people
+                    ORDER BY primaryName
+                    LIMIT 20
+                """)
+            ).mappings().all()
 
-    return render_template("delete_person_menu.html", people=people)
-
+    return render_template(
+        "admin/delete_generic_menu.html",
+        title="Person",
+        singular="Person",
+        items=people,
+        id_field="peopleId",
+        name_field="primaryName",
+        name_label="Name",
+        delete_route="admin.person_delete",
+        id_param="people_id"
+    )
 
 # ------------------------------------------------------------------
 # DELETE PERSON
@@ -128,3 +171,202 @@ def person_delete(people_id):
 
     flash("Person deleted!")
     return redirect(url_for("admin.person_delete_menu"))
+
+# ------------------------------------------------------------------
+# MOVIES MENU
+# ------------------------------------------------------------------
+@admin_bp.route("/movies/menu")
+def movie_menu():
+    return render_template(
+        "admin/manage_generic.html",
+        title="Movies",
+        singular="Movie",
+        add_route="admin.movie_new",
+        edit_route="admin.movie_edit_menu",
+        delete_route="admin.movie_delete_menu"
+    )
+    
+# ------------------------------------------------------------------
+# NEW MOVIE
+# ------------------------------------------------------------------
+@admin_bp.route("/movies/new", methods=["GET", "POST"])
+def movie_new():
+    if request.method == "POST":
+        movie_id = request.form["movieId"]
+        title = request.form["movieTitle"]
+        title_type = request.form.get("titleType")
+        start_year = request.form.get("startYear")
+        runtime = request.form.get("runtimeMinutes")
+        is_adult = 1 if request.form.get("isAdult") else 0
+
+        with engine.connect() as conn:
+            conn.execute(
+                text("""
+                    INSERT INTO movies
+                    (movieId, movieTitle, titleType, startYear, runtimeMinutes, isAdult)
+                    VALUES (:id, :t, :tt, :sy, :rt, :ia)
+                """),
+                {
+                    "id": movie_id,
+                    "t": title,
+                    "tt": title_type,
+                    "sy": start_year or None,
+                    "rt": runtime or None,
+                    "ia": is_adult
+                }
+            )
+            conn.commit()
+
+        flash("New movie added!")
+
+    return render_template("movie_form.html", movie=None)
+
+
+# ------------------------------------------------------------------
+# EDIT MOVIE
+# ------------------------------------------------------------------
+@admin_bp.route("/movies/edit/<movie_id>", methods=["GET", "POST"])
+def movie_edit(movie_id):
+
+    with engine.connect() as conn:
+        result = conn.execute(
+            text("""
+                SELECT movieId, movieTitle, titleType,
+                       startYear, runtimeMinutes, isAdult
+                FROM movies
+                WHERE movieId = :id
+            """),
+            {"id": movie_id}
+        )
+        movie = result.fetchone()
+
+    if request.method == "POST":
+        title = request.form["movieTitle"]
+        title_type = request.form.get("titleType")
+        start_year = request.form.get("startYear")
+        runtime = request.form.get("runtimeMinutes")
+        is_adult = 1 if request.form.get("isAdult") else 0
+
+        with engine.connect() as conn:
+            conn.execute(
+                text("""
+                    UPDATE movies
+                    SET movieTitle = :t,
+                        titleType = :tt,
+                        startYear = :sy,
+                        runtimeMinutes = :rt,
+                        isAdult = :ia
+                    WHERE movieId = :id
+                """),
+                {
+                    "t": title,
+                    "tt": title_type,
+                    "sy": start_year or None,
+                    "rt": runtime or None,
+                    "ia": is_adult,
+                    "id": movie_id
+                }
+            )
+            conn.commit()
+
+        flash("Movie updated!")
+        return redirect(url_for("admin.movie_edit_menu"))
+
+    return render_template("movie_form.html", movie=movie)
+
+
+# ------------------------------------------------------------------
+# EDIT MOVIE MENU (Search)
+# ------------------------------------------------------------------
+@admin_bp.route("/movies/edit", methods=["GET", "POST"])
+def movie_edit_menu():
+    query = request.form.get("search")
+
+    with engine.connect() as conn:
+        if query:
+            movies = conn.execute(
+                text("""
+                    SELECT movieId, movieTitle
+                    FROM movies
+                    WHERE movieTitle LIKE :q
+                    LIMIT 50
+                """),
+                {"q": f"%{query}%"}
+            ).mappings().all()
+        else:
+            movies = conn.execute(
+                text("""
+                    SELECT movieId, movieTitle
+                    FROM movies
+                    ORDER BY movieTitle
+                    LIMIT 20
+                """)
+            ).mappings().all()
+
+    return render_template(
+        "admin/edit_generic_menu.html",
+        title="Movie",
+        singular="Movie",
+        items=movies,
+        id_field="movieId",
+        name_field="movieTitle",
+        name_label="Title",
+        edit_route="admin.movie_edit",
+        id_param="movie_id"
+    )
+
+
+# ------------------------------------------------------------------
+# DELETE MOVIE MENU (Search)
+# ------------------------------------------------------------------
+@admin_bp.route("/movies/delete", methods=["GET", "POST"])
+def movie_delete_menu():
+    query = request.form.get("search")
+
+    with engine.connect() as conn:
+        if query:
+            movies = conn.execute(
+                text("""
+                    SELECT movieId, movieTitle
+                    FROM movies
+                    WHERE movieTitle LIKE :q
+                    LIMIT 50
+                """),
+                {"q": f"%{query}%"}
+            ).mappings().all()
+        else:
+            movies = conn.execute(
+                text("""
+                    SELECT movieId, movieTitle
+                    FROM movies
+                    ORDER BY movieTitle
+                    LIMIT 20
+                """)
+            ).mappings().all()
+
+    return render_template(
+        "admin/delete_generic_menu.html",
+        title="Movie",
+        singular="Movie",
+        items=movies,
+        id_field="movieId",
+        name_field="movieTitle",
+        name_label="Title",
+        delete_route="admin.movie_delete",
+        id_param="movie_id"
+    )
+
+# ------------------------------------------------------------------
+# DELETE MOVIE
+# ------------------------------------------------------------------
+@admin_bp.route("/movies/delete/<movie_id>", methods=["POST"])
+def movie_delete(movie_id):
+    with engine.connect() as conn:
+        conn.execute(
+            text("DELETE FROM movies WHERE movieId = :id"),
+            {"id": movie_id}
+        )
+        conn.commit()
+
+    flash("Movie deleted!")
+    return redirect(url_for("admin.movie_delete_menu"))

@@ -23,7 +23,7 @@
 
         <a href="{{ url_for('admin.admin_home') }}">🏠 Dashboard</a>
         <a href="{{ url_for('admin.person_menu') }}">👤 Manage People</a>
-        <a href="#">🎬 Manage Movies (coming)</a>
+        <a href="{{ url_for('admin.movie_menu') }}">🎬 Manage Movies</a>
         <a href="#">📺 Manage Series (coming)</a>
         <a href="#">⭐ Manage Celebrities (coming)</a>
     </div>
@@ -50,4 +50,5 @@
     {% block scripts %}{% endblock %}
 
 </body>
+
 </html>
