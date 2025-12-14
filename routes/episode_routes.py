@@ -72,107 +72,88 @@ def episodes():
 @episode_bp.route("/episode/<episode_id>")
 def episode_detail(episode_id):
     with engine.connect() as conn:
+        # Tek karmaşık sorgu ile tüm bilgileri çek
+        # Episode + Series + Stats (scalar subquery) + Genres + Cast
         sql = """
-            SELECT e.episodeId, e.epTitle, e.runtimeMinutes, 
-                   e.seriesId, e.seNumber, e.epNumber,
-                   s.seriesTitle, s.startYear, s.endYear
+            SELECT 
+                e.episodeId, e.epTitle, e.runtimeMinutes, 
+                e.seriesId, e.seNumber, e.epNumber,
+                s.seriesTitle, s.startYear, s.endYear,
+                (SELECT COUNT(DISTINCT e2.seNumber) FROM Episode e2 WHERE e2.seriesId = e.seriesId) AS total_seasons,
+                (SELECT COUNT(*) FROM Episode e3 WHERE e3.seriesId = e.seriesId) AS total_episodes,
+                g.genreName,
+                p.peopleId, p.primaryName, pr.category, pr.characters, prof.professionName
             FROM Episode e
             LEFT JOIN Series s ON e.seriesId = s.seriesId
+            LEFT JOIN Series_Genres sg ON s.seriesId = sg.seriesId
+            LEFT JOIN genres g ON sg.genreId = g.genreId
+            LEFT JOIN principals pr ON pr.titleId = e.seriesId
+            LEFT JOIN people p ON pr.peopleId = p.peopleId
+            LEFT JOIN profession prof ON p.professionId = prof.professionId
             WHERE e.episodeId = :episodeId
+            ORDER BY pr.category, p.primaryName
         """
-        result = conn.execute(text(sql), {"episodeId": episode_id})
-        episode = result.fetchone()
         
-        if not episode:
+        display_sql = sql.strip().replace(':episodeId', f"'{episode_id}'")
+        result = conn.execute(text(sql), {"episodeId": episode_id})
+        rows = result.fetchall()
+        
+        if not rows:
             flash("Episode not found.")
             return redirect(url_for('episode.episodes'))
         
-        genres_sql = """
-            SELECT g.genreName
-            FROM Series_Genres sg
-            JOIN genres g ON sg.genreId = g.genreId
-            WHERE sg.seriesId = :seriesId
-        """
-        genres_result = conn.execute(text(genres_sql), {"seriesId": episode.seriesId})
-        genres = [row.genreName for row in genres_result.fetchall()]
+        # İlk satırdan episode ve stats bilgilerini al
+        first_row = rows[0]
+        episode = {
+            'episodeId': first_row.episodeId,
+            'epTitle': first_row.epTitle,
+            'runtimeMinutes': first_row.runtimeMinutes,
+            'seriesId': first_row.seriesId,
+            'seNumber': first_row.seNumber,
+            'epNumber': first_row.epNumber,
+            'seriesTitle': first_row.seriesTitle,
+            'startYear': first_row.startYear,
+            'endYear': first_row.endYear
+        }
         
-        stats_sql = """
-            SELECT 
-                COUNT(DISTINCT seNumber) as total_seasons,
-                COUNT(*) as total_episodes
-            FROM Episode
-            WHERE seriesId = :seriesId
-        """
-        stats_result = conn.execute(text(stats_sql), {"seriesId": episode.seriesId})
-        stats = stats_result.fetchone()
+        stats = {
+            'total_seasons': first_row.total_seasons,
+            'total_episodes': first_row.total_episodes
+        }
         
-        cast_sql = """
-            SELECT p.peopleId, p.primaryName, pr.category, pr.characters,
-                   prof.professionName
-            FROM principals pr
-            JOIN people p ON pr.peopleId = p.peopleId
-            LEFT JOIN profession prof ON p.professionId = prof.professionId
-            WHERE pr.titleId = :seriesId
-            ORDER BY pr.category
-        """
-        cast_result = conn.execute(text(cast_sql), {"seriesId": episode.seriesId})
-        raw_cast = cast_result.fetchall()
+        # Unique genres listesi çıkar
+        genres = []
+        seen_genres = set()
+        for row in rows:
+            if row.genreName and row.genreName not in seen_genres:
+                genres.append(row.genreName)
+                seen_genres.add(row.genreName)
         
-        # Workaround for corrupted data: parse embedded CSV rows from characters field
+        # Unique cast listesi çıkar
         cast = []
-        if raw_cast:
-            first_row = raw_cast[0]
-            if first_row.characters and '\n' in first_row.characters:
-                # Data is corrupted - parse embedded CSV
-                import re
-                lines = first_row.characters.replace('\r\n', '\n').split('\n')
+        seen_people = set()
+        for row in rows:
+            if row.peopleId and row.peopleId not in seen_people:
+                # Corrupted data kontrolü
+                characters = row.characters
+                if characters and '\n' in characters:
+                    characters = characters.split('\n')[0]
                 
-                # First entry is the actual first character
-                first_char = lines[0] if lines else None
                 cast.append({
-                    'peopleId': first_row.peopleId,
-                    'primaryName': first_row.primaryName,
-                    'category': first_row.category,
-                    'characters': first_char,
-                    'professionName': first_row.professionName
+                    'peopleId': row.peopleId,
+                    'primaryName': row.primaryName,
+                    'category': row.category,
+                    'characters': characters,
+                    'professionName': row.professionName
                 })
-                
-                # Parse remaining lines as CSV rows for the same series
-                series_id = episode.seriesId
-                for line in lines[1:]:
-                    if line.startswith(series_id + ','):
-                        # Parse CSV: titleId,ordering,peopleId,category,job,characters
-                        parts = line.split(',', 5)
-                        if len(parts) >= 6:
-                            char_value = parts[5].strip('"').replace('["', '').replace('"]', '')
-                            # Get person name from database
-                            person_sql = text("SELECT primaryName FROM people WHERE peopleId = :pid")
-                            person_result = conn.execute(person_sql, {"pid": parts[2]})
-                            person = person_result.fetchone()
-                            if person:
-                                cast.append({
-                                    'peopleId': parts[2],
-                                    'primaryName': person.primaryName,
-                                    'category': parts[3],
-                                    'characters': char_value if char_value != '0' else None,
-                                    'professionName': None
-                                })
-            else:
-                # Data is not corrupted, use as-is
-                for row in raw_cast:
-                    cast.append({
-                        'peopleId': row.peopleId,
-                        'primaryName': row.primaryName,
-                        'category': row.category,
-                        'characters': row.characters,
-                        'professionName': row.professionName
-                    })
+                seen_people.add(row.peopleId)
     
     return render_template("episode.html", 
                            episode=episode, 
                            genres=genres,
                            stats=stats,
-                           cast=cast)
+                           cast=cast,
+                           sql_query=display_sql)
 
 
 @episode_bp.route("/characters")
