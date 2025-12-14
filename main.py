@@ -180,22 +180,11 @@ def series():
             params["sYear"] = int(start_year)
 
         # -- End Year --
-        # DİKKAT: Verilerinde endYear genelde NULL görünüyor.
-        # Filtre seçildiğinde sadece DOLU olanlar ve tarihi uyanlar gelir.
+        # DİKKAT: Verilerinde endYear genelde NULL. 
+        # endYear filtresi seçildiğinde: NULL olanlar (devam edenler) + o yıla kadar bitenler
         if end_year and end_year.isdigit():
-            sql += " AND endYear >= :eYear"
+            sql += " AND (endYear IS NULL OR endYear <= :eYear)"
             params["eYear"] = int(end_year)
-
-        # -- Runtime --
-        # JSON verinde runtimeMinutes 1947, 1955 gibi garip (yıl gibi) sayılar var.
-        # Bu filtre mantıken doğru çalışır ama verin bozuk olabilir.
-        if runtime:
-            if runtime == "lt30":
-                sql += " AND runtimeMinutes < 30"
-            elif runtime == "30-60":
-                sql += " AND runtimeMinutes BETWEEN 30 AND 60"
-            elif runtime == "gt60":
-                sql += " AND runtimeMinutes > 60"
 
         # -- Adult Content --
         if is_adult is not None and is_adult != "":
