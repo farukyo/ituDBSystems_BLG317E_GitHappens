@@ -1,143 +1,213 @@
-/* --- Series Page Styling (Unified with Movies & Celebrities) --- */
+/* -----------------------------------------------------------------------
+   SERIES PAGE COMPLETE STYLES (Movies & Episodes tarzında)
+------------------------------------------------------------------------*/
 
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 24px;
-}
-
+/* --- GENEL AYARLAR --- */
 .episodes-page {
-    width: 100%;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-}
-
-.episodes-page h1 {
-    margin-bottom: 20px;
+    padding: 20px 0;
     color: #fff;
-    font-size: 2rem;
-    font-weight: 700;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-.episodes-page .sub-title {
-    color: #9ca3af;
+h1 {
+    margin-bottom: 10px;
+    font-size: 2rem;
+    color: #fff;
+}
+
+.sub-title {
+    color: #cfe6ff;
     margin-bottom: 30px;
     font-size: 1rem;
+    opacity: 0.8;
 }
 
-/* --- Search Bar --- */
+hr {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 30px 0;
+}
+
+/* -----------------------------------------------------------------------
+   1. FİLTRELEME ALANI (ÜST KISIM)
+------------------------------------------------------------------------*/
+.search-form {
+    width: 100%;
+}
+
+/* Arama Kutusu ve Filtreler Grid */
+.filter-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr 0.8fr;
+    gap: 15px;
+    align-items: end;
+}
+
 .search-box {
+    grid-column: 1 / 2;
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    align-items: stretch;
 }
 
 .search-box input {
     flex: 1;
-    padding: 12px 16px;
+    padding: 10px 12px;
+    background: #1a1f2e;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 6px;
-    border: none;
-    background: #1f2937;
     color: #fff;
-    font-size: 1rem;
-    border: 1px solid #374151;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    height: 42px;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #e9601a;
 }
 
 .search-box input::placeholder {
-    color: #6b7280;
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .search-box button {
-    padding: 12px 28px;
+    background: #e9601a;
+    color: white;
     border: none;
-    background: var(--accent, #f97316);
-    color: #fff;
+    padding: 0 20px;
     border-radius: 6px;
     cursor: pointer;
-    font-weight: bold;
-    font-size: 1rem;
-    transition: background 0.2s ease;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.2s;
+    height: 42px;
 }
 
 .search-box button:hover {
-    background: #ea580c;
+    background: #d35415;
 }
 
-/* --- Filters Area --- */
-.filters {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-bottom: 30px;
-    background: rgba(31, 41, 55, 0.5);
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #374151;
+/* Filter Group Styling */
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.filters select,
-.filters input {
+.filter-group label {
+    font-size: 0.75rem;
+    color: #cfe6ff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-group select {
     width: 100%;
-    padding: 10px;
+    padding: 10px 12px;
+    background: #1a1f2e;
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 6px;
-    border: 1px solid #4b5563;
-    background: #111827;
     color: #fff;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    height: 42px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 40px;
     cursor: pointer;
-    font-size: 0.95rem;
 }
 
-.filters input::placeholder {
-    color: #6b7280;
+.filter-group select:focus {
+    outline: none;
+    border-color: #e9601a;
 }
 
-.filters input[type="number"] {
-    cursor: text;
+.filter-group select option {
+    background: #1a1f2e;
+    color: #fff;
 }
 
 /* Apply Filters Button */
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+    height: 42px;
+    grid-column: 6 / 7;
+}
+
 #filter-btn {
-    background: var(--accent, #f97316);
+    flex: 1;
+    background: #e9601a;
     color: white;
-    font-weight: bold;
     border: none;
+    padding: 0 20px;
     border-radius: 6px;
     cursor: pointer;
-    transition: background 0.2s ease;
-    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: background 0.2s;
 }
 
 #filter-btn:hover {
-    background: #ea580c;
+    background: #d35415;
 }
 
-hr {
-    margin: 20px 0;
-    border: none;
-    border-top: 1px solid #374151;
+/* -----------------------------------------------------------------------
+   2. SERIES TABLE YAPISI (ALT KISIM)
+------------------------------------------------------------------------*/
+
+/* Table Header */
+.episode-table-header {
+    display: grid;
+    grid-template-columns: 2fr 120px 120px 120px 150px;
+    gap: 20px;
+    align-items: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    font-weight: 700;
+    color: #cfe6ff;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* --- Series List --- */
+/* Series List */
 .series-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    display: contents;
 }
 
+/* Series Items */
 .series-item {
-    background: #1f2937;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: transform 0.2s, background 0.2s;
+    display: grid;
+    grid-template-columns: 2fr 120px 120px 120px 150px;
+    gap: 20px;
+    align-items: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.series-item:last-child {
+    border-bottom: none;
+    border-radius: 0 0 8px 8px;
 }
 
 .series-item:hover {
-    background: #273249;
-    transform: translateY(-2px);
-    border-color: rgba(249, 115, 22, 0.3);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-1px);
 }
 
+/* Series Title Link */
 .series-title {
     display: flex;
     align-items: center;
@@ -145,14 +215,19 @@ hr {
 }
 
 .series-title a {
-    color: var(--accent, #f97316);
+    color: #e9601a;
     text-decoration: none;
-    font-size: 1.2rem;
     font-weight: 600;
+    font-size: 1rem;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .series-title a:hover {
     text-decoration: underline;
+    color: #ff7a3d;
 }
 
 .series-title span {
@@ -160,73 +235,162 @@ hr {
     color: #fff;
     padding: 2px 6px;
     border-radius: 3px;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: bold;
+    white-space: nowrap;
 }
 
+/* Meta Information */
 .series-meta {
-    margin-top: 8px;
-    color: #9ca3af;
+    color: #ccc;
     font-size: 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
 }
 
+.series-meta > span {
+    white-space: nowrap;
+}
+
+/* No Results */
 .no-results {
     text-align: center;
-    color: rgba(255,255,255,0.5);
-    margin-top: 40px;
-    padding: 40px 20px;
+    padding: 60px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    color: #888;
 }
 
-/* --- Responsive Design --- */
-@media (max-width: 768px) {
-    .episodes-page {
-        padding: 12px;
-    }
+.no-results p {
+    font-size: 1.2rem;
+    color: #fff;
+    margin-bottom: 5px;
+}
 
-    .episodes-page h1 {
-        font-size: 1.5rem;
-    }
-
-    .filters {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 8px;
-        padding: 12px;
+/* -----------------------------------------------------------------------
+   3. MOBİL UYUMLULUK
+------------------------------------------------------------------------*/
+@media (max-width: 1024px) {
+    /* Filtreleri daralt */
+    .filter-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 12px;
     }
 
     .search-box {
-        flex-direction: column;
+        grid-column: 1 / -1;
     }
 
-    .search-box input,
-    .search-box button {
-        width: 100%;
+    .filter-buttons {
+        grid-column: 1 / -1;
+        height: auto;
+    }
+
+    /* Table grid'i 3 sütuna düşür */
+    .episode-table-header,
+    .series-item {
+        grid-template-columns: 1fr 100px 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    /* Filtreleri vertical yap */
+    .filter-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .search-box {
+        grid-column: 1 / -1;
+    }
+
+    .filter-buttons {
+        grid-column: 1 / -1;
+    }
+
+    /* Tabloyu kart görünümüne geç */
+    .episode-table-header {
+        display: none;
     }
 
     .series-item {
-        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        margin-bottom: 12px;
+    }
+
+    .series-item:last-child {
+        border-radius: 8px;
+        margin-bottom: 0;
+    }
+
+    .series-title {
+        width: 100%;
+        justify-content: space-between;
     }
 
     .series-title a {
-        font-size: 1rem;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+    }
+
+    .series-meta {
+        width: 100%;
+        font-size: 0.85rem;
+    }
+
+    .series-meta::before {
+        content: "Details: ";
+        color: #cfe6ff;
+        font-weight: 600;
+        margin-right: 4px;
     }
 }
 
 @media (max-width: 480px) {
-    .container {
-        padding: 12px;
-    }
-
-    .episodes-page h1 {
+    h1 {
         font-size: 1.3rem;
-        margin-bottom: 15px;
+        margin-bottom: 8px;
     }
 
-    .filters {
+    .filter-grid {
         grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .search-box {
+        gap: 8px;
+    }
+
+    .search-box input,
+    .search-box button {
+        height: 40px;
+        font-size: 13px;
     }
 
     .series-item {
         padding: 12px;
+        gap: 6px;
+    }
+
+    .series-title {
+        flex-wrap: wrap;
+    }
+
+    .series-title a {
+        font-size: 0.95rem;
     }
 
     .series-meta {
