@@ -14,7 +14,7 @@
         <p class="sub-title">Browse and filter the complete TV series database</p>
 
         <!-- SEARCH / FILTERS -->
-        <form action="{{ url_for('series') }}" method="GET">
+        <form action="{{ url_for('series.series') }}" method="GET">
 
             <!-- search-box -->
             <div class="search-box">
@@ -122,7 +122,7 @@
                     <div class="series-item">
 
                         <div class="series-title">
-                            <a href="{{ url_for('serie_detail', series_id=row.seriesId) }}">
+                            <a href="{{ url_for('series.serie_detail', series_id=row.seriesId) }}">
                                 {{ row.seriesTitle }}
                             </a>
 
