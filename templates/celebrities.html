@@ -488,7 +488,7 @@
     <div class="celebrity-list">
         {% if items %}
         {% for person in items %}
-        <a href="#" class="celebrity-item-row">
+        <a href="{{ url_for('celebrity.celebrity_detail', people_id=person.peopleId) }}" class="celebrity-item-row">
 
             <div class="info-left">
                 <h3 class="name">{{ person.primaryName }}</h3>

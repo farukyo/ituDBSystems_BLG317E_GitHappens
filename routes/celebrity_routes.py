@@ -1,7 +1,7 @@
 # Celebrity Routes Module
 # Handles celebrity listing with search, profession filtering, and sorting options.
 
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from sqlalchemy import text
 from database.db import engine
 
@@ -97,3 +97,22 @@ def celebrities():
                            title=title, 
                            selected_professions=profession_list,
                            sql_query=display_sql)
+
+@celebrity_bp.route("/celebrity/<people_id>")
+def celebrity_detail(people_id):
+    with engine.connect() as conn:
+        # Kişiyi ve mesleğini ID'ye göre çeken sorgu
+        sql = """
+            SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, pr.professionName 
+            FROM people p
+            LEFT JOIN profession pr ON p.professionId = pr.professionId
+            WHERE p.peopleId = :id
+        """
+        result = conn.execute(text(sql), {"id": people_id})
+        person = result.fetchone()
+
+        if not person:
+            flash("Celebrity not found.")
+            return redirect(url_for('celebrity.celebrities'))
+
+    return render_template("celebrity.html", person=person)
