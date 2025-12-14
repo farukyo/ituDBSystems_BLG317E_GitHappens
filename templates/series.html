@@ -18,9 +18,9 @@
 
             <!-- search-box -->
             <div class="search-box">
-                <input type="text" name="title" placeholder="Search series..."
-                       value="{{ request.args.get('title', '') }}">
-                <button type="submit">Search</button>
+                <input type="text" id="series-search" name="q" placeholder="Search series..."
+                       value="{{ request.args.get('q', '') }}">
+                <button id="series-search-btn" type="submit">Search</button>
             </div>
 
             <!-- filters -->
