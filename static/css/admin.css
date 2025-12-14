@@ -1,0 +1,105 @@
+/* -----------------------------------------
+   ADMIN PANEL — Clean, Light, Minimal
+------------------------------------------*/
+
+/* Color palette (light mode) */
+:root {
+    --bg: #f7f7f7;
+    --panel: #ffffff;
+    --text: #1a1a1a;
+    --accent: #e9601a;
+    --muted: #a0a0a0;
+}
+
+/* Reset */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+}
+
+/* -----------------------------------------
+   SIDEBAR
+------------------------------------------*/
+.admin-sidebar {
+    width: 240px;
+    background: var(--panel);
+    height: 100vh;
+    border-right: 1px solid #ddd;
+    padding-top: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    padding: 12px 20px;
+    font-weight: bold;
+    color: var(--accent);
+    font-size: 1.1rem;
+}
+
+.admin-sidebar a {
+    display: block;
+    padding: 12px 20px;
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s, padding-left 0.2s;
+}
+
+.admin-sidebar a:hover {
+    background: rgba(233, 96, 26, 0.15);
+    padding-left: 28px;
+}
+
+/* -----------------------------------------
+   MAIN AREA
+------------------------------------------*/
+.admin-main {
+    flex: 1;
+    margin-left: 240px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* -----------------------------------------
+   HEADER
+------------------------------------------*/
+.admin-header {
+    background: var(--panel);
+    padding: 14px 24px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo {
+    width: 36px;
+    height: 36px;
+}
+
+.admin-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+/* -----------------------------------------
+   CONTENT
+------------------------------------------*/
+.admin-content {
+    padding: 30px;
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/beemd.png') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div id="admin-sidebar" class="admin-sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">Admin Menu</span>
+        </div>
+
+        <a href="{{ url_for('admin.admin_home') }}">🏠 Dashboard</a>
+        <a href="{{ url_for('admin.person_menu') }}">👤 Manage People</a>
+        <a href="#">🎬 Manage Movies (coming)</a>
+        <a href="#">📺 Manage Series (coming)</a>
+        <a href="#">⭐ Manage Celebrities (coming)</a>
+    </div>
+
+    <div class="admin-main">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div class="admin-brand">
+                <a href="{{ url_for('main.index') }}" class="brand-link">
+                    <img src="{{ url_for('static', filename='img/beemd.png') }}" class="brand-logo" alt="BeeMD Logo">
+                </a>
+                <span class="admin-title">Admin Dashboard</span>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-content">
+            {% block content %}{% endblock %}
+        </main>
+
+    </div>
+
+    {% block scripts %}{% endblock %}
+
+</body>
+</html>

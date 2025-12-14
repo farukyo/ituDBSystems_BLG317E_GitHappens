@@ -1,3 +1,11 @@
+# ==============================================================================
+# genre_foreign_key_mapper.py - Genre Foreign Key Converter
+# ==============================================================================
+# This script converts text-based genre values in movies and series CSV files
+# to genre_id (foreign key) values from genre.csv.
+# Maps genre strings to IDs for database relationships.
+# ==============================================================================
+
 import os
 import pandas as pd
 

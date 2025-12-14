@@ -1,3 +1,12 @@
+# ==============================================================================
+# column_dropper.py - Unnecessary Column Remover Script
+# ==============================================================================
+# This script removes unnecessary columns from movies and series CSV files.
+# - From both files: originalTitle column
+# - From movies only: endYear column (meaningless for movies)
+# Used to simplify the database schema.
+# ==============================================================================
+
 import os
 import pandas as pd
 

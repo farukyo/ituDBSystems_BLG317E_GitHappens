@@ -371,10 +371,12 @@
                     <div class="cast-name">
                         <a href="/celebrities?q={{ person.primaryName }}">{{ person.primaryName }}</a>
                     </div>
-                    <div class="cast-role">{{ person.category or 'Unknown role' }}</div>
-                    {% if person.characters and person.characters != '\\N' %}
-                    <div class="cast-character">as {{ person.characters | replace('[', '') | replace(']', '') |
-                        replace('"', '') }}</div>
+                    <div class="cast-role">{{ person.category or person['category'] or 'Unknown role' }}</div>
+                    {% set chars = person.characters if person.characters is string else (person['characters'] if
+                    person['characters'] else None) %}
+                    {% if chars and chars != '\\N' and chars != '0' %}
+                    <div class="cast-character">as {{ chars | replace('[', '') | replace(']', '') | replace('"', '') }}
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -387,7 +389,7 @@
 
     <!-- Action Buttons -->
     <div class="episode-actions">
-        <a href="{{ url_for('episodes') }}" class="btn-back">
+        <a href="{{ url_for('episode.episodes') }}" class="btn-back">
             ← Back to Episodes
         </a>
         {% if episode.seriesId %}

@@ -1,3 +1,11 @@
+# ==============================================================================
+# genre_table_builder.py - Genre Table Builder
+# ==============================================================================
+# This script extracts unique genres from title.basics.csv file
+# and creates a separate genre.csv file with genre_id.
+# Generates a genre dimension table for database normalization.
+# ==============================================================================
+
 import os
 import pandas as pd
 

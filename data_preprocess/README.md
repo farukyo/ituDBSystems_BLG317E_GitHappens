@@ -1,152 +1,25 @@
-# Data Preprocess Pipeline
+# Data Preprocessing Scripts
 
-Bu klasördeki script'ler IMDb veri seti benzeri **TSV** dosyalarından başlayıp, proje tarafından kullanılan son **CSV** dosyalarına kadar bir preprocessing pipeline'ı oluşturur.
+This folder contains Python scripts for preprocessing IMDb data before importing into the database.
 
-Aşağıdaki adımlar, elinde ham `.tsv` dosyaları olan birinin bu script'leri **hangi sırayla** çalıştıracağını gösterir.
+## Scripts Overview
 
-> Çalıştırma komutları, proje kök dizininde (repo root) olduğun varsayılarak verilmiştir.
+| Script Name | Description |
+|-------------|-------------|
+| `tsv_to_csv_converter.py` | Converts TSV (Tab-Separated Values) files from IMDb to CSV format. Includes progress indicator for large files and supports batch conversion. |
+| `title_type_splitter.py` | Splits `title.basics.csv` into movies and series based on `titleType`. Movies include: movie, short, tvMovie, video. Series include: tvSeries, tvMiniSeries, tvEpisode, tvPilot, tvShort, tvSpecial. |
+| `genre_table_builder.py` | Extracts unique genres from `title.basics.csv` and creates a separate `genre.csv` with auto-incremented `genre_id`. Used for database normalization. |
+| `genre_foreign_key_mapper.py` | Converts text-based genre values in movies/series CSV files to `genre_id` foreign keys using `genre.csv`. Maps genre strings to IDs for database relationships. |
+| `column_dropper.py` | Removes unnecessary columns from movies and series CSV files. Drops `originalTitle` from both, and `endYear` from movies (meaningless for films). |
+| `empty_cell_filler.py` | Fills empty cells in CSV files with '0' value. Used when default values are required instead of NULL for MySQL import. Designed for missing data in the names table. |
 
----
+## Usage Order
 
-## 1. TSV → CSV dönüşümü
+For proper data preprocessing, run the scripts in the following order:
 
-**Amaç:** `data/` klasöründeki tüm `.tsv` dosyalarını aynı klasörde `.csv`'ye dönüştürmek.
-
-Script: `data_preprocess/tsv2csv.py`
-
-```bash
-python data_preprocess/tsv2csv.py
-```
-
-**Ne üretir?**
-- `data/title.basics.tsv` → `data/title.basics.csv`
-- `data/title.ratings.tsv` → `data/title.ratings.csv`
-- vb. (klasördeki tüm `.tsv` dosyaları için)
-
-Bu adım bittikten sonra **en azından** `data/title.basics.csv` dosyasının oluşmuş olması gerekir.
-
----
-
-## 2. Genre dimension tablosu oluşturma
-
-**Amaç:** `title.basics.csv` içindeki `genres` sütunundan distinct türleri çıkarıp her birine `genre_id` atamak.
-
-Script: `data_preprocess/genre_df.py`
-
-```bash
-python data_preprocess/genre_df.py
-```
-
-**Ne üretir?**
-- `data/genre.csv`
-  - Sütunlar: `genre_id, genre`
-  - Örnek: `1,Action`, `2,Adult`, ...
-
-Bu tablo, veritabanında **genre** dimension tablosu olarak kullanılabilir.
-
----
-
-## 3. Filmleri ve dizileri ayırma
-
-**Amaç:** `title.basics.csv` dosyasını, `titleType` değerlerine göre **filmler** ve **diziler** olarak ikiye ayırmak.
-
-Script: `data_preprocess/type_seperator.py`
-
-```bash
-python data_preprocess/type_seperator.py
-```
-
-**Ne yapar?**
-- `title.basics.csv` dosyasını okur.
-- `titleType` değerlerine göre ayırır:
-  - Filmler (`movies`): `movie`, `short`, `tvMovie`, `video`
-  - Diziler (`series`): `tvSeries`, `tvMiniSeries`, `tvEpisode`, `tvPilot`, `tvShort`, `tvSpecial`
-  - `videoGame` ve diğer tipler **yok sayılır**.
-
-**Ne üretir?**
-- `data/movies.basics.csv`
-- `data/series.basics.csv`
-
----
-
-## 4. Genre FK uygulama (genre isimlerini genre_id'ye çevirme)
-
-**Amaç:** `movies.basics.csv` ve `series.basics.csv` içindeki `genres` sütunlarını, `genre.csv`'deki `genre_id` değerleri ile değiştirmek.
-
-Script: `data_preprocess/genre_fk.py`
-
-```bash
-python data_preprocess/genre_fk.py
-```
-
-**Ne yapar?**
-- `data/genre.csv` dosyasını okur (`genre_id, genre`).
-- `movies.basics.csv` ve `series.basics.csv` içindeki `genres` kolonunu işler:
-  - Önce genre isimlerini virgüle göre ayırır.
-  - Her bir genre ismini `genre.csv`'deki `genre_id` ile eşleştirir.
-  - Her `tconst` için birden fazla tür varsa, `genre_id`'leri virgülle birleştirir.
-- Sonuçta **her satırdaki `genres` sütunu artık genre isimleri değil, `genre_id` listesi** olur.
-
-**Örnek:**
-- Önce: `genres = "Documentary,Short"`
-- Sonra: `genres = "8,23"` (8 = Documentary, 23 = Short)
-
-**Üzerine yazdığı dosyalar:**
-- `data/movies.basics.csv`
-- `data/series.basics.csv`
-
----
-
-## 5. Kolon sadeleştirme (table fix)
-
-**Amaç:** Projede kullanılmayan bazı kolonları düşürerek tabloyu sadeleştirmek.
-
-Script: `data_preprocess/tablefix.py`
-
-```bash
-python data_preprocess/tablefix.py
-```
-
-**Ne yapar?**
-- Hem `movies.basics.csv` hem `series.basics.csv` için `originalTitle` sütununu siler.
-- Ek olarak **sadece** `movies.basics.csv` için `endYear` sütununu siler.
-
-**Son durumda kolonlar:**
-
-- `data/movies.basics.csv`:
-  - `tconst, titleType, primaryTitle, isAdult, startYear, runtimeMinutes, genres`
-
-- `data/series.basics.csv`:
-  - `tconst, titleType, primaryTitle, isAdult, startYear, endYear, runtimeMinutes, genres`
-
----
-
-## Özet: Doğru çalışma sırası
-
-1. **TSV → CSV**
-   ```bash
-   python data_preprocess/tsv2csv.py
-   ```
-2. **Genre dimension** (`genre.csv` üret)
-   ```bash
-   python data_preprocess/genre_df.py
-   ```
-3. **Filmleri ve dizileri ayır** (`movies.basics.csv`, `series.basics.csv` üret)
-   ```bash
-   python data_preprocess/type_seperator.py
-   ```
-4. **Genre FK uygula** (`genres` → `genre_id` listesi)
-   ```bash
-   python data_preprocess/genre_fk.py
-   ```
-5. **Tabloları sadeleştir** (gereksiz kolonları kaldır)
-   ```bash
-   python data_preprocess/tablefix.py
-   ```
-
-Bu 5 adımı sırayla çalıştırdığında, veritabanına yüklemeye hazır, temizlenmiş:
-- `data/genre.csv`
-- `data/movies.basics.csv`
-- `data/series.basics.csv`
-
-dosyalarına sahip olursun.
+1. `tsv_to_csv_converter.py` - Convert IMDb TSV files to CSV
+2. `title_type_splitter.py` - Split titles into movies and series
+3. `genre_table_builder.py` - Create genre dimension table
+4. `genre_foreign_key_mapper.py` - Replace genre names with foreign keys
+5. `column_dropper.py` - Remove unnecessary columns
+6. `empty_cell_filler.py` - Fill empty cells (if needed)
