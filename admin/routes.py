@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash
 from sqlalchemy import text
+import random
 from database.db import engine
 from admin import admin_bp   # blueprint buradan geliyor
 
@@ -34,10 +35,24 @@ def person_new():
         birth = request.form.get("birthYear")
         death = request.form.get("deathYear")
 
+        # normalize empty strings to NULL
+        birth = birth or None
+        death = death or None
+
         with engine.connect() as conn:
+            # generate a random peopleId like 'nm0000123' that's not already in DB
+            while True:
+                candidate_id = f"nm{random.randint(0, 9999999):07d}"
+                exists = conn.execute(
+                    text("SELECT 1 FROM people WHERE peopleId = :id"),
+                    {"id": candidate_id}
+                ).fetchone()
+                if not exists:
+                    break
+
             conn.execute(
-                text("INSERT INTO people (primaryName, birthYear, deathYear) VALUES (:n, :b, :d)"),
-                {"n": name, "b": birth, "d": death}
+                text("INSERT INTO people (peopleId, primaryName, birthYear, deathYear) VALUES (:id, :n, :b, :d)"),
+                {"id": candidate_id, "n": name, "b": birth, "d": death}
             )
             conn.commit()
 
