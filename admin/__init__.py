@@ -7,4 +7,4 @@ admin_bp = Blueprint(
     template_folder="../templates/admin"
 )
 
-from admin import routes   # blueprint tanımlandıktan sonra import edilir
+from admin import routes

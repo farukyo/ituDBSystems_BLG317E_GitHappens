@@ -5,9 +5,9 @@
   <label>Name</label><br>
   <input name="primaryName" value="{{ person.primaryName if person else '' }}"><br>
   <label>Birth Year</label><br>
-  <input name="birthYear" value="{{ person.birthYear if person else '' }}"><br>
+  <input name="birthYear" value="{{ person.birthYear if person and person.birthYear is not none else '' }}"><br>
   <label>Death Year</label><br>
-  <input name="deathYear" value="{{ person.deathYear if person else '' }}"><br>
+  <input name="deathYear" value="{{ person.deathYear if person and person.deathYear is not none else '' }}"><br>
   <button type="submit">Save</button>
 </form>
 {% endblock %}
