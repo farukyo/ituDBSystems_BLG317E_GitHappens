@@ -1,0 +1,46 @@
+{% extends "admin_base.html" %}
+{% block content %}
+
+<h1>{{ 'Edit' if series else 'New' }} Series</h1>
+
+<form method="post">
+
+  <label>Series Title</label><br>
+  <input name="seriesTitle"
+         value="{{ series.seriesTitle if series else '' }}"
+         required><br><br>
+
+  <label>Title Type</label><br>
+  <input name="titleType"
+         list="titleTypes"
+         value="{{ series.titleType if series and series.titleType is not none else '' }}">
+  <datalist id="titleTypes">
+    <option value="tvShort">
+    <option value="tvSeries">
+    <option value="tvMiniSeries">
+    <option value="tvSpecial">
+    <option value="tvPilot">
+  </datalist>
+  <br><br>
+
+  <label>Start Year</label><br>
+  <input name="startYear"
+         value="{{ series.startYear if series and series.startYear is not none else '' }}"><br><br>
+
+  <label>End Year</label><br>
+  <input name="endYear"
+         value="{{ series.endYear if series and series.endYear is not none else '' }}"><br><br>
+  
+  <label>Runtime (minutes)</label><br>
+  <input name="runtimeMinutes"
+         value="{{ series.runtimeMinutes if series and series.runtimeMinutes is not none else '' }}"><br><br>
+  <label>
+    <input type="checkbox" name="isAdult"
+           {% if series and series.isAdult %}checked{% endif %}>
+    Adult Content
+  </label><br><br>
+
+  <button type="submit">Save</button>
+</form>
+
+{% endblock %}

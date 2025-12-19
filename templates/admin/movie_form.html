@@ -5,38 +5,30 @@
 
 <form method="post">
 
-  {% if movie %}
-    <!-- Görüntüleme amaçlı -->
-    <label>Movie ID</label><br>
-    <input value="{{ movie.movieId }}" disabled><br><br>
-
-    <!-- Backend’e gönderilmez -->
-  {% else %}
-    <label>Movie ID</label><br>
-    <input name="movieId" required><br><br>
-  {% endif %}
-
   <label>Movie Title</label><br>
   <input name="movieTitle"
          value="{{ movie.movieTitle if movie else '' }}"
          required><br><br>
 
   <label>Title Type</label><br>
-  <select name="titleType">
-    <option value="">-- Select --</option>
-    <option value="movie" {{ 'selected' if movie and movie.titleType=='movie' }}>Movie</option>
-    <option value="short" {{ 'selected' if movie and movie.titleType=='short' }}>Short</option>
-    <option value="tvMovie" {{ 'selected' if movie and movie.titleType=='tvMovie' }}>TV Movie</option>
-  </select><br><br>
+  <input name="titleType"
+         list="titleTypes"
+         value="{{ movie.titleType if movie and movie.titleType is not none else '' }}">
+  <datalist id="titleTypes">
+    <option value="movie">
+    <option value="short">
+    <option value="tvMovie">
+    <option value="video">
+  </datalist>
+  <br><br>
 
   <label>Start Year</label><br>
   <input name="startYear"
-         value="{{ movie.startYear if movie else '' }}"><br><br>
+         value="{{ movie.startYear if movie and movie.startYear is not none else '' }}"><br><br>
 
   <label>Runtime (minutes)</label><br>
   <input name="runtimeMinutes"
-         value="{{ movie.runtimeMinutes if movie else '' }}"><br><br>
-
+         value="{{ movie.runtimeMinutes if movie and movie.runtimeMinutes is not none else '' }}"><br><br>
   <label>
     <input type="checkbox" name="isAdult"
            {% if movie and movie.isAdult %}checked{% endif %}>
