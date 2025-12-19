@@ -1,0 +1,34 @@
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    dob DATE,
+    gender VARCHAR(20),
+    is_admin TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- CONSTRAINT TANIMLARI
+    CONSTRAINT unique_email UNIQUE (email),
+    -- Cinsiyet kontrolü sabit değerler olduğu için çalışır
+    CONSTRAINT check_gender CHECK (gender IN ('male', 'female', 'other', 'prefer_not_to_say'))
+);
+CREATE TABLE user_likes (
+    like_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    entity_id VARCHAR(20) NOT NULL, 
+    entity_type VARCHAR(20) NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- REFERANS KISITLAMALARI --
+    -- Kullanıcı silindiğinde veya ID'si değiştiğinde veriyi korur/temizler
+    CONSTRAINT fk_user_likes FOREIGN KEY (user_id) REFERENCES users(id) 
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE,
+    
+    -- Aynı kullanıcı aynı şeyi iki kez beğenemez
+    CONSTRAINT unique_user_entity_like UNIQUE (user_id, entity_id),
+    
+    -- Sadece geçerli tipleri kabul eder
+    CONSTRAINT check_entity_type CHECK (entity_type IN ('movie', 'series', 'episode', 'person'))
+);
