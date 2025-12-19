@@ -151,6 +151,11 @@
     object-fit: cover;
 }
 
+/* Utility: focus image higher in the frame (use on specific images) */
+.member-image img.focus-top {
+    object-position: center 18%;
+}
+
 .placeholder-avatar {
     width: 100px;
     height: 100px;

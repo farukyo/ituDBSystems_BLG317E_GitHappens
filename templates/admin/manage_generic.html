@@ -1,0 +1,25 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<h1>Manage {{ title }}</h1>
+
+<ul>
+  <li>
+    <a href="{{ url_for(add_route) }}">
+      ➕ Add New {{ singular }}
+    </a>
+  </li>
+
+  <li>
+    <a href="{{ url_for(edit_route) }}">
+      ✏️ Edit {{ singular }}
+    </a>
+  </li>
+
+  <li>
+    <a href="{{ url_for(delete_route) }}">
+      🗑️ Delete {{ singular }}
+    </a>
+  </li>
+</ul>
+
+{% endblock %}

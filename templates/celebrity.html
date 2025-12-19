@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}{{ person.primaryName }} - BeeMD{% endblock %}
+
+{% block head %}
+<style>
+    .celebrity-detail-page {
+        padding: 40px 0;
+    }
+
+    .celebrity-header {
+        margin-bottom: 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 20px;
+    }
+
+    .celebrity-header h1 {
+        color: #fff;
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+
+    .celebrity-details-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .card-title {
+        color: #cfe6ff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+    }
+
+    .detail-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .detail-label {
+        color: #cfe6ff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detail-value {
+        color: #fff;
+        font-size: 1.1rem;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: background 0.3s ease;
+    }
+
+    .btn-back:hover {
+        background: rgba(255, 255, 255, 0.12);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container celebrity-detail-page">
+
+    <div class="celebrity-header">
+        <h1>{{ person.primaryName }}</h1>
+        </div>
+
+    <div class="celebrity-details-card">
+        <h3 class="card-title">Personal Information</h3>
+        <div class="detail-grid">
+
+            <div class="detail-item">
+                <span class="detail-label">Birth Year</span>
+                <span class="detail-value">
+                    {{ person.birthYear if person.birthYear else 'Unknown' }}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Death Year</span>
+                <span class="detail-value">
+                    {% if person.deathYear %}
+                        <span style="color: #e74c3c;">{{ person.deathYear }}</span>
+                    {% else %}
+                        -
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Age</span>
+                <span class="detail-value">
+                    {% if person.birthYear %}
+                        {% if person.deathYear %}
+                            {{ person.deathYear - person.birthYear }} (Deceased)
+                        {% else %}
+                            {{ 2025 - person.birthYear }}
+                        {% endif %}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Professions</span>
+                <span class="detail-value">
+                    {% if person.professionName and person.professionName != '0' %}
+                        {{ person.professionName | replace('_', ' ') | replace(',', ', ') | title }}
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <a href="{{ url_for('celebrity.celebrities') }}" class="btn-back">
+            ← Back to Celebrities
+        </a>
+    </div>
+
+</div>
+{% endblock %}
