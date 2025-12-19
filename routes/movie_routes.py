@@ -10,84 +10,135 @@ movie_bp = Blueprint('movie', __name__)
 
 @movie_bp.route("/movies")
 def movies():
-    title_query = request.args.get('title')      # 'q' yerine 'title' yaptık
+    title_query = request.args.get('title')
     genre_filter = request.args.get('genre')
     year_filter = request.args.get('year')
     min_rating = request.args.get('min_rating')
     max_rating = request.args.get('max_rating')
-    
+    view = request.args.get('view')
+
     with engine.connect() as conn:
+
+        # GENRE LIST (HER MODDA LAZIM)
         genre_sql = """
             SELECT DISTINCT g.genreName 
             FROM genres g
             JOIN movie_genres mg ON g.genreId = mg.genreId
             ORDER BY g.genreName ASC
         """
-        genre_result = conn.execute(text(genre_sql))
-        genres_list = [row[0] for row in genre_result.fetchall()]
-        
-        sql = """
-            SELECT m.*,
-            (
-                SELECT GROUP_CONCAT(g.genreName SEPARATOR ', ')
-                FROM movie_genres mg
-                JOIN genres g ON mg.genreId = g.genreId
-                WHERE mg.movieId = m.movieId
-            ) as genre_str
-            FROM movies m 
-            WHERE 1=1
-        """
+        genres_list = [row[0] for row in conn.execute(text(genre_sql)).fetchall()]
+
         params = {}
-        
-        # Title Filtresi
-        if title_query:
-            sql += " AND m.movieTitle LIKE :title"
-            params["title"] = f"%{title_query}%"
-        
-        # Genre Filtresi
-        if genre_filter:
-            sql += """ 
-            AND m.movieId IN (
-                SELECT mg.movieId 
-                FROM movie_genres mg
-                JOIN genres g ON mg.genreId = g.genreId
-                WHERE g.genreName = :genre
-            )
+
+        if view == "stats":
+            sql = """
+            SELECT 
+                m.movieId,
+                m.movieTitle,
+                m.startYear,
+                r.averageRating,
+                COUNT(DISTINCT pr.peopleId) AS cast_count,
+                COUNT(DISTINCT g.genreId) AS genre_count
+            FROM movies m
+            LEFT JOIN ratings r ON m.movieId = r.titleId
+            LEFT JOIN principals pr ON m.movieId = pr.titleId
+            LEFT JOIN movie_genres mg ON m.movieId = mg.movieId
+            LEFT JOIN genres g ON mg.genreId = g.genreId
+            WHERE 1=1
             """
-            params["genre"] = genre_filter
 
-        # Yıl Filtresi (Tam eşleşme)
-        # DİKKAT: Veritabanındaki sütun adın 'startYear' değilse burayı düzelt (örn: 'year')
-        if year_filter:
-            sql += " AND startYear = :year"
-            params["year"] = year_filter
+            if title_query:
+                sql += " AND m.movieTitle LIKE :title"
+                params["title"] = f"%{title_query}%"
 
-        # Puan Filtresi (Min - Max)
-        # DİKKAT: Sütun adın 'averageRating' değilse düzelt (örn: 'rating', 'imdb_score')
-        if min_rating:
-            sql += " AND averageRating >= :min_rating"
-            params["min_rating"] = min_rating
-            
-        if max_rating:
-            sql += " AND averageRating <= :max_rating"
-            params["max_rating"] = max_rating
+            if genre_filter:
+                sql += " AND g.genreName = :genre"
+                params["genre"] = genre_filter
 
-        # Sıralama ve Limit
-        # Puanı yüksek olanları önce göstermek istersen:
-        # sql += " ORDER BY averageRating DESC"
-        sql += " LIMIT 100;"
-        
-        result = conn.execute(text(sql), params)
-        data = result.fetchall()
+            if year_filter:
+                sql += " AND m.startYear = :year"
+                params["year"] = year_filter
 
-    # Title
-    if title_query:
+            if min_rating:
+                sql += " AND r.averageRating >= :min_rating"
+                params["min_rating"] = min_rating
+
+            if max_rating:
+                sql += " AND r.averageRating <= :max_rating"
+                params["max_rating"] = max_rating
+
+            sql += """
+            GROUP BY 
+                m.movieId, m.movieTitle, m.startYear, r.averageRating
+            ORDER BY r.averageRating DESC
+            LIMIT 100
+            """
+
+        else:
+            sql = """
+            SELECT m.*, 
+                r.averageRating, 
+                r.numVotes,
+                (
+                    SELECT GROUP_CONCAT(g.genreName SEPARATOR ', ')
+                    FROM movie_genres mg
+                    JOIN genres g ON mg.genreId = g.genreId
+                    WHERE mg.movieId = m.movieId
+                ) as genre_str
+            FROM movies m 
+            LEFT JOIN ratings r ON m.movieId = r.titleId
+            WHERE 1=1
+            """
+
+            if title_query:
+                sql += " AND m.movieTitle LIKE :title"
+                params["title"] = f"%{title_query}%"
+
+            if genre_filter:
+                sql += """
+                AND m.movieId IN (
+                    SELECT mg.movieId
+                    FROM movie_genres mg
+                    JOIN genres g ON mg.genreId = g.genreId
+                    WHERE g.genreName = :genre
+                )
+                """
+                params["genre"] = genre_filter
+
+            if year_filter:
+                sql += " AND m.startYear = :year"
+                params["year"] = year_filter
+
+            if min_rating:
+                sql += " AND r.averageRating >= :min_rating"
+                params["min_rating"] = min_rating
+
+            if max_rating:
+                sql += " AND r.averageRating <= :max_rating"
+                params["max_rating"] = max_rating
+
+            sql += " ORDER BY r.averageRating DESC, m.movieTitle ASC LIMIT 100"
+
+        data = conn.execute(text(sql), params).fetchall()
+
+    # 🔹 PAGE TITLE
+    if view == "stats":
+        page_title = "Detailed Movie Statistics"
+    elif title_query:
         page_title = f"Results for '{title_query}'"
     elif genre_filter:
         page_title = f"{genre_filter} Movies"
     else:
         page_title = "All Movies"
-    return render_template("movies.html", movies=data, genres=genres_list, title=page_title)
+
+    return render_template(
+        "movies.html",
+        movies=data,
+        genres=genres_list,
+        title=page_title
+    )
+
+
 
 
 
@@ -95,9 +146,10 @@ def movies():
 def movie(movie_id):
     with engine.connect() as conn:
         sql = """
-            SELECT movieId, movieTitle, titleType, startYear, runtimeMinutes
-            FROM movies
-            WHERE movieId = :movieId
+            SELECT m.*, r.averageRating, r.numVotes
+            FROM movies m
+            LEFT JOIN ratings r ON m.movieId = r.titleId  -- ratings tablosunu bağla
+            WHERE m.movieId = :movieId
         """
         result = conn.execute(text(sql), {"movieId": movie_id})
         movie = result.fetchone()
@@ -105,16 +157,35 @@ def movie(movie_id):
         if not movie:
             flash(f"Movie with ID {movie_id} not found.")
             return redirect(url_for('movie.movies'))
+        # Film Detay sayfasında (movie.html) kullanıldığı için türleri çekelim:
+        genre_sql = """
+            SELECT g.genreName 
+            FROM movie_genres mg
+            JOIN genres g ON mg.genreId = g.genreId
+            WHERE mg.movieId = :movieId
+        """
+        genre_result = conn.execute(text(genre_sql), {"movieId": movie_id})
+        genres = [row[0] for row in genre_result.fetchall()]
         
-        cast_sql = """
+        # Rating bilgilerini stats dict'ine toplayıp template'e gönderelim
+        stats = {
+            'averageRating': movie.averageRating,
+            'numVotes': movie.numVotes
+        }
+        
+        cast_sql = text("""
             SELECT p.peopleId, p.primaryName, pr.category, pr.characters
             FROM principals pr
             JOIN people p ON pr.peopleId = p.peopleId
-            WHERE pr.titleId = :movieId
-            ORDER BY pr.category, p.primaryName
-        """
-        cast_result = conn.execute(text(cast_sql), {"movieId": movie_id})
-        cast = cast_result.fetchall()
+            WHERE pr.titleId = :id OR pr.titleId LIKE :like_id
+        """)
         
+        like_param = f"%{movie_id}" if not str(movie_id).startswith('tt') else movie_id
+        cast_result = conn.execute(cast_sql, {"id": movie_id, "like_id": like_param}).fetchall()
+        
+        # Mapping kullanarak dict listesine çevir (HTML'de hata almamak için önemli)
+        cast = [dict(row._mapping) for row in cast_result]
+
+
     page_title = f"{movie.movieTitle} ({movie.startYear})"
-    return render_template("movie.html", movie=movie, cast=cast, title=page_title)
+    return render_template("movie.html", movie=movie, cast=cast, genres=genres, stats=stats, title=page_title)
