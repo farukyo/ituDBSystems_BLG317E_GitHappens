@@ -35,7 +35,7 @@ def login():
         
         with engine.connect() as conn:
             result = conn.execute(
-                text("SELECT * FROM users WHERE email = :email"), 
+                text("SELECT * FROM githappens_users.users WHERE email = :email"), 
                 {"email": email}
             ).fetchone()
             
@@ -69,20 +69,20 @@ def signup():
         
         with engine.connect() as conn:
             # Email kontrolü
-            existing = conn.execute(text("SELECT id FROM users WHERE email = :email"), {"email": email}).fetchone()
+            existing = conn.execute(text("SELECT id FROM githappens_users.users WHERE email = :email"), {"email": email}).fetchone()
             if existing:
                 flash("Email already exists.")
                 return redirect(url_for('auth.signup'))
 
             # Kayıt (ID AUTO_INCREMENT olduğu için eklemiyoruz)
             conn.execute(text("""
-                INSERT INTO users (username, email, password_hash, dob, gender) 
+                INSERT INTO githappens_users.users (username, email, password_hash, dob, gender) 
                 VALUES (:u, :e, :p, :d, :g)
             """), {"u": username, "e": email, "p": password, "d": dob, "g": gender})
             conn.commit()
             
             # Kayıt sonrası otomatik login için kullanıcıyı tekrar çekiyoruz
-            u = conn.execute(text("SELECT * FROM users WHERE email = :email"), {"email": email}).fetchone()._mapping
+            u = conn.execute(text("SELECT * FROM githappens_users.users WHERE email = :email"), {"email": email}).fetchone()._mapping
             new_user = User(id=u['id'], username=u['username'], email=u['email'], password_hash=u['password_hash'])
             login_user(new_user)
             return redirect(url_for('main.index'))
