@@ -488,31 +488,89 @@
     <div class="celebrity-list">
         {% if items %}
         {% for person in items %}
-        <a href="{{ url_for('celebrity.celebrity_detail', people_id=person.peopleId) }}" class="celebrity-item-row">
+        <div class="celebrity-item-row" style="position: relative; display: flex; justify-content: space-between; align-items: center; padding: 20px; background: #222; border-radius: 8px; margin-bottom: 10px;">
+            
+            <a href="{{ url_for('celebrity.celebrity_detail', people_id=person.peopleId) }}" style="text-decoration: none; flex: 1;">
+                <div class="info-left">
+                    <h3 class="name" style="color: white; margin: 0;">{{ person.primaryName }}</h3>
+                    <span class="profession" style="color: #bbb; font-size: 0.9rem;">
+                    {% if person.professionName and person.professionName != '0' and person.professionName != 0 %}
+                        {{ person.professionName | replace('_', ' ') | title }}
+                    {% endif %}
+                    </span>
+                </div>
+            </a>
 
-            <div class="info-left">
-                <h3 class="name">{{ person.primaryName }}</h3>
-                <span class="profession">
-                    {{ person.professionName | replace('_', ' ') | replace(',', ', ') | title if (person.professionName
-                    and person.professionName != '0') else 'Profession Unknown' }}
+            <div class="info-right" style="display: flex; align-items: center; gap: 15px;">
+                
+                <button class="like-btn {{ 'liked' if person.is_liked else '' }}" 
+                        data-id="{{ person.peopleId }}" 
+                        data-type="person"
+                        onclick="toggleLike(this, event)">
+                    ❤
+                </button>
+
+                <span class="year" style="color: #bbb; font-weight: bold;">
+                    {% if person.deathYear %}
+                        {{ person.birthYear }} - {{ person.deathYear }}
+                    {% else %}
+                        {{ person.birthYear if person.birthYear else '?' }}
+                    {% endif %}
                 </span>
             </div>
-
-            <div class="info-right">
-                {% if person.deathYear %}
-                <span class="year" style="color: #666;">{{ person.birthYear }} - {{ person.deathYear }}</span>
-                {% else %}
-                <span class="year">Born: {{ person.birthYear if person.birthYear else '?' }}</span>
-                {% endif %}
-            </div>
-        </a>
+        </div>
         {% endfor %}
         {% else %}
-        <div style="width: 100%; text-align: center; margin-top: 40px; color: #aaa;">
-            <p>No celebrities found matching your criteria.</p>
-        </div>
+            <p style="text-align: center; color: #888;">No celebrities found.</p>
         {% endif %}
     </div>
+
+<style>
+    .like-btn {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #555; /* Varsayılan gri renk */
+        transition: transform 0.2s, color 0.2s;
+        z-index: 10;
+        padding: 0 10px;
+    }
+    .like-btn:hover { transform: scale(1.2); }
+    
+    /* Beğenilince Kırmızı Olsun */
+    .like-btn.liked { color: #e50914; }
+</style>
+
+<script>
+    function toggleLike(btn, event) {
+        event.preventDefault(); 
+        event.stopPropagation();
+
+        const peopleId = btn.getAttribute('data-id');
+        
+        let formData = new FormData();
+        formData.append('people_id', peopleId);
+
+        fetch('/like_celebrity', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text()) 
+        .then(data => {
+            if (data === "1") {
+                if (btn.classList.contains('liked')) {
+                    btn.classList.remove('liked');
+                } else {
+                    btn.classList.add('liked');
+                }
+            } else {
+                alert("Login Required to Like.");
+            }
+        })
+        .catch(err => console.error('Hata:', err));
+    }
+</script>
 
 </div>
 
@@ -602,6 +660,16 @@
                     closePopup();
                 }
             });
+        }
+    });
+    window.addEventListener("pageshow", function(event) {
+        
+        var historyTraversal = event.persisted || 
+                               (typeof window.performance != "undefined" && 
+                                window.performance.navigation.type === 2);
+
+        if (historyTraversal) {
+            window.location.reload();
         }
     });
 </script>

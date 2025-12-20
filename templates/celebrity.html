@@ -78,6 +78,13 @@
     .btn-back:hover {
         background: rgba(255, 255, 255, 0.12);
     }
+    .like-btn {
+        background: none; border: none; font-size: 2rem;
+        cursor: pointer; color: #555; transition: transform 0.2s;
+        margin-left: 15px; vertical-align: middle;
+    }
+    .like-btn.liked { color: #e50914; }
+    .like-btn:hover { transform: scale(1.1); }
 </style>
 {% endblock %}
 
@@ -85,8 +92,15 @@
 <div class="container celebrity-detail-page">
 
     <div class="celebrity-header">
+    <div style="display: flex; align-items: center;">
         <h1>{{ person.primaryName }}</h1>
-        </div>
+        <button class="like-btn {{ 'liked' if person.is_liked else '' }}" 
+                data-id="{{ person.peopleId }}" 
+                onclick="toggleLikeDetail(this)">
+            ❤
+        </button>
+    </div>
+</div>
 
     <div class="celebrity-details-card">
         <h3 class="card-title">Personal Information</h3>
@@ -146,4 +160,34 @@
     </div>
 
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleLikeDetail(btn) {
+        const peopleId = btn.getAttribute('data-id');
+
+        let formData = new FormData();
+        formData.append('people_id', peopleId);
+
+        fetch('/like_celebrity', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data === "1") {
+                if (btn.classList.contains('liked')) {
+                    btn.classList.remove('liked');
+                } else {
+                    btn.classList.add('liked');
+                }
+            } else {
+                // Eğer giriş yapılmamışsa login sayfasına yönlendirebilirsin
+                window.location.href = "/login";
+            }
+        })
+        .catch(err => console.error(err));
+    }
+</script>
 {% endblock %}
