@@ -1,52 +1,208 @@
 {% extends "base.html" %}
 
-{% block title %}Series Detail - BeeMD{% endblock %}
+{% block title %}{{ series.seriesTitle }} - BeeMD{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/serie.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/movie.css') }}" />
+<style>
+    /* Movie.html'deki özel stillerin aynısı */
+    .serie-detail-page { padding: 40px 0; }
+    
+    .header-section { margin-bottom: 30px; }
+    .header-section h1 { color: #fff; font-size: 2rem; margin-bottom: 10px; }
+    .header-section .meta-info { color: var(--accent); font-size: 1.1rem; }
+
+    .details-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .section-title {
+        color: #cfe6ff;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+    }
+
+    .detail-item { display: flex; flex-direction: column; gap: 8px; }
+    .detail-label { color: #cfe6ff; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .detail-value { color: #fff; font-size: 1.1rem; }
+    .detail-value.highlight { color: var(--accent); font-weight: 600; }
+
+    .genre-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .genre-tag {
+        background: rgba(233, 96, 26, 0.2);
+        color: var(--accent);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    /* Cast Grid */
+    .cast-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 15px;
+    }
+    .cast-item {
+        display: flex; align-items: center; gap: 15px;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 15px; border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: background 0.3s ease;
+    }
+    .cast-item:hover { background: rgba(255, 255, 255, 0.05); }
+    .cast-avatar {
+        width: 50px; height: 50px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #ff7a3d);
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-weight: 600; font-size: 1.1rem; flex-shrink: 0;
+    }
+    .cast-info { flex: 1; min-width: 0; }
+    .cast-name a { color: #fff; text-decoration: none; font-weight: 500; }
+    .cast-name a:hover { color: var(--accent); }
+    .cast-role { color: var(--muted); font-size: 0.85rem; }
+    .cast-character { color: #7eb8ff; font-size: 0.85rem; font-style: italic; }
+
+    /* Actions */
+    .action-buttons { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 30px; }
+    .btn-action {
+        display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px;
+        border-radius: 8px; font-weight: 500; text-decoration: none; transition: background 0.3s ease;
+    }
+    .btn-secondary { background: rgba(255, 255, 255, 0.08); color: #fff; }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.12); }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #d65a1a; }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container serie-page">
+<div class="container serie-detail-page">
 
-    <!-- Burayı daha sonra backend verileriyle dinamik yapabilirsiniz -->
-    <header class="serie-header">
-        <h1>Breaking Bad</h1>
-        <p class="serie-meta">Genre: Drama / Crime • Season 1</p>
-        <p class="serie-desc">
-            High school chemistry teacher Walter White turns to cooking methamphetamine
-            to secure his family's future after a terminal diagnosis.
+    <div class="header-section">
+        <h1>{{ series.seriesTitle }}</h1>
+        <p class="meta-info">
+            {{ series.titleType }} 
+            {% if series.startYear %} • {{ series.startYear }} - {{ series.endYear or 'Present' }} {% endif %}
         </p>
-    </header>
+    </div>
 
-    <section class="episodes">
-        <h2>Episodes</h2>
-        <ul class="episode-list">
-            <li class="episode-item">
-                <span class="ep-title">Episode 1 – Pilot</span>
-                <span class="ep-duration">58 min</span>
-                <a class="ep-link" href="#">Detail</a>
-            </li>
-            <li class="episode-item">
-                <span class="ep-title">Episode 2 – Cat’s in the Bag...</span>
-                <span class="ep-duration">47 min</span>
-                <a class="ep-link" href="#">Detail</a>
-            </li>
-            <li class="episode-item">
-                <span class="ep-title">Episode 3 – ...And the Bag’s in the River</span>
-                <span class="ep-duration">46 min</span>
-                <a class="ep-link" href="#">Detail</a>
-            </li>
-        </ul>
-    </section>
+    <div class="details-card">
+        <h3 class="section-title">Series Information</h3>
+        <div class="detail-grid">
 
-    <div class="back-to-series">
-        <a href="{{ url_for('series.series') }}" class="back-button">← Back to Series</a>
+            <div class="detail-item">
+                <span class="detail-label">Runtime</span>
+                <span class="detail-value">
+                    {{ series.runtimeMinutes }} min / ep
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Genres</span>
+                <span class="detail-value">
+                    {% if genres %}
+                    <div class="genre-tags">
+                        {% for genre in genres %}
+                        <span class="genre-tag">{{ genre }}</span>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    N/A
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Total Seasons</span>
+                <span class="detail-value highlight">{{ stats.total_seasons or 0 }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Total Episodes</span>
+                <span class="detail-value highlight">{{ stats.total_episodes or 0 }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Content Rating</span>
+                <span class="detail-value">
+                    {% if series.isAdult == 1 %} <span style="color:red">Adult</span> {% else %} General {% endif %}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Stats</span>
+                {% if rating %}
+                <div class="movie-stats">
+                    {% if rating.rating %}
+                    <div class="stat-item">
+                        <span class="stat-number">{{ rating.rating | float | round(1) }}</span>
+                        <span class="stat-label">Rating</span>
+                    </div>
+                    {% endif %}
+                    {% if rating.votes %}
+                    <div class="stat-item">
+                        <span class="stat-number">{{ "{:,}".format(rating.votes) }}</span>
+                        <span class="stat-label">Votes</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <span class="no-data">No stats available</span>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+
+    <div class="details-card">
+        <h3 class="section-title">Cast & Crew</h3>
+        {% if cast %}
+        <div class="cast-grid">
+            {% for person in cast %}
+            <div class="cast-item">
+                <div class="cast-avatar">
+                    {{ person.primaryName[0] if person.primaryName else '?' }}
+                </div>
+                <div class="cast-info">
+                    <div class="cast-name">
+                        <a href="/celebrities?q={{ person.primaryName }}">{{ person.primaryName }}</a>
+                    </div>
+                    <div class="cast-role">{{ person.category }}</div>
+                    {% if person.characters and person.characters != '\\N' %}
+                    <div class="cast-character">as {{ person.characters | replace('[', '') | replace(']', '') | replace('"', '') }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: var(--muted); font-style: italic;">No cast information available.</p>
+        {% endif %}
+    </div>
+
+    <div class="action-buttons">
+        <a href="{{ url_for('series.series') }}" class="btn-action btn-secondary">
+            ← Back to Series List
+        </a>
+        
+        <a href="{{ url_for('episode.episodes', seriesName=series.seriesTitle) }}" class="btn-action btn-primary">
+            View All Episodes
+        </a>
     </div>
 
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/serie.js') }}"></script>
 {% endblock %}
