@@ -114,10 +114,14 @@
     <section class="profile-section">
         <h2>Liked Celebrities</h2>
         <ul class="liked-list">
-            {% for actor in user.liked_actors %}
-                <li>{{ actor.name }}</li>
+            {% for celeb in liked_celebs %}
+                <li>
+                    <a href="{{ url_for('celebrity.celebrity_detail', people_id=celeb.peopleId) }}" style="color: white; text-decoration: none;">
+                        {{ celeb.primaryName }}
+                    </a>
+                </li>
             {% else %}
-                <li>You haven't liked any celebrities yet.</li>
+                <li style="color: #777;">You haven't liked any celebrities yet.</li>
             {% endfor %}
         </ul>
     </section>
