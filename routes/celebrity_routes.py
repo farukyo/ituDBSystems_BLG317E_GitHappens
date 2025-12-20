@@ -33,7 +33,7 @@ def celebrities():
                        CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
                 FROM people p
                 LEFT JOIN profession pr ON p.professionId = pr.professionId
-                LEFT JOIN user_likes ul ON p.peopleId = ul.entity_id 
+                LEFT JOIN githappens_users.user_likes ul ON p.peopleId = ul.entity_id 
                                        AND ul.user_id = :uid 
                                        AND ul.entity_type = 'person'
                 WHERE 1=1
@@ -105,7 +105,7 @@ def celebrity_detail(people_id):
                    CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
             FROM people p
             LEFT JOIN profession pr ON p.professionId = pr.professionId
-            LEFT JOIN user_likes ul ON p.peopleId = ul.entity_id 
+            LEFT JOIN githappens_users.user_likes ul ON p.peopleId = ul.entity_id 
                                    AND ul.user_id = :uid 
                                    AND ul.entity_type = 'person'
             WHERE p.peopleId = :id
@@ -126,21 +126,24 @@ def like_celebrity():
     user_id = current_user.id
     
     with engine.connect() as conn:
+        # DEĞİŞİKLİK: Tablo isminin başına veritabanı adı eklendi
         check_sql = """
-            SELECT 1 FROM user_likes 
+            SELECT 1 FROM githappens_users.user_likes 
             WHERE user_id = :uid AND entity_id = :eid AND entity_type = 'person'
         """
         result = conn.execute(text(check_sql), {"uid": user_id, "eid": people_id}).fetchone()
         
         if result:
+            # DEĞİŞİKLİK: DELETE işlemi
             delete_sql = """
-                DELETE FROM user_likes 
+                DELETE FROM githappens_users.user_likes 
                 WHERE user_id = :uid AND entity_id = :eid AND entity_type = 'person'
             """
             conn.execute(text(delete_sql), {"uid": user_id, "eid": people_id})
         else:
+            # DEĞİŞİKLİK: INSERT işlemi
             insert_sql = """
-                INSERT INTO user_likes (user_id, entity_id, entity_type)
+                INSERT INTO githappens_users.user_likes (user_id, entity_id, entity_type)
                 VALUES (:uid, :eid, 'person')
             """
             conn.execute(text(insert_sql), {"uid": user_id, "eid": people_id})
