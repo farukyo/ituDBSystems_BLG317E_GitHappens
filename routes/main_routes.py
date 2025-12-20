@@ -77,7 +77,65 @@ def search():
 
 @main_bp.route("/")
 def index():
-    return render_template("home.html")
+    featured_movies = []
+    featured_series = []
+    featured_people = []
+
+    with engine.connect() as conn:
+        # Top 5 Movies
+        try:
+            sql_movies = """
+                SELECT m.movieId, m.movieTitle, m.startYear, r.averageRating, r.numVotes
+                FROM movies m
+                JOIN ratings r ON m.movieId = r.titleId
+                WHERE r.numVotes > 100000
+                ORDER BY r.averageRating DESC
+                LIMIT 5
+            """
+            featured_movies = conn.execute(text(sql_movies)).fetchall()
+        except Exception as e:
+            print(f"Error fetching featured movies: {e}")
+
+        # Top 5 Series
+        try:
+            sql_series = """
+                SELECT s.seriesId, s.seriesTitle, s.startYear, r.averageRating, r.numVotes
+                FROM series s
+                JOIN ratings r ON s.seriesId = r.titleId
+                WHERE r.numVotes > 100000
+                ORDER BY r.averageRating DESC
+                LIMIT 5
+            """
+            featured_series = conn.execute(text(sql_series)).fetchall()
+        except Exception as e:
+            print(f"Error fetching featured series: {e}")
+
+        # Top 5 People (Actors in high rated titles)
+        try:
+            sql_people = """
+                SELECT
+                    p.peopleId,
+                    p.primaryName,
+                    (
+                        SELECT COUNT(*)
+                        FROM githappens_users.user_likes ul
+                        WHERE ul.entity_id = p.peopleId
+                          AND ul.entity_type = 'person'
+                    ) as numLikes
+                FROM people p
+                LEFT JOIN profession prof ON p.professionId = prof.professionId
+                WHERE (prof.professionName LIKE '%actor%' OR prof.professionName LIKE '%actress%')
+                ORDER BY numLikes DESC
+                LIMIT 5
+            """
+            featured_people = conn.execute(text(sql_people)).fetchall()
+        except Exception as e:
+            print(f"Error fetching featured people: {e}")
+
+    return render_template("home.html", 
+                           featured_movies=featured_movies, 
+                           featured_series=featured_series, 
+                           featured_people=featured_people)
 
 
 @main_bp.route("/about")
