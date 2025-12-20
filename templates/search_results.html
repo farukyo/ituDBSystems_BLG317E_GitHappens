@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="search-results-container">
+    <h1>Search Results for "{{ query }}"</h1>
+    
+    <!-- Movies Section -->
+    {% if movies %}
+    <div class="results-section">
+        <h2>Movies <span class="result-count">({{ movies | length }})</span></h2>
+        <div class="results-grid">
+            {% for movie in movies %}
+            <div class="result-card">
+                <h3><a href="{{ url_for('movie.movie', movie_id=movie.movieId) }}">{{ movie.movieTitle }}</a></h3>
+                <p class="result-year">{{ movie.startYear }}</p>
+                <p class="result-runtime">{{ movie.runtimeMinutes }} min</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Series Section -->
+    {% if series %}
+    <div class="results-section">
+        <h2>TV Series <span class="result-count">({{ series | length }})</span></h2>
+        <div class="results-grid">
+            {% for tv_series in series %}
+            <div class="result-card">
+                <h3><a href="{{ url_for('series.serie_detail', series_id=tv_series.seriesId) }}">{{ tv_series.seriesTitle }}</a></h3>
+                <p class="result-year">{{ tv_series.startYear }}</p>
+                <p class="result-runtime">{{ tv_series.runtimeMinutes }} min/ep</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Episodes Section -->
+    {% if episodes %}
+    <div class="results-section">
+        <h2>Episodes <span class="result-count">({{ episodes | length }})</span></h2>
+        <div class="results-list">
+            <table class="episodes-table">
+                <thead>
+                    <tr>
+                        <th>Episode Title</th>
+                        <th>Series</th>
+                        <th>Season</th>
+                        <th>Episode</th>
+                        <th>Runtime</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for episode in episodes %}
+                    <tr>
+                        <td><a href="{{ url_for('episode.episode_detail', episode_id=episode.episodeId) }}">{{ episode.epTitle }}</a></td>
+                        <td><a href="{{ url_for('series.serie_detail', series_id=episode.seriesId) }}">{{ episode.seriesTitle }}</a></td>
+                        <td>S{{ episode.seNumber }}</td>
+                        <td>E{{ episode.epNumber }}</td>
+                        <td>{{ episode.runtimeMinutes }} min</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- No Results -->
+    {% if not movies and not series and not episodes %}
+    <div class="no-results">
+        <p>No results found for "{{ query }}"</p>
+        <p>Try searching with different keywords.</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .search-results-container {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .search-results-container h1 {
+        color: #ff6b35;
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+    }
+    
+    .results-section {
+        margin-bottom: 3rem;
+        border-bottom: 1px solid #444;
+        padding-bottom: 2rem;
+    }
+    
+    .results-section h2 {
+        color: #fff;
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+    }
+    
+    .result-count {
+        color: #ff6b35;
+        font-size: 0.9em;
+    }
+    
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .result-card {
+        background: #1a1a1a;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 3px solid #ff6b35;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .result-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+    }
+    
+    .result-card h3 {
+        margin: 0 0 0.5rem 0;
+    }
+    
+    .result-card a {
+        color: #ff6b35;
+        text-decoration: none;
+    }
+    
+    .result-card a:hover {
+        text-decoration: underline;
+    }
+    
+    .result-year,
+    .result-runtime {
+        color: #999;
+        font-size: 0.9rem;
+        margin: 0.3rem 0;
+    }
+    
+    .results-list {
+        overflow-x: auto;
+    }
+    
+    .episodes-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #1a1a1a;
+    }
+    
+    .episodes-table thead {
+        background: #222;
+        border-bottom: 2px solid #ff6b35;
+    }
+    
+    .episodes-table th {
+        padding: 1rem;
+        text-align: left;
+        color: #ff6b35;
+        font-weight: bold;
+    }
+    
+    .episodes-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #333;
+        color: #ddd;
+    }
+    
+    .episodes-table td a {
+        color: #ff6b35;
+        text-decoration: none;
+    }
+    
+    .episodes-table td a:hover {
+        text-decoration: underline;
+    }
+    
+    .episodes-table tbody tr:hover {
+        background: #222;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: #1a1a1a;
+        border-radius: 8px;
+        color: #999;
+    }
+    
+    .no-results p {
+        font-size: 1.1rem;
+        margin: 0.5rem 0;
+    }
+</style>
+{% endblock %}
