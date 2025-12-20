@@ -1,0 +1,24 @@
+{% extends "admin_base.html" %}
+{% block content %}
+
+<h2>{{ "Edit" if genre else "New" }} Genre</h2>
+
+<form method="post">
+
+  {% if not genre %}
+    <label>Genre ID</label><br>
+    <input type="number" name="genreId" required><br><br>
+  {% endif %}
+
+  <label>Genre Name</label><br>
+  <input name="genreName"
+         value="{{ genre.genreName if genre else '' }}"
+         required><br><br>
+
+  <label>Description</label><br>
+  <textarea name="description">{{ genre.description if genre else '' }}</textarea><br><br>
+
+  <button type="submit">Save</button>
+</form>
+
+{% endblock %}
