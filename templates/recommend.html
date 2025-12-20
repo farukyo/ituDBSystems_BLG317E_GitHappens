@@ -4,11 +4,330 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/recommend.css') }}" />
+<style>
+    .filter-section {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .filter-group label {
+        font-size: 0.9rem;
+        color: #aaa;
+    }
+
+    .filter-group select,
+    .filter-group input {
+        padding: 0.5rem;
+        border-radius: 5px;
+        border: 1px solid #444;
+        background: #222;
+        color: white;
+        min-width: 150px;
+    }
+
+    .filter-btn {
+        margin-top: auto;
+        padding: 0.5rem 1.5rem;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        height: 36px;
+    }
+
+    .filter-btn:hover {
+        background: var(--primary-hover);
+    }
+
+    .recommend-container {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .recommend-column {
+        flex: 1;
+        min-width: 0;
+        /* Prevents flex item from overflowing */
+    }
+
+    .recommend-section {
+        margin-bottom: 3rem;
+    }
+
+    .recommend-section h2 {
+        margin-bottom: 1.5rem;
+        font-size: 1.8rem;
+        color: var(--text-color);
+        border-bottom: 2px solid var(--primary-color);
+        padding-bottom: 0.5rem;
+        display: inline-block;
+    }
+
+    .genre-tags {
+        margin-bottom: 2rem;
+    }
+
+    .genre-tag {
+        display: inline-block;
+        background: var(--primary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        margin-right: 0.5rem;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .card {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 1rem;
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        border-color: var(--primary-color);
+    }
+
+    .card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .card p {
+        font-size: 0.9rem;
+        color: #aaa;
+        margin-top: auto;
+    }
+
+    .rating {
+        color: #f5c518;
+        font-weight: bold;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+        .recommend-container {
+            flex-direction: column;
+        }
+    }
+
+    /* Robot Bubble Styles */
+    .robot-container {
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-end;
+    }
+
+    .robot-btn {
+        font-size: 3rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.3s;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    }
+
+    .robot-btn:hover {
+        transform: scale(1.1) rotate(10deg);
+    }
+
+    .speech-bubble {
+        background: white;
+        color: #333;
+        padding: 1rem;
+        border-radius: 15px;
+        border-top-right-radius: 0;
+        margin-top: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        max-width: 250px;
+        display: none;
+        /* Hidden by default */
+        animation: popIn 0.3s ease-out;
+        position: relative;
+    }
+
+    .speech-bubble a {
+        color: var(--primary-color);
+        font-weight: bold;
+        text-decoration: none;
+        border-bottom: 1px dotted var(--primary-color);
+    }
+
+    .speech-bubble a:hover {
+        border-bottom-style: solid;
+    }
+
+    @keyframes popIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px) scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
     <h1>Personalized Recommendations</h1>
     <p>Here are some recommendations just for you, {{ current_user.username }}.</p>
+
+    <!-- Filter Form -->
+    <form class="filter-section" method="GET" action="{{ url_for('main.recommend') }}">
+        <div class="filter-group">
+            <label for="genre">Genre</label>
+            <select name="genre" id="genre">
+                <option value="">All Genres (Personalized)</option>
+                {% for g in all_genres %}
+                <option value="{{ g }}" {% if selected_genre==g %}selected{% endif %}>{{ g }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filter-group">
+            <label for="start_year">Start Year</label>
+            <input type="number" name="start_year" id="start_year" placeholder="e.g. 2000"
+                value="{{ start_year or '' }}">
+        </div>
+        <div class="filter-group">
+            <label for="end_year">End Year</label>
+            <input type="number" name="end_year" id="end_year" placeholder="e.g. 2023" value="{{ end_year or '' }}">
+        </div>
+        <button type="submit" class="filter-btn">Apply</button>
+    </form>
+
+    {% if genres %}
+    <div class="genre-tags">
+        <span>Based on:</span>
+        {% for genre in genres %}
+        <span class="genre-tag">{{ genre }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="recommend-container">
+        <!-- Left Column: Movies -->
+        <div class="recommend-column">
+            <div class="recommend-section">
+                <h2>Recommended Movies</h2>
+                {% if movies %}
+                <div class="cards-grid">
+                    {% for movie in movies %}
+                    <a class="card" href="{{ url_for('movie.movie', movie_id=movie.movieId) }}">
+                        <h3>{{ movie.movieTitle }} ({{ movie.startYear }})</h3>
+                        <p><span class="rating">⭐ {{ movie.averageRating }}</span> ({{ movie.numVotes }} votes)</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p>No movie recommendations found.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Column: Series -->
+        <div class="recommend-column">
+            <div class="recommend-section">
+                <h2>Recommended Series</h2>
+                {% if series %}
+                <div class="cards-grid">
+                    {% for serie in series %}
+                    <a class="card" href="{{ url_for('series.serie_detail', series_id=serie.seriesId) }}">
+                        <h3>{{ serie.seriesTitle }} ({{ serie.startYear }})</h3>
+                        <p><span class="rating">⭐ {{ serie.averageRating }}</span> ({{ serie.numVotes }} votes)</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p>No series recommendations found.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Robot Bubble UI -->
+<div class="robot-container">
+    <div class="speech-bubble" id="robotBubble">
+        <span id="robotText">Thinking...</span>
+    </div>
+    <button class="robot-btn" onclick="askRobot()">🤖</button>
+</div>
+
+<script>
+    async function askRobot() {
+        const bubble = document.getElementById('robotBubble');
+        const text = document.getElementById('robotText');
+
+        // Toggle visibility
+        if (bubble.style.display === 'block') {
+            bubble.style.display = 'none';
+            return;
+        }
+
+        bubble.style.display = 'block';
+        text.innerHTML = 'Thinking...';
+
+        try {
+            const response = await fetch('/api/random_recommendation');
+            const data = await response.json();
+
+            if (data.error) {
+                text.innerHTML = "I couldn't find anything right now. Try again!";
+            } else {
+                text.innerHTML = `How about watching <a href="${data.url}">${data.title}</a>?`;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            text.innerHTML = "Beep boop! Something went wrong.";
+        }
+    }
+</script>
 {% endblock %}

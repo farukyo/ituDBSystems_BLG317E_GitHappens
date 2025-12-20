@@ -62,11 +62,34 @@
 </section>
 
 <section class="featured container">
-    <h2>Featured this week</h2>
+    <h2>Featured Movies</h2>
     <div class="cards">
-        <a class="card" href="#">New release: Example Movie</a>
-        <a class="card" href="#">Top rated: Example Drama</a>
-        <a class="card" href="#">Must-see Series: Example Show</a>
+        {% for movie in featured_movies %}
+        <a class="card" href="{{ url_for('movie.movie', movie_id=movie.movieId) }}">
+            <h3>{{ movie.movieTitle }} ({{ movie.startYear }})</h3>
+            <p>⭐ {{ movie.averageRating }} ({{ movie.numVotes }} votes)</p>
+        </a>
+        {% endfor %}
+    </div>
+
+    <h2>Featured Series</h2>
+    <div class="cards">
+        {% for serie in featured_series %}
+        <a class="card" href="{{ url_for('series.serie_detail', series_id=serie.seriesId) }}">
+            <h3>{{ serie.seriesTitle }} ({{ serie.startYear }})</h3>
+            <p>⭐ {{ serie.averageRating }} ({{ serie.numVotes }} votes)</p>
+        </a>
+        {% endfor %}
+    </div>
+
+    <h2>Featured People</h2>
+    <div class="cards">
+        {% for person in featured_people %}
+        <a class="card" href="{{ url_for('celebrity.celebrity_detail', people_id=person.peopleId) }}">
+            <h3>{{ person.primaryName }}</h3>
+            <p>❤️ {{ person.numLikes }}</p>
+        </a>
+        {% endfor %}
     </div>
 </section>
 {% endblock %}

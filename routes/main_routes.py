@@ -77,7 +77,66 @@ def search():
 
 @main_bp.route("/")
 def index():
-    return render_template("home.html")
+    featured_movies = []
+    featured_series = []
+    featured_people = []
+
+    with engine.connect() as conn:
+        # Top 5 Movies
+        try:
+            sql_movies = """
+                SELECT m.movieId, m.movieTitle, m.startYear, r.averageRating, r.numVotes
+                FROM movies m
+                JOIN ratings r ON m.movieId = r.titleId
+                WHERE r.numVotes > 100000
+                ORDER BY r.averageRating DESC
+                LIMIT 5
+            """
+            featured_movies = conn.execute(text(sql_movies)).fetchall()
+        except Exception as e:
+            print(f"Error fetching featured movies: {e}")
+
+        # Top 5 Series
+        try:
+            sql_series = """
+                SELECT s.seriesId, s.seriesTitle, s.startYear, r.averageRating, r.numVotes
+                FROM series s
+                JOIN ratings r ON s.seriesId = r.titleId
+                WHERE r.numVotes > 100000
+                ORDER BY r.averageRating DESC
+                LIMIT 5
+            """
+            featured_series = conn.execute(text(sql_series)).fetchall()
+        except Exception as e:
+            print(f"Error fetching featured series: {e}")
+
+        # Top 5 People (Most liked actors)
+        try:
+            sql_people = """
+                SELECT
+                    p.peopleId,
+                    p.primaryName,
+                    l.numLikes
+                FROM (
+                    SELECT entity_id, COUNT(*) as numLikes
+                    FROM githappens_users.user_likes
+                    WHERE entity_type = 'person'
+                    GROUP BY entity_id
+                ) l
+                JOIN people p ON l.entity_id = p.peopleId
+                LEFT JOIN profession prof ON p.professionId = prof.professionId
+                WHERE (prof.professionName LIKE '%actor%' OR prof.professionName LIKE '%actress%')
+                ORDER BY l.numLikes DESC
+                LIMIT 5
+            """
+            featured_people = conn.execute(text(sql_people)).fetchall()
+        except Exception as e:
+            print(f"Error fetching featured people: {e}")
+
+    return render_template("home.html", 
+                           featured_movies=featured_movies, 
+                           featured_series=featured_series, 
+                           featured_people=featured_people)
 
 
 @main_bp.route("/about")
@@ -190,7 +249,186 @@ def submit_quiz():
 @main_bp.route("/recommend")
 @login_required
 def recommend():
-    return render_template("recommend.html")
+    user_id = current_user.id
+    recommended_movies = []
+    recommended_series = []
+    top_genres = []
+    all_genres = []
+
+    # Filter parameters
+    selected_genre = request.args.get('genre')
+    start_year = request.args.get('start_year')
+    end_year = request.args.get('end_year')
+
+    with engine.connect() as conn:
+        # 0. Fetch all genres for the dropdown
+        all_genres = conn.execute(text("SELECT genreName FROM genres ORDER BY genreName")).fetchall()
+        all_genres = [g[0] for g in all_genres]
+
+        # Determine which genres to use for recommendation
+        target_genre_ids = []
+        
+        if selected_genre:
+            # If user selected a genre, use that
+            genre_res = conn.execute(text("SELECT genreId FROM genres WHERE genreName = :name"), {"name": selected_genre}).fetchone()
+            if genre_res:
+                target_genre_ids = [genre_res[0]]
+                top_genres = [selected_genre] # For display
+        else:
+            # Otherwise, use user's top genres
+            sql_genres = """
+                SELECT g.genreId, g.genreName, COUNT(*) as genre_count
+                FROM (
+                    SELECT mg.genreId
+                    FROM githappens_users.user_likes ul
+                    JOIN Movie_Genres mg ON ul.entity_id = mg.movieId
+                    WHERE ul.user_id = :uid AND ul.entity_type = 'movie'
+                    
+                    UNION ALL
+                    
+                    SELECT sg.genreId
+                    FROM githappens_users.user_likes ul
+                    JOIN Series_Genres sg ON ul.entity_id = sg.seriesId
+                    WHERE ul.user_id = :uid AND ul.entity_type = 'serie'
+                ) as user_genres
+                JOIN genres g ON user_genres.genreId = g.genreId
+                GROUP BY g.genreId, g.genreName
+                ORDER BY genre_count DESC
+                LIMIT 3
+            """
+            top_genres_result = conn.execute(text(sql_genres), {"uid": user_id}).fetchall()
+            top_genres = [row.genreName for row in top_genres_result]
+            target_genre_ids = [row.genreId for row in top_genres_result]
+
+        # Build query conditions
+        year_condition = ""
+        params = {"uid": user_id}
+        
+        if start_year and start_year.isdigit():
+            year_condition += " AND m.startYear >= :start_year"
+            params["start_year"] = int(start_year)
+        if end_year and end_year.isdigit():
+            year_condition += " AND m.startYear <= :end_year"
+            params["end_year"] = int(end_year)
+
+        # Series year condition (uses s.startYear)
+        series_year_condition = year_condition.replace("m.startYear", "s.startYear")
+
+
+        if target_genre_ids:
+            # 2. Recommend Movies
+            ids_str = ','.join(map(str, target_genre_ids))
+            
+            sql_rec_movies = f"""
+                SELECT DISTINCT m.movieId, m.movieTitle, m.startYear, r.averageRating, r.numVotes
+                FROM movies m
+                JOIN Movie_Genres mg ON m.movieId = mg.movieId
+                JOIN ratings r ON m.movieId = r.titleId
+                WHERE mg.genreId IN ({ids_str})
+                AND m.movieId NOT IN (
+                    SELECT entity_id FROM githappens_users.user_likes WHERE user_id = :uid AND entity_type = 'movie'
+                )
+                AND r.numVotes > 1000
+                {year_condition}
+                ORDER BY r.averageRating DESC
+                LIMIT 12
+            """
+            try:
+                recommended_movies = conn.execute(text(sql_rec_movies), params).fetchall()
+            except Exception as e:
+                print(f"Error recommending movies: {e}")
+
+            # 3. Recommend Series
+            sql_rec_series = f"""
+                SELECT DISTINCT s.seriesId, s.seriesTitle, s.startYear, r.averageRating, r.numVotes
+                FROM series s
+                JOIN Series_Genres sg ON s.seriesId = sg.seriesId
+                JOIN ratings r ON s.seriesId = r.titleId
+                WHERE sg.genreId IN ({ids_str})
+                AND s.seriesId NOT IN (
+                    SELECT entity_id FROM githappens_users.user_likes WHERE user_id = :uid AND entity_type = 'serie'
+                )
+                AND r.numVotes > 1000
+                {series_year_condition}
+                ORDER BY r.averageRating DESC
+                LIMIT 12
+            """
+            try:
+                recommended_series = conn.execute(text(sql_rec_series), params).fetchall()
+            except Exception as e:
+                print(f"Error recommending series: {e}")
+
+        else:
+            # Fallback: Top rated content if no likes and no filter
+            # Apply year filter if present
+            
+            sql_top_movies = f"""
+                SELECT m.movieId, m.movieTitle, m.startYear, r.averageRating, r.numVotes
+                FROM movies m
+                JOIN ratings r ON m.movieId = r.titleId
+                WHERE r.numVotes > 10000
+                {year_condition}
+                ORDER BY r.averageRating DESC
+                LIMIT 12
+            """
+            recommended_movies = conn.execute(text(sql_top_movies), params).fetchall()
+            
+            sql_top_series = f"""
+                SELECT s.seriesId, s.seriesTitle, s.startYear, r.averageRating, r.numVotes
+                FROM series s
+                JOIN ratings r ON s.seriesId = r.titleId
+                WHERE r.numVotes > 10000
+                {series_year_condition}
+                ORDER BY r.averageRating DESC
+                LIMIT 12
+            """
+            recommended_series = conn.execute(text(sql_top_series), params).fetchall()
+
+    return render_template("recommend.html", 
+                           movies=recommended_movies, 
+                           series=recommended_series,
+                           genres=top_genres,
+                           all_genres=all_genres,
+                           selected_genre=selected_genre,
+                           start_year=start_year,
+                           end_year=end_year)
+
+@main_bp.route("/api/random_recommendation")
+def random_recommendation():
+    import random
+    is_movie = random.choice([True, False])
+    
+    with engine.connect() as conn:
+        if is_movie:
+            sql = """
+                SELECT m.movieId as id, m.movieTitle as title, 'movie' as type
+                FROM movies m
+                JOIN ratings r ON m.movieId = r.titleId
+                WHERE r.averageRating > 7.0 AND r.numVotes > 5000
+                ORDER BY RAND()
+                LIMIT 1
+            """
+        else:
+            sql = """
+                SELECT s.seriesId as id, s.seriesTitle as title, 'serie' as type
+                FROM series s
+                JOIN ratings r ON s.seriesId = r.titleId
+                WHERE r.averageRating > 7.0 AND r.numVotes > 5000
+                ORDER BY RAND()
+                LIMIT 1
+            """
+        
+        result = conn.execute(text(sql)).fetchone()
+        
+        if result:
+            return {
+                "id": result.id,
+                "title": result.title,
+                "type": result.type,
+                "url": url_for('movie.movie', movie_id=result.id) if result.type == 'movie' else url_for('series.serie_detail', series_id=result.id)
+            }
+        else:
+            return {"error": "No recommendation found"}, 404
 
 
 @main_bp.route("/suggest", methods=["GET", "POST"])
