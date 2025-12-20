@@ -6,6 +6,9 @@ from flask_login import login_required, current_user
 from groq import Groq 
 import os
 import json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 main_bp = Blueprint('main', __name__)
 

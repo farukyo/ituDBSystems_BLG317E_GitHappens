@@ -143,6 +143,28 @@
                 </span>
             </div>
 
+            <div class="detail-item">
+                <span class="detail-label">Stats</span>
+                {% if rating %}
+                <div class="movie-stats">
+                    {% if rating.rating %}
+                    <div class="stat-item">
+                        <span class="stat-number">{{ rating.rating | float | round(1) }}</span>
+                        <span class="stat-label">Rating</span>
+                    </div>
+                    {% endif %}
+                    {% if rating.votes %}
+                    <div class="stat-item">
+                        <span class="stat-number">{{ "{:,}".format(rating.votes) }}</span>
+                        <span class="stat-label">Votes</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <span class="no-data">No stats available</span>
+                {% endif %}
+            </div>
+
         </div>
     </div>
 
@@ -173,11 +195,11 @@
     </div>
 
     <div class="action-buttons">
-        <a href="{{ url_for('series') }}" class="btn-action btn-secondary">
+        <a href="{{ url_for('series.series') }}" class="btn-action btn-secondary">
             ← Back to Series List
         </a>
         
-        <a href="{{ url_for('episodes', seriesName=series.seriesTitle) }}" class="btn-action btn-primary">
+        <a href="{{ url_for('episode.episodes', seriesName=series.seriesTitle) }}" class="btn-action btn-primary">
             View All Episodes
         </a>
     </div>

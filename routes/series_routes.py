@@ -113,9 +113,43 @@ def serie_detail(series_id):
         """
         cast = conn.execute(text(sql_cast), {"id": series_id}).fetchall()
 
+        # 4. İstatistikler (Seasons ve Episodes)
+        try:
+            sql_stats = """
+                SELECT COUNT(DISTINCT seNumber) as total_seasons,
+                       COUNT(*) as total_episodes
+                FROM Episode
+                WHERE seriesId = :id
+            """
+            stats_result = conn.execute(text(sql_stats), {"id": series_id}).fetchone()
+            stats = {
+                "total_seasons": stats_result.total_seasons if stats_result else 0,
+                "total_episodes": stats_result.total_episodes if stats_result else 0
+            }
+        except:
+            # Episode tablosu yoksa default değer
+            stats = {
+                "total_seasons": 0,
+                "total_episodes": 0
+            }
+
+        # 5. Rating ve Votes
+        sql_rating = """
+            SELECT averageRating, numVotes
+            FROM ratings
+            WHERE titleId = :id
+        """
+        rating_result = conn.execute(text(sql_rating), {"id": series_id}).fetchone()
+        rating = {
+            "rating": rating_result.averageRating if rating_result else 0,
+            "votes": rating_result.numVotes if rating_result else 0
+        }
+
     page_title = f"{series.seriesTitle} ({series.startYear})"
     return render_template("serie.html", 
                            series=series, 
                            genres=genres,
-                           cast=cast, 
+                           cast=cast,
+                           stats=stats,
+                           rating=rating,
                            title=page_title)
