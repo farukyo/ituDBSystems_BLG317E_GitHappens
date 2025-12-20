@@ -96,22 +96,24 @@
     <div class="episode-list">
         {% if items %}
 
-        <!-- Table Header -->
         <div class="episode-table-header">
             <span class="col-title">Title</span>
             <span class="col-runtime">Runtime</span>
             <span class="col-series">Series</span>
             <span class="col-season">Season</span>
             <span class="col-episode">Episode</span>
+            <span style="text-align: center;">Like</span>
         </div>
 
         {% for episode in items %}
         <div class="episode-item">
+            
             <span class="col-title">
                 <a href="/episode/{{ episode.episodeId }}" class="episode-title-link">
                     {{ episode.epTitle or 'Untitled' }}
                 </a>
             </span>
+            
             <span class="col-runtime">
                 {% if episode.runtimeMinutes %}
                 {{ episode.runtimeMinutes }} min
@@ -119,6 +121,7 @@
                 N/A
                 {% endif %}
             </span>
+            
             <span class="col-series">
                 {% if episode.seriesId %}
                 <a href="/serie/{{ episode.seriesId }}" class="series-link">
@@ -128,6 +131,7 @@
                 N/A
                 {% endif %}
             </span>
+            
             <span class="col-season">
                 {% if episode.seNumber %}
                 S{{ episode.seNumber }}
@@ -135,6 +139,7 @@
                 -
                 {% endif %}
             </span>
+            
             <span class="col-episode">
                 {% if episode.epNumber %}
                 E{{ episode.epNumber }}
@@ -142,8 +147,18 @@
                 -
                 {% endif %}
             </span>
-        </div>
-        {% endfor %}
+
+            <span style="text-align: center;">
+                <button class="like-btn {{ 'liked' if episode.is_liked else '' }}" 
+                        data-id="{{ episode.episodeId }}" 
+                        data-type="episode"
+                        onclick="toggleEntityLike(this, event)">
+                    ❤
+                </button>
+            </span>
+
+        </div> {% endfor %}
+        
         {% else %}
         <div class="no-results">
             {% if request.args.get('epTitle') or request.args.get('seriesName') or

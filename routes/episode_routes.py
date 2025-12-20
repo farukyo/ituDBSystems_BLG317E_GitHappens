@@ -3,6 +3,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from sqlalchemy import text
+from flask_login import current_user
 from database.db import engine
 
 episode_bp = Blueprint('episode', __name__)
@@ -16,17 +17,19 @@ def episodes():
     series_name = request.args.get('seriesName')
     season_number = request.args.get('seNumber')
     episode_number = request.args.get('epNumber')
-    
+    uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
         sql = """
             SELECT e.episodeId, e.epTitle, e.runtimeMinutes, 
                    e.seriesId, e.seNumber, e.epNumber,
-                   s.seriesTitle
+                   s.seriesTitle,
+                   CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked  
             FROM Episode e
             LEFT JOIN Series s ON e.seriesId = s.seriesId
+            LEFT JOIN githappens_users.user_likes ul ON e.episodeId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'episode' 
             WHERE 1=1
         """
-        params = {}
+        params = {"uid": uid}
         
         if ep_title:
             sql += " AND e.epTitle LIKE :epTitle"
@@ -71,6 +74,7 @@ def episodes():
 
 @episode_bp.route("/episode/<episode_id>")
 def episode_detail(episode_id):
+    uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
         # Tek karmaşık sorgu ile tüm bilgileri çek
         # Episode + Series + Stats (scalar subquery) + Genres + Cast
@@ -82,7 +86,8 @@ def episode_detail(episode_id):
                 (SELECT COUNT(DISTINCT e2.seNumber) FROM Episode e2 WHERE e2.seriesId = e.seriesId) AS total_seasons,
                 (SELECT COUNT(*) FROM Episode e3 WHERE e3.seriesId = e.seriesId) AS total_episodes,
                 g.genreName,
-                p.peopleId, p.primaryName, pr.category, pr.characters, prof.professionName
+                p.peopleId, p.primaryName, pr.category, pr.characters, prof.professionName,
+                CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked  
             FROM Episode e
             LEFT JOIN Series s ON e.seriesId = s.seriesId
             LEFT JOIN Series_Genres sg ON s.seriesId = sg.seriesId
@@ -90,12 +95,13 @@ def episode_detail(episode_id):
             LEFT JOIN principals pr ON pr.titleId = e.seriesId
             LEFT JOIN people p ON pr.peopleId = p.peopleId
             LEFT JOIN profession prof ON p.professionId = prof.professionId
+            LEFT JOIN githappens_users.user_likes ul ON e.episodeId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'episode' 
             WHERE e.episodeId = :episodeId
             ORDER BY pr.category, p.primaryName
         """
         
         display_sql = sql.strip().replace(':episodeId', f"'{episode_id}'")
-        result = conn.execute(text(sql), {"episodeId": episode_id})
+        result = conn.execute(text(sql), {"episodeId": episode_id, "uid": uid})
         rows = result.fetchall()
         
         if not rows:
@@ -113,7 +119,8 @@ def episode_detail(episode_id):
             'epNumber': first_row.epNumber,
             'seriesTitle': first_row.seriesTitle,
             'startYear': first_row.startYear,
-            'endYear': first_row.endYear
+            'endYear': first_row.endYear,
+            'is_liked': first_row.is_liked  
         }
         
         stats = {

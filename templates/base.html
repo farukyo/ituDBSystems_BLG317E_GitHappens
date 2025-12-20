@@ -157,6 +157,41 @@
 
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
     {% block scripts %}{% endblock %}
+
+    <script>
+    function toggleEntityLike(btn, event) {
+        // Tıklama olayının yukarı (satıra/linke) gitmesini engelle
+        if(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+
+        const entityId = btn.getAttribute('data-id');
+        const entityType = btn.getAttribute('data-type'); // 'movie', 'person', 'episode' vs.
+
+        let formData = new FormData();
+        formData.append('entity_id', entityId);
+        formData.append('entity_type', entityType);
+
+        fetch('/like_entity', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data === "1") {
+                // Başarılıysa kalbin rengini değiştir (toggle)
+                btn.classList.toggle('liked');
+            } else {
+                // Giriş yapılmamışsa veya hata varsa
+                alert("Please log in to like items.");
+                // İstersen: window.location.href = "/login";
+            }
+        })
+        .catch(err => console.error('Like Error:', err));
+    }
+</script>
+
 </body>
 
 </html>
