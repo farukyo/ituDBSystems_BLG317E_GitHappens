@@ -1,23 +1,23 @@
 from flask import render_template, request, redirect, url_for, flash
 from sqlalchemy import text
 from database.db import engine
-from admin import admin_bp   # blueprint buradan geliyor
-
-# ------------------------------------------------------------------
-# ADMIN HOME
-# ------------------------------------------------------------------
-@admin_bp.route("/")
-def admin_home():
-    return render_template("admin/index.html")
+from admin import admin_bp
+import random
 
 # ------------------------------------------------------------------
 # PEOPLE MENU
 # ------------------------------------------------------------------
 @admin_bp.route("/people/menu")
 def person_menu():
-    return render_template("admin/manage_people.html")
-
-
+    return render_template(
+        "admin/manage_generic.html",
+        title="People",
+        singular="Person",
+        add_route="admin.person_new",
+        edit_route="admin.person_edit_menu",
+        delete_route="admin.person_delete_menu"
+    )
+    
 # ------------------------------------------------------------------
 # NEW PERSON
 # ------------------------------------------------------------------
@@ -28,10 +28,24 @@ def person_new():
         birth = request.form.get("birthYear")
         death = request.form.get("deathYear")
 
+        # normalize empty strings to NULL
+        birth = birth or None
+        death = death or None
+
         with engine.connect() as conn:
+            # generate a random peopleId like 'nm0000123' that's not already in DB
+            while True:
+                candidate_id = f"nm{random.randint(0, 9999999):07d}"
+                exists = conn.execute(
+                    text("SELECT 1 FROM people WHERE peopleId = :id"),
+                    {"id": candidate_id}
+                ).fetchone()
+                if not exists:
+                    break
+
             conn.execute(
-                text("INSERT INTO people (primaryName, birthYear, deathYear) VALUES (:n, :b, :d)"),
-                {"n": name, "b": birth, "d": death}
+                text("INSERT INTO people (peopleId, primaryName, birthYear, deathYear) VALUES (:id, :n, :b, :d)"),
+                {"id": candidate_id, "n": name, "b": birth, "d": death}
             )
             conn.commit()
 
@@ -54,8 +68,8 @@ def person_edit(people_id):
 
     if request.method == "POST":
         name = request.form["primaryName"]
-        birth = request.form.get("birthYear")
-        death = request.form.get("deathYear")
+        birth = request.form.get("birthYear") or None
+        death = request.form.get("deathYear") or None
 
         with engine.connect() as conn:
             conn.execute(
@@ -80,16 +94,35 @@ def person_edit_menu():
     with engine.connect() as conn:
         if query:
             people = conn.execute(
-                text("SELECT peopleId, primaryName FROM people "
-                     "WHERE primaryName LIKE :q LIMIT 50"),
+                text("""
+                    SELECT peopleId, primaryName
+                    FROM people
+                    WHERE primaryName LIKE :q
+                    LIMIT 50
+                """),
                 {"q": f"%{query}%"}
-            ).fetchall()
+            ).mappings().all()
         else:
             people = conn.execute(
-                text("SELECT peopleId, primaryName FROM people ORDER BY primaryName LIMIT 20")
-            ).fetchall()
+                text("""
+                    SELECT peopleId, primaryName
+                    FROM people
+                    ORDER BY primaryName
+                    LIMIT 20
+                """)
+            ).mappings().all()
 
-    return render_template("edit_person_menu.html", people=people)
+    return render_template(
+        "admin/edit_generic_menu.html",
+        title="Person",
+        singular="Person",
+        items=people,
+        id_field="peopleId",
+        name_field="primaryName",
+        name_label="Name",
+        edit_route="admin.person_edit",
+        id_param="people_id"
+    )
 
 
 # ------------------------------------------------------------------
@@ -102,17 +135,35 @@ def person_delete_menu():
     with engine.connect() as conn:
         if query:
             people = conn.execute(
-                text("SELECT peopleId, primaryName FROM people "
-                     "WHERE primaryName LIKE :q LIMIT 50"),
+                text("""
+                    SELECT peopleId, primaryName
+                    FROM people
+                    WHERE primaryName LIKE :q
+                    LIMIT 50
+                """),
                 {"q": f"%{query}%"}
-            ).fetchall()
+            ).mappings().all()
         else:
             people = conn.execute(
-                text("SELECT peopleId, primaryName FROM people ORDER BY primaryName LIMIT 20")
-            ).fetchall()
+                text("""
+                    SELECT peopleId, primaryName
+                    FROM people
+                    ORDER BY primaryName
+                    LIMIT 20
+                """)
+            ).mappings().all()
 
-    return render_template("delete_person_menu.html", people=people)
-
+    return render_template(
+        "admin/delete_generic_menu.html",
+        title="Person",
+        singular="Person",
+        items=people,
+        id_field="peopleId",
+        name_field="primaryName",
+        name_label="Name",
+        delete_route="admin.person_delete",
+        id_param="people_id"
+    )
 
 # ------------------------------------------------------------------
 # DELETE PERSON

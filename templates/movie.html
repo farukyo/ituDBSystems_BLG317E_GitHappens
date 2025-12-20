@@ -305,13 +305,13 @@
                 <div class="movie-stats">
                     {% if stats.averageRating %}
                     <div class="stat-item">
-                        <span class="stat-number">{{ stats.averageRating }}</span>
+                        <span class="stat-number">{{ stats.averageRating | float | round(1) }}</span>
                         <span class="stat-label">Rating</span>
                     </div>
                     {% endif %}
                     {% if stats.numVotes %}
                     <div class="stat-item">
-                        <span class="stat-number">{{ stats.numVotes }}</span>
+                        <span class="stat-number">{{ "{:,}".format(stats.numVotes) }}</span>
                         <span class="stat-label">Votes</span>
                     </div>
                     {% endif %}
@@ -371,4 +371,3 @@
 
 </div>
 {% endblock %}
-// ...existing code...

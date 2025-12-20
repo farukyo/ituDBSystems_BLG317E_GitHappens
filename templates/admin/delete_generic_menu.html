@@ -1,0 +1,40 @@
+{% extends "admin_base.html" %}
+{% block content %}
+
+<h1>Delete {{ title }}</h1>
+
+<form method="post">
+    <input type="text" name="search" placeholder="Search {{ singular | lower }}...">
+    <button type="submit">Search</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>{{ name_label }}</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td>{{ item[id_field] }}</td>
+      <td>{{ item[name_field] }}</td>
+      <td>
+        <form
+          action="{{ url_for(delete_route, **{id_param: item[id_field]}) }}"
+          method="post"
+        >
+          <button type="submit"
+                  onclick="return confirm('Delete this {{ singular | lower }}?')">
+            Delete
+          </button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

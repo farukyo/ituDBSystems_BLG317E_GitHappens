@@ -232,15 +232,161 @@
         color: var(--muted);
         font-style: italic;
     }
+
+    /* Header Title Row */
+    .header-title-row {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-title-row h1 {
+        margin: 0;
+    }
+
+    /* Info Button */
+    .info-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border: none;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        color: #cfe6ff;
+        cursor: pointer;
+        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .info-btn:hover {
+        background: var(--accent);
+        color: #fff;
+        transform: scale(1.1);
+    }
+
+    /* SQL Popup Overlay */
+    .sql-popup-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .sql-popup-overlay.active {
+        display: flex;
+    }
+
+    .sql-popup {
+        background: #1a1f2e;
+        border-radius: 12px;
+        max-width: 900px;
+        width: 100%;
+        max-height: 80vh;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sql-popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sql-popup-header h3 {
+        margin: 0;
+        color: #cfe6ff;
+        font-size: 1.1rem;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        color: var(--muted);
+        font-size: 28px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0;
+        transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+        color: var(--accent);
+    }
+
+    .sql-popup-content {
+        padding: 20px;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: calc(80vh - 60px);
+    }
+
+    .sql-query-block {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sql-query-block:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .query-number {
+        display: block;
+        color: var(--accent);
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+    }
+
+    .sql-popup-content pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .sql-popup-content code {
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 13px;
+        color: #7eb8ff;
+        line-height: 1.6;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container episode-detail-page">
 
-    <!-- Episode Header -->
+    <!-- Episode Header with SQL Button -->
     <div class="episode-header">
-        <h1>{{ episode.epTitle or 'Untitled Episode' }}</h1>
+        <div class="header-title-row">
+            <h1>{{ episode.epTitle or 'Untitled Episode' }}</h1>
+            <button type="button" class="info-btn" id="showSqlBtn" title="Show SQL Queries">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+            </button>
+        </div>
         {% if episode.seriesTitle %}
         <p class="series-info">
             <a href="/serie/{{ episode.seriesId }}">{{ episode.seriesTitle }}</a>
@@ -399,5 +545,62 @@
         {% endif %}
     </div>
 
+    <!-- SQL Query Popup -->
+    <div class="sql-popup-overlay" id="sqlPopup">
+        <div class="sql-popup">
+            <div class="sql-popup-header">
+                <h3>Executed SQL Query</h3>
+                <button type="button" class="close-btn" id="closeSqlBtn">&times;</button>
+            </div>
+            <div class="sql-popup-content">
+                <pre><code>{{ sql_query | default('No query executed') }}</code></pre>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // SQL Query Popup functionality
+        const showSqlBtn = document.getElementById('showSqlBtn');
+        const sqlPopup = document.getElementById('sqlPopup');
+        const closeSqlBtn = document.getElementById('closeSqlBtn');
+
+        if (showSqlBtn && sqlPopup) {
+            // Open popup
+            showSqlBtn.addEventListener('click', function () {
+                sqlPopup.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+
+            // Close popup with X button
+            if (closeSqlBtn) {
+                closeSqlBtn.addEventListener('click', function () {
+                    sqlPopup.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+
+            // Close popup when clicking overlay
+            sqlPopup.addEventListener('click', function (e) {
+                if (e.target === sqlPopup) {
+                    sqlPopup.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Close popup with Escape key
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape' && sqlPopup.classList.contains('active')) {
+                    sqlPopup.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+    });
+</script>
 {% endblock %}

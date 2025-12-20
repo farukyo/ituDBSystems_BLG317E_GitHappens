@@ -26,7 +26,7 @@
         <a href="{{ url_for('episode.episodes') }}">📹 Episodes</a>
         <a href="{{ url_for('celebrity.celebrities') }}">⭐ Celebrities</a>
         <a href="{{ url_for('main.recommend') }}">💡 Recommend</a>
-        <a href="{{ url_for('main.quiz') }}">❓ Quizes</a>
+        <a href="{{ url_for('main.quiz_setup') }}">❓ Quizes</a>
     </div>
 
     <div id="main-content" class="main-content">
@@ -114,7 +114,7 @@
                     <h4>Explore As User</h4>
                     <ul>
                         <li><a href="{{ url_for('user.profile') }}">User</a></li>
-                        <li><a href="{{ url_for('main.quiz') }}">Quizes</a></li>
+                        <li><a href="{{ url_for('main.quiz_setup') }}">Quizes</a></li>
                         <li><a href="{{ url_for('main.recommend') }}">Recommendations</a></li>
                     </ul>
                 </div>

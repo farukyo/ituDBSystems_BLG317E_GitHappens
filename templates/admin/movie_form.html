@@ -1,0 +1,41 @@
+{% extends "admin_base.html" %}
+{% block content %}
+
+<h1>{{ 'Edit' if movie else 'New' }} Movie</h1>
+
+<form method="post">
+
+  <label>Movie Title</label><br>
+  <input name="movieTitle"
+         value="{{ movie.movieTitle if movie else '' }}"
+         required><br><br>
+
+  <label>Title Type</label><br>
+  <input name="titleType"
+         list="titleTypes"
+         value="{{ movie.titleType if movie and movie.titleType is not none else '' }}">
+  <datalist id="titleTypes">
+    <option value="movie">
+    <option value="short">
+    <option value="tvMovie">
+    <option value="video">
+  </datalist>
+  <br><br>
+
+  <label>Start Year</label><br>
+  <input name="startYear"
+         value="{{ movie.startYear if movie and movie.startYear is not none else '' }}"><br><br>
+
+  <label>Runtime (minutes)</label><br>
+  <input name="runtimeMinutes"
+         value="{{ movie.runtimeMinutes if movie and movie.runtimeMinutes is not none else '' }}"><br><br>
+  <label>
+    <input type="checkbox" name="isAdult"
+           {% if movie and movie.isAdult %}checked{% endif %}>
+    Adult Content
+  </label><br><br>
+
+  <button type="submit">Save</button>
+</form>
+
+{% endblock %}

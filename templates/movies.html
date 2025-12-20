@@ -59,9 +59,23 @@
                 </div>
             </div>
         </form>
+        <div class="movie-actions" style="margin-bottom:20px;">
+            <a href="{{ url_for('movie.movies') }}?{{ request.query_string|safe }}&view=stats" class="btn-primary">
+                📊 Detailed Movie Stats
+            </a>
+        </div>
 
         <hr>
 
+        {% if request.args.get('view') == 'stats' %}
+        <div class="episode-table-header movie-grid-layout">
+            <div class="col-title">TITLE</div>
+            <div class="col-year">YEAR</div>
+            <div class="col-rating">IMDB</div>
+            <div class="col-runtime">CAST COUNT</div>
+            <div class="col-runtime">GENRE COUNT</div>
+        </div>
+        {% else %}
         <div class="episode-table-header movie-grid-layout">
             <div class="col-title">TITLE</div>
             <div class="col-year">YEAR</div>
@@ -69,22 +83,28 @@
             <div class="col-genre">GENRE</div>
             <div class="col-runtime">RUNTIME</div>
         </div>
+        {% endif %}
+
+
 
         <div class="episode-list">
             {% if movies %}
             {% for movie in movies %}
             <div class="episode-item movie-grid-layout">
 
+                <!-- TITLE (HER ZAMAN AYNI, LİNK KORUNUYOR) -->
                 <div class="col-title">
-                    <a href="{{ url_for('movie.movies', movie_id=movie.movieId) }}" class="episode-title-link">
+                    <a href="{{ url_for('movie.movie', movie_id=movie.movieId) }}" class="episode-title-link">
                         {{ movie.movieTitle }}
                     </a>
                 </div>
 
+                <!-- YEAR -->
                 <div class="col-year">
                     <span>{{ movie.startYear }}</span>
                 </div>
 
+                <!-- IMDB -->
                 <div class="col-rating">
                     {% if movie.averageRating %}
                     <span style="color: #f5c518; font-weight: bold;">★ {{ movie.averageRating }}</span>
@@ -93,6 +113,20 @@
                     {% endif %}
                 </div>
 
+                {% if request.args.get('view') == 'stats' %}
+
+                <!-- 🔵 STAT MODE -->
+                <div class="col-runtime">
+                    {{ movie.cast_count }}
+                </div>
+
+                <div class="col-runtime">
+                    {{ movie.genre_count }}
+                </div>
+
+                {% else %}
+
+                <!-- 🟢 NORMAL MOVIES MODE -->
                 <div class="col-genre">
                     <span style="color: #7eb8ff; font-size: 0.9em;">
                         {{ movie.genre_str if movie.genre_str else '-' }}
@@ -106,8 +140,12 @@
                     -
                     {% endif %}
                 </div>
+
+                {% endif %}
+
             </div>
             {% endfor %}
+
             {% else %}
             <div class="no-results">
                 <p>No movies found matching your criteria.</p>
