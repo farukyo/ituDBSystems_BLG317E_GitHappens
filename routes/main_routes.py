@@ -110,22 +110,23 @@ def index():
         except Exception as e:
             print(f"Error fetching featured series: {e}")
 
-        # Top 5 People (Actors in high rated titles)
+        # Top 5 People (Most liked actors)
         try:
             sql_people = """
                 SELECT
                     p.peopleId,
                     p.primaryName,
-                    (
-                        SELECT COUNT(*)
-                        FROM githappens_users.user_likes ul
-                        WHERE ul.entity_id = p.peopleId
-                          AND ul.entity_type = 'person'
-                    ) as numLikes
-                FROM people p
+                    l.numLikes
+                FROM (
+                    SELECT entity_id, COUNT(*) as numLikes
+                    FROM githappens_users.user_likes
+                    WHERE entity_type = 'person'
+                    GROUP BY entity_id
+                ) l
+                JOIN people p ON l.entity_id = p.peopleId
                 LEFT JOIN profession prof ON p.professionId = prof.professionId
                 WHERE (prof.professionName LIKE '%actor%' OR prof.professionName LIKE '%actress%')
-                ORDER BY numLikes DESC
+                ORDER BY l.numLikes DESC
                 LIMIT 5
             """
             featured_people = conn.execute(text(sql_people)).fetchall()
