@@ -20,8 +20,16 @@ def series():
     with engine.connect() as conn:
         # 2. Temel Sorgu
         sql = """
-            SELECT seriesId, seriesTitle, titleType, startYear, endYear, runtimeMinutes, isAdult 
-            FROM series 
+            SELECT s.seriesId, s.seriesTitle, s.titleType, s.startYear, s.endYear, s.runtimeMinutes, s.isAdult,
+                   r.averageRating, r.numVotes,
+                   (
+                       SELECT GROUP_CONCAT(g.genreName SEPARATOR ', ')
+                       FROM Series_Genres sg
+                       JOIN genres g ON sg.genreId = g.genreId
+                       WHERE sg.seriesId = s.seriesId
+                   ) as genre_str
+            FROM series s
+            LEFT JOIN ratings r ON s.seriesId = r.titleId
             WHERE 1=1
         """
         params = {}
@@ -40,7 +48,7 @@ def series():
 
         # -- Start Year --
         if start_year and start_year.isdigit():
-            sql += " AND startYear >= :sYear"
+            sql += " AND startYear = :sYear"
             params["sYear"] = int(start_year)
 
         # -- End Year --
@@ -103,15 +111,43 @@ def serie_detail(series_id):
         """
         genres = [r.genreName for r in conn.execute(text(sql_genres), {"id": series_id}).fetchall()]
 
-        # 3. Oyuncular (Cast)
+        # 3. Oyuncular (Cast) - Sadece acting categories
         sql_cast = """
             SELECT p.peopleId, p.primaryName, pr.category, pr.characters
             FROM principals pr
             JOIN people p ON pr.peopleId = p.peopleId
-            WHERE pr.titleId = :id
+            WHERE pr.titleId = :id 
+            AND pr.category IN ('actor', 'actress', 'self')
             LIMIT 20
         """
-        cast = conn.execute(text(sql_cast), {"id": series_id}).fetchall()
+        cast_data = conn.execute(text(sql_cast), {"id": series_id}).fetchall()
+        
+        # Characters JSON'ı parse et
+        import json
+        cast = []
+        for person in cast_data:
+            try:
+                # characters string'i parse et - JSON array veya single string olabilir
+                chars = person.characters
+                if chars and chars != '\\N':
+                    if isinstance(chars, str):
+                        # JSON array ise
+                        if chars.startswith('['):
+                            chars = json.loads(chars)[0] if json.loads(chars) else ''
+                        # Tırnak işaretlerini temizle
+                        chars = chars.strip('"')
+                else:
+                    chars = None
+            except:
+                chars = None
+            
+            cast.append({
+                'peopleId': person.peopleId,
+                'primaryName': person.primaryName,
+                'category': person.category,
+                'characters': chars
+            })
+
 
         # 4. İstatistikler (Seasons ve Episodes)
         try:
