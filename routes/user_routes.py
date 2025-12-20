@@ -14,7 +14,7 @@ def toggle_like(entity_type, entity_id):
     with engine.connect() as conn:
         # 1. Zaten var mı bak?
         check_sql = text("""
-            SELECT 1 FROM user_likes 
+            SELECT 1 FROM githappens_users.user_likes 
             WHERE user_id = :uid AND entity_id = :eid AND entity_type = :etype
         """)
         existing = conn.execute(check_sql, {
@@ -23,13 +23,13 @@ def toggle_like(entity_type, entity_id):
 
         if existing:
             # 2. Varsa SİL (Unlike)
-            conn.execute(text("DELETE FROM user_likes WHERE user_id = :uid AND entity_id = :eid AND entity_type = :etype"),
+            conn.execute(text("DELETE FROM githappens_users.user_likes WHERE user_id = :uid AND entity_id = :eid AND entity_type = :etype"),
                          {"uid": current_user.id, "eid": entity_id, "etype": entity_type})
             conn.commit()
             return jsonify({"status": "unliked"})
         else:
             # 3. Yoksa EKLE (Like)
-            conn.execute(text("INSERT INTO user_likes (user_id, entity_id, entity_type) VALUES (:uid, :eid, :etype)"),
+            conn.execute(text("INSERT INTO githappens_users.user_likes (user_id, entity_id, entity_type) VALUES (:uid, :eid, :etype)"),
                          {"uid": current_user.id, "eid": entity_id, "etype": entity_type})
             conn.commit()
             return jsonify({"status": "liked"})
@@ -44,7 +44,7 @@ def profile():
         sql = """
             SELECT p.peopleId, p.primaryName
             FROM people p
-            JOIN user_likes ul ON p.peopleId = ul.entity_id
+            JOIN githappens_users.user_likes ul ON p.peopleId = ul.entity_id
             WHERE ul.user_id = :uid 
               AND ul.entity_type = 'person'
         """

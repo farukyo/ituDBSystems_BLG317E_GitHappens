@@ -26,9 +26,9 @@ login_manager.login_message = 'Please log in to access this page.'
 
 @login_manager.user_loader
 def load_user(user_id):
-    """Flask-Login'in kullanıcıyı her sayfa geçişinde MySQL'den tanımasını sağlar."""
     with engine.connect() as conn:
-        result = conn.execute(text("SELECT * FROM users WHERE id = :id"), {"id": user_id}).fetchone()
+        sql = text("SELECT * FROM githappens_users.users WHERE id = :id")
+        result = conn.execute(sql, {"id": user_id}).fetchone()
         if result:
             u = result._mapping
             return User(
