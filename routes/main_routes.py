@@ -328,7 +328,7 @@ def recommend():
                 AND m.movieId NOT IN (
                     SELECT entity_id FROM githappens_users.user_likes WHERE user_id = :uid AND entity_type = 'movie'
                 )
-                AND r.numVotes > 5000
+                AND r.numVotes > 1000
                 {year_condition}
                 ORDER BY r.averageRating DESC
                 LIMIT 12
@@ -348,7 +348,7 @@ def recommend():
                 AND s.seriesId NOT IN (
                     SELECT entity_id FROM githappens_users.user_likes WHERE user_id = :uid AND entity_type = 'serie'
                 )
-                AND r.numVotes > 5000
+                AND r.numVotes > 1000
                 {series_year_condition}
                 ORDER BY r.averageRating DESC
                 LIMIT 12
@@ -392,6 +392,43 @@ def recommend():
                            selected_genre=selected_genre,
                            start_year=start_year,
                            end_year=end_year)
+
+@main_bp.route("/api/random_recommendation")
+def random_recommendation():
+    import random
+    is_movie = random.choice([True, False])
+    
+    with engine.connect() as conn:
+        if is_movie:
+            sql = """
+                SELECT m.movieId as id, m.movieTitle as title, 'movie' as type
+                FROM movies m
+                JOIN ratings r ON m.movieId = r.titleId
+                WHERE r.averageRating > 7.0 AND r.numVotes > 5000
+                ORDER BY RAND()
+                LIMIT 1
+            """
+        else:
+            sql = """
+                SELECT s.seriesId as id, s.seriesTitle as title, 'serie' as type
+                FROM series s
+                JOIN ratings r ON s.seriesId = r.titleId
+                WHERE r.averageRating > 7.0 AND r.numVotes > 5000
+                ORDER BY RAND()
+                LIMIT 1
+            """
+        
+        result = conn.execute(text(sql)).fetchone()
+        
+        if result:
+            return {
+                "id": result.id,
+                "title": result.title,
+                "type": result.type,
+                "url": url_for('movie.movie', movie_id=result.id) if result.type == 'movie' else url_for('series.serie_detail', series_id=result.id)
+            }
+        else:
+            return {"error": "No recommendation found"}, 404
 
 
 @main_bp.route("/suggest", methods=["GET", "POST"])

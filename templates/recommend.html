@@ -12,7 +12,7 @@
         margin-bottom: 2rem;
         display: flex;
         gap: 1rem;
-        align-items: center;
+        align-items: flex-end;
         flex-wrap: wrap;
     }
 
@@ -146,6 +146,68 @@
             flex-direction: column;
         }
     }
+
+    /* Robot Bubble Styles */
+    .robot-container {
+        position: fixed;
+        top: 100px;
+        right: 30px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-end;
+    }
+
+    .robot-btn {
+        font-size: 3rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.3s;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    }
+
+    .robot-btn:hover {
+        transform: scale(1.1) rotate(10deg);
+    }
+
+    .speech-bubble {
+        background: white;
+        color: #333;
+        padding: 1rem;
+        border-radius: 15px;
+        border-top-right-radius: 0;
+        margin-top: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        max-width: 250px;
+        display: none;
+        /* Hidden by default */
+        animation: popIn 0.3s ease-out;
+        position: relative;
+    }
+
+    .speech-bubble a {
+        color: var(--primary-color);
+        font-weight: bold;
+        text-decoration: none;
+        border-bottom: 1px dotted var(--primary-color);
+    }
+
+    .speech-bubble a:hover {
+        border-bottom-style: solid;
+    }
+
+    @keyframes popIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px) scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
 </style>
 {% endblock %}
 
@@ -174,7 +236,7 @@
             <label for="end_year">End Year</label>
             <input type="number" name="end_year" id="end_year" placeholder="e.g. 2023" value="{{ end_year or '' }}">
         </div>
-        <button type="submit" class="filter-btn">Filter</button>
+        <button type="submit" class="filter-btn">Apply</button>
     </form>
 
     {% if genres %}
@@ -230,4 +292,42 @@
         </div>
     </div>
 </div>
+
+<!-- Robot Bubble UI -->
+<div class="robot-container">
+    <div class="speech-bubble" id="robotBubble">
+        <span id="robotText">Thinking...</span>
+    </div>
+    <button class="robot-btn" onclick="askRobot()">🤖</button>
+</div>
+
+<script>
+    async function askRobot() {
+        const bubble = document.getElementById('robotBubble');
+        const text = document.getElementById('robotText');
+
+        // Toggle visibility
+        if (bubble.style.display === 'block') {
+            bubble.style.display = 'none';
+            return;
+        }
+
+        bubble.style.display = 'block';
+        text.innerHTML = 'Thinking...';
+
+        try {
+            const response = await fetch('/api/random_recommendation');
+            const data = await response.json();
+
+            if (data.error) {
+                text.innerHTML = "I couldn't find anything right now. Try again!";
+            } else {
+                text.innerHTML = `How about watching <a href="${data.url}">${data.title}</a>?`;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            text.innerHTML = "Beep boop! Something went wrong.";
+        }
+    }
+</script>
 {% endblock %}
