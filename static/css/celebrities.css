@@ -107,23 +107,6 @@
 }
 
 
-@media (max-width: 600px) {
-    .filters {
-        grid-template-columns: 1fr 1fr;
-    }
-
-
-    .celebrity-item-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    .celebrity-item-row .info-right {
-        align-self: flex-end; 
-        font-size: 0.9rem;
-    }
-}
 /* --- RESULTS HEADER & INFO BUTTON (Episodes Style) --- */
 .results-header {
     display: flex;

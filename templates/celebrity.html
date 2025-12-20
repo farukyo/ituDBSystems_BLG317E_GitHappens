@@ -5,73 +5,106 @@
 {% block head %}
 <style>
     .celebrity-detail-page {
-        padding: 40px 0;
+        padding: 40px 0;     /* Eski haline yakın */
+        max-width: 1100px;   /* 1000px -> 1100px (Hafif genişledi) */
+        margin: 0 auto;
     }
 
     .celebrity-header {
-        margin-bottom: 30px;
+        margin-bottom: 35px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         padding-bottom: 20px;
     }
 
     .celebrity-header h1 {
-        color: #d65a1a; /* İstenilen Turuncu Renk */
-        font-size: 2.5rem;
+        color: #d65a1a;
+        font-size: 3rem; /* 2.5rem -> 3rem (Biraz büyüdü) */
         margin-bottom: 10px;
     }
 
+    /* KART TASARIMI (Hafif Büyütüldü) */
     .celebrity-details-card {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
-        padding: 30px;
-        margin-bottom: 30px;
+        border-radius: 14px; /* 12px -> 14px */
+        padding: 35px;       /* 30px -> 35px (İç boşluk biraz arttı) */
+        margin-bottom: 35px; /* Kartlar arası mesafe biraz arttı */
     }
 
     .card-title {
-        color: #d65a1a; /* İstenilen Turuncu Renk */
-        font-size: 1.2rem;
+        color: #d65a1a;
+        font-size: 1.5rem;   /* 1.2rem -> 1.5rem (Biraz büyüdü) */
         font-weight: 600;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
+        margin-bottom: 25px;
+        padding-bottom: 12px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .detail-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 25px;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Sütun genişliği biraz arttı */
+        gap: 30px; /* 25px -> 30px */
     }
 
     .detail-item {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
     }
 
     .detail-label {
-        color: #d65a1a; /* İstenilen Turuncu Renk */
-        font-size: 0.85rem;
-        font-weight: 600;
+        color: #d65a1a;
+        font-size: 1rem;    /* 0.85rem -> 1rem (Biraz büyüdü) */
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
     .detail-value {
         color: #fff;
-        font-size: 1.1rem;
+        font-size: 1.3rem; /* 1.1rem -> 1.3rem (Biraz büyüdü) */
+        line-height: 1.4;
     }
 
+    /* --- TOP RATED WORKS İÇİN ÖZEL STİLLER (Hafif Büyütüldü) --- */
+    .work-item {
+        background: rgba(255,255,255,0.05);
+        padding: 20px;       /* 15px -> 20px */
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.1);
+        transition: transform 0.2s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 110px; /* Minimum yükseklik biraz arttı */
+    }
+
+    .work-item h4 {
+        margin: 0 0 12px 0;
+        font-size: 1.2rem; /* 1rem -> 1.2rem */
+        line-height: 1.3;
+    }
+
+    .work-item-meta {
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+        font-size: 1.1rem; /* 0.85rem -> 1.1rem */
+        color: #aaa;
+    }
+
+    /* BUTONLAR */
     .btn-back {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 12px 24px;
+        gap: 10px;
+        padding: 14px 28px; /* Buton biraz büyüdü */
         background: rgba(255, 255, 255, 0.08);
         color: #fff;
         text-decoration: none;
-        border-radius: 8px;
+        border-radius: 10px;
         font-weight: 500;
+        font-size: 1.1rem; 
         transition: background 0.3s ease;
     }
 
@@ -82,26 +115,125 @@
     .like-btn {
         background: none; 
         border: none; 
-        font-size: 2rem;
+        font-size: 2.5rem; /* Kalp ikonu biraz büyüdü (2rem -> 2.5rem) */
         cursor: pointer; 
         color: #555; 
         transition: transform 0.2s;
-        margin-left: 15px; 
+        margin-left: 20px; 
         vertical-align: middle;
-        padding: 0; /* Fazla boşlukları al */
+        padding: 0;
         line-height: 1;
     }
     .like-btn.liked { color: #e50914; }
     .like-btn:hover { transform: scale(1.1); }
+    /* --- YENİ EKLENEN: SQL POPUP STİLLERİ --- */
+    .info-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: #ccc;
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+    }
+    .info-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+    }
+
+    /* --- GÜNCELLENEN SQL POPUP STİLLERİ (VS Code Teması) --- */
+    .sql-popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    backdrop-filter: blur(3px);
+}
+
+.sql-popup-overlay.active {
+    display: flex;
+}
+
+.sql-popup {
+    background: #1a1f2e;
+    border-radius: 12px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sql-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sql-popup-header h3 {
+    margin: 0;
+    color: #cfe6ff;
+    font-size: 1.1rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #e67e22;
+}
+
+.sql-popup-content {
+    padding: 20px;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: calc(80vh - 60px);
+    background-color: #111;
+}
+
+.sql-popup-content pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.sql-popup-content code {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    color: #7eb8ff;
+    line-height: 1.6;
+}
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container celebrity-detail-page">
 
-    <div class="celebrity-header">
-        <div style="display: flex; align-items: center;">
-            <h1>{{ person.primaryName }}</h1>
+    <div class="celebrity-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="header-left" style="display: flex; align-items: center;">
+            <h1 style="margin-right: 15px; margin-bottom: 0;">{{ person.primaryName }}</h1>
             
             <button class="like-btn {{ 'liked' if person.is_liked else '' }}" 
                     data-id="{{ person.peopleId }}" 
@@ -110,7 +242,30 @@
                 ❤
             </button>
         </div>
-    </div> <div class="celebrity-details-card">
+
+        <button type="button" class="info-btn" id="showSqlBtn" title="Show SQL Query">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+        </button>
+    </div>
+
+    <div class="sql-popup-overlay" id="sqlPopup">
+        <div class="sql-popup">
+            <div class="sql-popup-header">
+                <h3>Executed SQL Queries (Detail Page)</h3>
+                <button type="button" class="close-btn" id="closeSqlBtn">&times;</button>
+            </div>
+            <div class="sql-popup-content">
+                <pre><code>{{ sql_query | default('No query info available.') }}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="celebrity-details-card">
         <h3 class="card-title">Personal Information</h3>
         <div class="detail-grid">
 
@@ -161,6 +316,51 @@
         </div>
     </div>
 
+    {% if best_works %}
+    <div class="celebrity-details-card">
+        <h3 class="card-title">Top Rated Works</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+            {% for work in best_works %}
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); transition: transform 0.2s;">
+                
+                <h4 style="margin: 0 0 5px 0; font-size: 1rem;">
+                    {% if work.type == 'movie' %}
+                        <a href="{{ url_for('movie.movie', movie_id=work.id) }}" style="color: #fff; text-decoration: none;">
+                            {{ work.title }}
+                        </a>
+                    {% elif work.type == 'series' %}
+                        <a href="{{ url_for('series.serie_detail', series_id=work.id) }}" style="color: #fff; text-decoration: none;">
+                            {{ work.title }}
+                        </a>
+                    {% elif work.type == 'episode' %}
+                        <a href="{{ url_for('episode.episode_detail', episode_id=work.id) }}" style="color: #fff; text-decoration: none;">
+                            {{ work.title }}
+                        </a>
+                    {% else %}
+                        <span style="color: #fff;">{{ work.title }}</span>
+                    {% endif %}
+                </h4>
+
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #888;">
+                    <span>{{ work.startYear if work.startYear else '-' }}</span>
+                    
+                    <span style="color: #f5c518; font-weight: bold;">
+                        ★ {{ work.averageRating }}
+                    </span>
+                </div>
+                
+                <div style="font-size: 0.7rem; color: #666; margin-top: 5px; text-transform: uppercase;">
+                    {{ work.type }}
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+
     <div style="margin-top: 30px;">
         <a href="{{ url_for('celebrity.celebrities') }}" class="btn-back">
             ← Back to Celebrities
@@ -168,4 +368,33 @@
     </div>
 
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const showSqlBtn = document.getElementById('showSqlBtn');
+        const sqlPopup = document.getElementById('sqlPopup');
+        const closeSqlBtn = document.getElementById('closeSqlBtn');
+
+        if (showSqlBtn && sqlPopup) {
+            showSqlBtn.addEventListener('click', () => {
+                sqlPopup.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+
+            const closePopup = () => {
+                sqlPopup.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+
+            if (closeSqlBtn) closeSqlBtn.addEventListener('click', closePopup);
+
+            sqlPopup.addEventListener('click', (e) => {
+                if (e.target === sqlPopup) closePopup();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && sqlPopup.classList.contains('active')) closePopup();
+            });
+        }
+    });
+</script>
 {% endblock %}
