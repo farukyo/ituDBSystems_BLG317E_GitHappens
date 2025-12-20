@@ -20,6 +20,16 @@
       🗑️ Delete {{ singular }}
     </a>
   </li>
+
+
+{% if extra_route %}
+
+  <li>
+    <a href="{{ url_for(extra_route) }}" class="admin-btn">
+      🫵🏻 {{ extra_label }}
+    </a>
+  </li>
 </ul>
+{% endif %}
 
 {% endblock %}

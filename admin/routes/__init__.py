@@ -4,3 +4,4 @@ from admin.routes.movie import *
 from admin.routes.series import *
 from admin.routes.episode import *
 from admin.routes.ratings import *
+from admin.routes.genres import *

@@ -3,6 +3,7 @@ from sqlalchemy import text
 from database.db import engine
 from admin import admin_bp
 
+
 # -------------------------------------------------
 # TITLE TYPE + NAME → titleId BULMA
 # -------------------------------------------------
@@ -17,12 +18,6 @@ def get_title_id(conn, title_type, title_name):
     elif title_type == "series":
         row = conn.execute(
             text("SELECT seriesId AS id FROM Series WHERE seriesTitle = :t"),
-            {"t": title_name}
-        ).fetchone()
-
-    elif title_type == "episode":
-        row = conn.execute(
-            text("SELECT episodeId AS id FROM Episode WHERE epTitle = :t"),
             {"t": title_name}
         ).fetchone()
 
@@ -59,12 +54,12 @@ def rating_new():
         avg_rating = request.form.get("averageRating")
         num_votes = request.form.get("numVotes")
 
-        if not title_type or not title_name:
-            flash("Title type and title name are required.")
+        if title_type not in ("movie", "series"):
+            flash("Ratings can only be added for movies or series.")
             return redirect(url_for("admin.rating_new"))
 
-        if title_type not in ("movie", "series", "episode"):
-            flash("Ratings can only be added for movies, series or episodes.")
+        if not title_name:
+            flash("Title name is required.")
             return redirect(url_for("admin.rating_new"))
 
         avg_rating = float(avg_rating) if avg_rating else None
@@ -119,13 +114,11 @@ def rating_edit(rating_id):
                     r.numVotes,
                     COALESCE(
                         m.movieTitle,
-                        s.seriesTitle,
-                        e.epTitle
+                        s.seriesTitle
                     ) AS primaryTitle
                 FROM ratings r
-                LEFT JOIN movies  m ON r.titleId = m.movieId
-                LEFT JOIN Series  s ON r.titleId = s.seriesId
-                LEFT JOIN Episode e ON r.titleId = e.episodeId
+                LEFT JOIN movies m ON r.titleId = m.movieId
+                LEFT JOIN Series s ON r.titleId = s.seriesId
                 WHERE r.ratingId = :id
             """),
             {"id": rating_id}
@@ -178,17 +171,14 @@ def rating_edit_menu():
                         r.ratingId,
                         COALESCE(
                             m.movieTitle,
-                            s.seriesTitle,
-                            e.epTitle
+                            s.seriesTitle
                         ) AS primaryTitle
                     FROM ratings r
-                    LEFT JOIN movies  m ON r.titleId = m.movieId
-                    LEFT JOIN Series  s ON r.titleId = s.seriesId
-                    LEFT JOIN Episode e ON r.titleId = e.episodeId
+                    LEFT JOIN movies m ON r.titleId = m.movieId
+                    LEFT JOIN Series s ON r.titleId = s.seriesId
                     WHERE 
                         m.movieTitle LIKE :q OR
-                        s.seriesTitle LIKE :q OR
-                        e.epTitle LIKE :q
+                        s.seriesTitle LIKE :q
                     LIMIT 50
                 """),
                 {"q": f"%{query}%"}
@@ -200,13 +190,11 @@ def rating_edit_menu():
                         r.ratingId,
                         COALESCE(
                             m.movieTitle,
-                            s.seriesTitle,
-                            e.epTitle
+                            s.seriesTitle
                         ) AS primaryTitle
                     FROM ratings r
-                    LEFT JOIN movies  m ON r.titleId = m.movieId
-                    LEFT JOIN Series  s ON r.titleId = s.seriesId
-                    LEFT JOIN Episode e ON r.titleId = e.episodeId
+                    LEFT JOIN movies m ON r.titleId = m.movieId
+                    LEFT JOIN Series s ON r.titleId = s.seriesId
                     ORDER BY primaryTitle
                     LIMIT 20
                 """)
@@ -240,17 +228,14 @@ def rating_delete_menu():
                         r.ratingId,
                         COALESCE(
                             m.movieTitle,
-                            s.seriesTitle,
-                            e.epTitle
+                            s.seriesTitle
                         ) AS primaryTitle
                     FROM ratings r
-                    LEFT JOIN movies  m ON r.titleId = m.movieId
-                    LEFT JOIN Series  s ON r.titleId = s.seriesId
-                    LEFT JOIN Episode e ON r.titleId = e.episodeId
+                    LEFT JOIN movies m ON r.titleId = m.movieId
+                    LEFT JOIN Series s ON r.titleId = s.seriesId
                     WHERE 
                         m.movieTitle LIKE :q OR
-                        s.seriesTitle LIKE :q OR
-                        e.epTitle LIKE :q
+                        s.seriesTitle LIKE :q
                     LIMIT 50
                 """),
                 {"q": f"%{query}%"}
@@ -262,13 +247,11 @@ def rating_delete_menu():
                         r.ratingId,
                         COALESCE(
                             m.movieTitle,
-                            s.seriesTitle,
-                            e.epTitle
+                            s.seriesTitle
                         ) AS primaryTitle
                     FROM ratings r
-                    LEFT JOIN movies  m ON r.titleId = m.movieId
-                    LEFT JOIN Series  s ON r.titleId = s.seriesId
-                    LEFT JOIN Episode e ON r.titleId = e.episodeId
+                    LEFT JOIN movies m ON r.titleId = m.movieId
+                    LEFT JOIN Series s ON r.titleId = s.seriesId
                     ORDER BY primaryTitle
                     LIMIT 20
                 """)
