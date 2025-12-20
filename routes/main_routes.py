@@ -105,7 +105,6 @@ def quiz_play():
 def submit_quiz():
     quiz = session.get("quiz")
     
-    # Eğer session düşmüşse veya quiz verisi yoksa ana sayfaya at
     if not quiz or "questions" not in quiz:
         return redirect(url_for("main.quiz_setup"))
 
@@ -114,23 +113,14 @@ def submit_quiz():
     total = len(questions)
 
     for i, q in enumerate(questions):
-        # Formdan gelen cevabı al (q0, q1, q2...)
         user_answer = request.form.get(f"q{i}")
-        
-        # DEBUG: Terminale yazdırarak hangi soruda hata olduğunu görebilirsin
-        print(f"Soru {i} için Kullanıcı Cevabı: {user_answer} | Doğru Cevap: {q['answer']}")
-        
         if user_answer == q["answer"]:
             correct += 1
 
-    # Skor hesaplama (Bölme hatasını önlemek için total > 0 kontrolü)
-    score = round((correct / total) * 100) if total > 0 else 0
-
     return render_template(
         "quiz_result.html",
-        correct=correct,
-        total=total,
-        score=score
+        score=correct,  # Artık 'score' 30 değil, 3 olacak
+        total=total
     )
 
 

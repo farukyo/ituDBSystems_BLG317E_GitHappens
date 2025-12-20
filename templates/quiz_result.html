@@ -1,19 +1,29 @@
 {% extends "base.html" %}
 
-{% block title %}Quiz Result - BeeMD{% endblock %}
+{% block title %}Quiz Results - BeeMD{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/quiz.css') }}" />
+{% endblock %}
 
 {% block content %}
-<div class="episodes-page">
-    <div class="container" style="text-align: center;">
-        <h1>🎉 Quiz Completed!</h1>
-        <hr>
-        <div class="result-card" style="padding: 40px; background: rgba(255,255,255,0.05); border-radius: 15px;">
-            <p style="font-size: 1.5rem;">Score: <strong>{{ score }}%</strong></p>
-            <p>You got <strong>{{ correct }}</strong> out of <strong>{{ total }}</strong> correct!</p>
+<div class="quiz-play-page">
+    <div class="inner-container">
+        <h1>Quiz Results 🏆</h1>
+        <p class="sub-title">See how well you know your favorite movies and series.</p>
 
-            <div style="margin-top: 30px;">
-                <a href="{{ url_for('main.quiz_setup') }}" class="btn-primary">🔄 Try New Quiz</a>
-            </div>
+        <div class="quiz-question-card result-summary">
+            <h2>Your Score: <span class="highlight">{{ score }} / {{ total }}</span></h2>
+            <p>Percentage: {{ (score / total * 100) | round(1) }}%</p>
+        </div>
+
+        <div class="quiz-button-wrapper result-actions">
+            <a href="{{ url_for('main.quiz_setup') }}" class="quiz-btn-primary">
+                🔄 Try New Quiz
+            </a>
+            <a href="{{ url_for('main.index') }}" class="quiz-btn-secondary">
+                🏠 Back to Home
+            </a>
         </div>
     </div>
 </div>
