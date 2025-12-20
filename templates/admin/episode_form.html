@@ -1,0 +1,49 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+<h1>{{ 'Edit' if episode else 'New' }} Episode</h1>
+
+<form method="post">
+
+  <label>Episode Title</label><br>
+  <input
+    type="text"
+    name="episodeTitle"
+    value="{{ episode.epTitle if episode else '' }}"
+    required>
+  <br><br>
+
+  <label>Series Title</label><br>
+  <input
+    type="text"
+    name="seriesTitle"
+    value="{{ episode.seriesTitle if episode else '' }}"
+    required>
+  <br><br>
+
+  <label>Season Number</label><br>
+  <input
+    type="number"
+    name="seasonNumber"
+    value="{{ episode.seNumber if episode and episode.seNumber is not none else '' }}">
+  <br><br>
+
+  <label>Episode Number</label><br>
+  <input
+    type="number"
+    name="episodeNumber"
+    value="{{ episode.epNumber if episode and episode.epNumber is not none else '' }}">
+  <br><br>
+
+  <label>Runtime (minutes)</label><br>
+  <input
+    type="number"
+    name="runtimeMinutes"
+    value="{{ episode.runtimeMinutes if episode and episode.runtimeMinutes is not none else '' }}">
+  <br><br>
+
+  <button type="submit">Save</button>
+</form>
+
+{% endblock %}
