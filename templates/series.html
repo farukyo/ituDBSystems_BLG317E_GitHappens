@@ -137,7 +137,7 @@
                 <div>YEAR RANGE</div>
                 <div>IMDB</div>
                 <div>GENRE</div>
-                <div>RUNTIME</div>
+                <div>START YEAR</div>
             </div>
         {% endif %}
 
@@ -175,10 +175,10 @@
                             <span>{{ row.genre_str if row.genre_str else 'Unknown' }}</span>
                         </div>
 
-                        <!-- Runtime -->
+                        <!-- Start Year -->
                         <div class="col-runtime">
-                            {% if row.runtimeMinutes %}
-                                {{ row.runtimeMinutes }} min
+                            {% if row.startYear %}
+                                {{ row.startYear }}
                             {% else %}
                                 -
                             {% endif %}
