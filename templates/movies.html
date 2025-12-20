@@ -67,44 +67,43 @@
 
         <hr>
 
-        {% if request.args.get('view') == 'stats' %}
-        <div class="episode-table-header movie-grid-layout">
-            <div class="col-title">TITLE</div>
-            <div class="col-year">YEAR</div>
-            <div class="col-rating">IMDB</div>
-            <div class="col-runtime">CAST COUNT</div>
-            <div class="col-runtime">GENRE COUNT</div>
-        </div>
-        {% else %}
-        <div class="episode-table-header movie-grid-layout">
-            <div class="col-title">TITLE</div>
-            <div class="col-year">YEAR</div>
-            <div class="col-rating">IMDB</div>
-            <div class="col-genre">GENRE</div>
-            <div class="col-runtime">RUNTIME</div>
-        </div>
-        {% endif %}
 
 
 
         <div class="episode-list">
             {% if movies %}
+            
+            {% if request.args.get('view') == 'stats' %}
+            <div class="episode-table-header movie-grid-layout">
+                <div>TITLE</div>
+                <div>YEAR</div>
+                <div>RATING</div>
+                <div>CAST COUNT</div> <div>GENRE COUNT</div> <div style="text-align: center;">LIKE</div>
+            </div>
+            {% else %}
+            <div class="episode-table-header movie-grid-layout">
+                <div>TITLE</div>
+                <div>YEAR</div>
+                <div>RATING</div>
+                <div>GENRE</div>
+                <div>RUNTIME</div>
+                <div style="text-align: center;">LIKE</div>
+            </div>
+            {% endif %}
+
             {% for movie in movies %}
             <div class="episode-item movie-grid-layout">
 
-                <!-- TITLE (HER ZAMAN AYNI, LİNK KORUNUYOR) -->
                 <div class="col-title">
                     <a href="{{ url_for('movie.movie', movie_id=movie.movieId) }}" class="episode-title-link">
                         {{ movie.movieTitle }}
                     </a>
                 </div>
 
-                <!-- YEAR -->
                 <div class="col-year">
-                    <span>{{ movie.startYear }}</span>
+                    <span style="color: #fff;">{{ movie.startYear }}</span>
                 </div>
 
-                <!-- IMDB -->
                 <div class="col-rating">
                     {% if movie.averageRating %}
                     <span style="color: #f5c518; font-weight: bold;">★ {{ movie.averageRating }}</span>
@@ -114,34 +113,31 @@
                 </div>
 
                 {% if request.args.get('view') == 'stats' %}
-
-                <!-- 🔵 STAT MODE -->
-                <div class="col-runtime">
-                    {{ movie.cast_count }}
-                </div>
-
-                <div class="col-runtime">
-                    {{ movie.genre_count }}
-                </div>
-
+                    <div class="col-runtime" style="color:#aaa;">{{ movie.cast_count }} Actors</div>
+                    <div class="col-runtime" style="color:#aaa;">{{ movie.genre_count }} Genres</div>
                 {% else %}
-
-                <!-- 🟢 NORMAL MOVIES MODE -->
-                <div class="col-genre">
-                    <span style="color: #7eb8ff; font-size: 0.9em;">
-                        {{ movie.genre_str if movie.genre_str else '-' }}
-                    </span>
-                </div>
-
-                <div class="col-runtime">
-                    {% if movie.runtimeMinutes %}
-                    {{ movie.runtimeMinutes }} min
-                    {% else %}
-                    -
-                    {% endif %}
-                </div>
-
+                    <div class="col-genre">
+                        <span style="color: #7eb8ff; font-size: 0.9em;">
+                            {{ movie.genre_str if movie.genre_str else '-' }}
+                        </span>
+                    </div>
+                    <div class="col-runtime">
+                        {% if movie.runtimeMinutes %}
+                        {{ movie.runtimeMinutes }} min
+                        {% else %}
+                        -
+                        {% endif %}
+                    </div>
                 {% endif %}
+
+                <div style="text-align: center;">
+                    <button class="like-btn {{ 'liked' if movie.is_liked else '' }}" 
+                            data-id="{{ movie.movieId }}" 
+                            data-type="movie"
+                            onclick="toggleEntityLike(this, event)">
+                        ❤
+                    </button>
+                </div>
 
             </div>
             {% endfor %}
@@ -149,7 +145,6 @@
             {% else %}
             <div class="no-results">
                 <p>No movies found matching your criteria.</p>
-                <span class="hint">Try removing some filters to see more results.</span>
             </div>
             {% endif %}
         </div>

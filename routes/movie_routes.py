@@ -3,6 +3,7 @@
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from sqlalchemy import text
+from flask_login import current_user
 from database.db import engine
 
 movie_bp = Blueprint('movie', __name__)
@@ -17,6 +18,7 @@ def movies():
     max_rating = request.args.get('max_rating')
     view = request.args.get('view')
 
+    uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
 
         # GENRE LIST (HER MODDA LAZIM)
@@ -28,7 +30,7 @@ def movies():
         """
         genres_list = [row[0] for row in conn.execute(text(genre_sql)).fetchall()]
 
-        params = {}
+        params = {"uid": uid}
 
         if view == "stats":
             sql = """
@@ -38,12 +40,14 @@ def movies():
                 m.startYear,
                 r.averageRating,
                 COUNT(DISTINCT pr.peopleId) AS cast_count,
-                COUNT(DISTINCT g.genreId) AS genre_count
+                COUNT(DISTINCT g.genreId) AS genre_count,
+                CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
             FROM movies m
             LEFT JOIN ratings r ON m.movieId = r.titleId
             LEFT JOIN principals pr ON m.movieId = pr.titleId
             LEFT JOIN movie_genres mg ON m.movieId = mg.movieId
             LEFT JOIN genres g ON mg.genreId = g.genreId
+            LEFT JOIN githappens_users.user_likes ul ON m.movieId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'movie'
             WHERE 1=1
             """
 
@@ -84,9 +88,11 @@ def movies():
                     FROM movie_genres mg
                     JOIN genres g ON mg.genreId = g.genreId
                     WHERE mg.movieId = m.movieId
-                ) as genre_str
+                ) as genre_str,
+                CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
             FROM movies m 
             LEFT JOIN ratings r ON m.movieId = r.titleId
+            LEFT JOIN githappens_users.user_likes ul ON m.movieId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'movie'
             WHERE 1=1
             """
 
@@ -144,14 +150,18 @@ def movies():
 
 @movie_bp.route("/movie/<movie_id>")
 def movie(movie_id):
+    uid = current_user.id if current_user.is_authenticated else -1
+    
     with engine.connect() as conn:
         sql = """
-            SELECT m.*, r.averageRating, r.numVotes
+            SELECT m.*, r.averageRating, r.numVotes,
+                   CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked  
             FROM movies m
-            LEFT JOIN ratings r ON m.movieId = r.titleId  -- ratings tablosunu bağla
+            LEFT JOIN ratings r ON m.movieId = r.titleId
+            LEFT JOIN githappens_users.user_likes ul ON m.movieId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'movie' 
             WHERE m.movieId = :movieId
         """
-        result = conn.execute(text(sql), {"movieId": movie_id})
+        result = conn.execute(text(sql), {"movieId": movie_id, "uid": uid})
         movie = result.fetchone()
         
         if not movie:
