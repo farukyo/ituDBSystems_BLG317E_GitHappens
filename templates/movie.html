@@ -231,6 +231,25 @@
         color: var(--muted);
         font-style: italic;
     }
+    /* --- EKLENECEK KALP BUTONU STİLİ --- */
+    .like-btn {
+        background: none;     /* Arka planı şeffaf yap */
+        border: none;         /* Kenarlığı kaldır */
+        font-size: 2.5rem;    /* Boyutu başlığa uygun şekilde büyüt */
+        cursor: pointer;      /* Üzerine gelince el işareti çıksın */
+        color: #555;          /* Varsayılan renk (Gri) */
+        transition: transform 0.2s, color 0.2s;
+        line-height: 1;
+        padding: 0 0 0 15px;  /* Soldan biraz boşluk bırak */
+    }
+
+    .like-btn:hover {
+        transform: scale(1.1); /* Üzerine gelince hafif büyüsün */
+    }
+
+    .like-btn.liked {
+        color: #e50914;       /* Beğenilince Kırmızı olsun */
+    }
 </style>
 {% endblock %}
 
@@ -239,7 +258,17 @@
 
     <!-- Movie Header -->
     <div class="movie-header">
-        <h1>{{ movie.title or movie.movieTitle or 'Movie' }}</h1>
+        <div class="movie-header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <h1 style="margin: 0;">{{ movie.title or movie.movieTitle or 'Movie' }}</h1>
+            
+            <button class="like-btn {{ 'liked' if movie.is_liked else '' }}" 
+                    data-id="{{ movie.movieId }}" 
+                    data-type="movie"
+                    onclick="toggleEntityLike(this, event)">
+                ❤
+            </button>
+        </div>
         {% if movie.originalTitle or movie.tagline %}
         <p class="movie-info">
             {% if movie.originalTitle and movie.originalTitle != (movie.title or movie.movieTitle) %}

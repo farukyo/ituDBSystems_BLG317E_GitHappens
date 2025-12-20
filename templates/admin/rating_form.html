@@ -1,0 +1,41 @@
+{% extends "admin_base.html" %}
+
+{% block title %}
+{{ 'Edit' if rating else 'New' }} Rating
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ 'Edit' if rating else 'New' }} Rating</h1>
+
+<form method="post">
+
+    {# -------- TITLE TYPE (SADECE NEW) -------- #}
+    {% if not rating %}
+    <label>Title Type</label><br>
+    <select name="titleType" required>
+        <option value="">-- Select Type --</option>
+        <option value="movie">Movie</option>
+        <option value="series">Series</option>
+    </select><br><br>
+
+    <label>Title Name</label><br>
+    <input type="text" name="titleName" placeholder="Enter exact title name" required><br><br>
+    {% else %}
+    {# -------- EDIT MODE: TITLE SABİT -------- #}
+    <label>Title</label><br>
+    <input type="text" value="{{ rating.primaryTitle }}" disabled><br><br>
+    {% endif %}
+
+    <label>Average Rating</label><br>
+    <input type="number" name="averageRating" step="0.1" min="0" max="10"
+        value="{{ rating.averageRating if rating else '' }}"><br><br>
+
+    <label>Number of Votes</label><br>
+    <input type="number" name="numVotes" min="0" value="{{ rating.numVotes if rating else '' }}"><br><br>
+
+    <button type="submit">Save</button>
+
+</form>
+
+{% endblock %}

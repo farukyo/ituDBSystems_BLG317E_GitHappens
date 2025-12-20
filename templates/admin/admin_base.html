@@ -25,6 +25,9 @@
         <a href="{{ url_for('admin.person_menu') }}">👤 Manage People</a>
         <a href="{{ url_for('admin.movie_menu') }}">🎬 Manage Movies</a>
         <a href="{{ url_for('admin.series_menu') }}">📺 Manage Series</a>
+        <a href="{{ url_for('admin.episode_menu') }}">🎞️ Manage Episodes</a>
+        <a href="{{ url_for('admin.rating_menu') }}">📊 Manage Ratings</a>
+        <a href="{{ url_for('admin.genre_menu') }}">🧬 Manage Genres</a>
     </div>
 
     <div class="admin-main">
@@ -39,12 +42,27 @@
             </div>
         </header>
 
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="flash-container">
+            {% for message in messages %}
+            <div class="flash-message">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
         <!-- MAIN CONTENT -->
         <main class="admin-content">
             {% block content %}{% endblock %}
         </main>
 
     </div>
+
+
 
     {% block scripts %}{% endblock %}
 

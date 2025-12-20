@@ -246,38 +246,52 @@ hr {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin: 25px 0;
 }
+/* Episode List */
+.episode-list {
+    margin-top: 20px;
+}
+/* --- TABLO DÜZENİ (Masaüstü İçin Sabit Grid) --- */
 
-/* Episode Table Header */
+/* Başlık Satırı */
 .episode-table-header {
-    display: grid;
-    grid-template-columns: 1fr 100px 180px 80px 80px;
+    display: grid !important;
+    /* 6 Sütun: Title (Geniş) | Runtime | Series (Geniş) | Season | Episode | Like */
+    grid-template-columns: 3fr 100px 2fr 80px 80px 60px !important;
     gap: 10px;
     padding: 12px 15px;
     background: rgba(255, 255, 255, 0.08);
     border-radius: 8px 8px 0 0;
     font-weight: 600;
     color: #cfe6ff;
-    font-size: 0.85rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    align-items: center;
 }
 
-/* Episode List */
-.episode-list {
-    margin-top: 20px;
-}
-
+/* Liste Satırları */
 .episode-item {
-    display: grid;
-    grid-template-columns: 1fr 100px 180px 80px 80px;
+    display: grid !important;
+    /* Başlık ile birebir aynı sütun yapısı olmalı */
+    grid-template-columns: 3fr 100px 2fr 80px 80px 60px !important;
     gap: 10px;
     align-items: center;
     background: rgba(255, 255, 255, 0.03);
     padding: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-top: none;
-    transition: background 0.3s ease, border 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+/* Like Butonu Ortala */
+.episode-item .like-btn {
+    width: 100%;
+    text-align: center;
+}
+
+
+
+.like-btn {
+    background: none; border: none; font-size: 1.5rem;
+    cursor: pointer; color: #555; transition: transform 0.2s;
+}
+.like-btn.liked { color: #e50914; }
 
 .episode-item:first-of-type {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
