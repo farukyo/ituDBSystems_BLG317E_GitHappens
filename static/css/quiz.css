@@ -1,94 +1,189 @@
-/* -----------------------------------------
-   QUIZ PAGE STYLES
-------------------------------------------*/
-
-.quiz-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 2rem;
+/* --- Genel Konteyner Yapısı --- */
+.quiz-setup-container,
+.quiz-play-page {
+    padding: 40px 20px;
+    min-height: 80vh;
+    color: white;
 }
 
-.quiz-container h1 {
-    color: var(--accent);
-    margin-bottom: 1.5rem;
+.inner-container {
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.quiz-question {
-    background: #222;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
+h1 {
+    font-size: 2.5rem;
+    color: white !important;
+    margin-bottom: 10px;
 }
 
-.quiz-options {
+.sub-title {
+    color: #999 !important;
+    margin-bottom: 40px;
+    font-size: 1.1rem;
+}
+
+/* --- Form ve Grid Yapısı --- */
+.quiz-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.quiz-filter-group {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: 8px;
 }
 
-.quiz-option {
-    background: #333;
-    padding: 1rem;
-    border-radius: 6px;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.quiz-option:hover {
-    border-color: var(--accent);
-    background: #3a3a3a;
-}
-
-.quiz-option.selected {
-    border-color: var(--accent);
-    background: rgba(233, 96, 26, 0.1);
-}
-
-.quiz-submit {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1rem;
+.quiz-filter-group label {
+    color: #ccc;
+    font-size: 0.9rem;
     font-weight: 600;
-    margin-top: 1rem;
 }
 
-.quiz-submit:hover {
-    background: #d15515;
+/* --- Input, Select ve Soru Kartları --- */
+.quiz-filter-group input,
+.quiz-filter-group select,
+.quiz-question-card {
+    background: #1a1d24 !important;
+    border: 1px solid #333 !important;
+    border-radius: 8px;
+    color: white !important;
 }
 
-/* Responsive design for quiz page */
-@media (max-width: 768px) {
-    .quiz-container {
-        padding: 1.5rem;
-    }
-
-    .quiz-question {
-        padding: 1rem;
-    }
+.quiz-filter-group input,
+.quiz-filter-group select {
+    padding: 12px 15px;
+    font-size: 1rem;
+    outline: none;
 }
 
-@media (max-width: 480px) {
-    .quiz-container {
-        margin: 1rem auto;
-        padding: 1rem;
-    }
+.quiz-filter-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ff6b00' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 15px center !important;
+}
 
-    .quiz-container h1 {
-        font-size: 1.5rem;
-    }
+/* IMDb Rating Aralığı */
+.quiz-range-inputs {
+    display: flex;
+    align-items: center;
+    background: #1a1d24;
+    border: 1px solid #333;
+    border-radius: 8px;
+    gap: 5px;
+}
 
-    .quiz-option {
-        padding: 0.75rem;
-        font-size: 0.95rem;
-    }
+.quiz-range-inputs input {
+    border: none !important;
+    width: 100%;
+}
 
-    .quiz-submit {
-        width: 100%;
-    }
+/* --- Soru Kartları (Quiz Play) --- */
+.quiz-question-card {
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+}
+
+.quiz-question-card:hover {
+    border-color: #ff6b00 !important;
+}
+
+.option-row {
+    padding: 10px 0;
+}
+
+.option-row label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.option-row label:hover {
+    color: #ff6b00 !important;
+}
+
+/* --- BUTONLAR: TAM ORTALANMIŞ VE TURUNCU --- */
+.quiz-button-wrapper {
+    display: flex;
+    justify-content: center;
+    /* Hem Setup hem Play sayfasında butonu ortalar */
+    margin: 50px 0;
+    width: 100%;
+}
+
+.quiz-btn-primary {
+    background-color: #ff6b00 !important;
+    color: white !important;
+    border: none !important;
+    padding: 14px 45px !important;
+    font-size: 1.1rem !important;
+    font-weight: bold !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4) !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quiz-btn-primary:hover {
+    background-color: #e66000 !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(255, 107, 0, 0.5) !important;
+}
+
+/* --- Sonuç Sayfası Özel Stilleri --- */
+.result-summary {
+    text-align: center;
+    padding: 40px !important;
+    margin-top: 30px;
+}
+
+.result-summary h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.highlight {
+    color: #ff6b00;
+    /* BeeMD Turuncusu */
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.result-actions {
+    gap: 20px;
+    /* Butonlar arası boşluk */
+}
+
+/* İkincil Buton (Back to Home için daha sade bir stil) */
+.quiz-btn-secondary {
+    background-color: transparent !important;
+    color: #ccc !important;
+    border: 1px solid #444 !important;
+    padding: 14px 45px !important;
+    font-size: 1.1rem !important;
+    font-weight: bold !important;
+    border-radius: 10px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.quiz-btn-secondary:hover {
+    background-color: #333 !important;
+    color: white !important;
+    border-color: #666 !important;
 }
