@@ -7,6 +7,8 @@ from groq import Groq
 import os
 import json
 from dotenv import load_dotenv
+from sqlalchemy import text
+from database.db import engine
 
 load_dotenv()
 
@@ -15,6 +17,64 @@ main_bp = Blueprint('main', __name__)
 client = Groq(
     api_key=os.environ.get("GROQ_API_KEY"),
 )
+
+@main_bp.route("/search")
+def search():
+    """Unified search endpoint for movies, series, and episodes"""
+    search_query = request.args.get('q', '').strip()
+    
+    if not search_query:
+        flash("Please enter a search term", "warning")
+        return redirect(url_for('main.index'))
+    
+    movies = []
+    series = []
+    episodes = []
+    
+    with engine.connect() as conn:
+        # Search in Movies
+        try:
+            sql_movies = """
+                SELECT movieId, movieTitle, startYear, runtimeMinutes 
+                FROM movies 
+                WHERE movieTitle LIKE :q 
+                LIMIT 20
+            """
+            movies = conn.execute(text(sql_movies), {"q": f"%{search_query}%"}).fetchall()
+        except:
+            movies = []
+        
+        # Search in Series
+        try:
+            sql_series = """
+                SELECT seriesId, seriesTitle, startYear, runtimeMinutes 
+                FROM series 
+                WHERE seriesTitle LIKE :q 
+                LIMIT 20
+            """
+            series = conn.execute(text(sql_series), {"q": f"%{search_query}%"}).fetchall()
+        except:
+            series = []
+        
+        # Search in Episodes
+        try:
+            sql_episodes = """
+                SELECT e.episodeId, e.epTitle, e.runtimeMinutes, e.seNumber, e.epNumber, s.seriesTitle
+                FROM Episode e
+                JOIN Series s ON e.seriesId = s.seriesId
+                WHERE e.epTitle LIKE :q 
+                LIMIT 20
+            """
+            episodes = conn.execute(text(sql_episodes), {"q": f"%{search_query}%"}).fetchall()
+        except:
+            episodes = []
+    
+    return render_template("search_results.html", 
+                           query=search_query,
+                           movies=movies,
+                           series=series,
+                           episodes=episodes)
+
 @main_bp.route("/")
 def index():
     return render_template("home.html")
@@ -108,7 +168,6 @@ def quiz_play():
 def submit_quiz():
     quiz = session.get("quiz")
     
-    # Eğer session düşmüşse veya quiz verisi yoksa ana sayfaya at
     if not quiz or "questions" not in quiz:
         return redirect(url_for("main.quiz_setup"))
 
@@ -117,23 +176,14 @@ def submit_quiz():
     total = len(questions)
 
     for i, q in enumerate(questions):
-        # Formdan gelen cevabı al (q0, q1, q2...)
         user_answer = request.form.get(f"q{i}")
-        
-        # DEBUG: Terminale yazdırarak hangi soruda hata olduğunu görebilirsin
-        print(f"Soru {i} için Kullanıcı Cevabı: {user_answer} | Doğru Cevap: {q['answer']}")
-        
         if user_answer == q["answer"]:
             correct += 1
 
-    # Skor hesaplama (Bölme hatasını önlemek için total > 0 kontrolü)
-    score = round((correct / total) * 100) if total > 0 else 0
-
     return render_template(
         "quiz_result.html",
-        correct=correct,
-        total=total,
-        score=score
+        score=correct,  # Artık 'score' 30 değil, 3 olacak
+        total=total
     )
 
 

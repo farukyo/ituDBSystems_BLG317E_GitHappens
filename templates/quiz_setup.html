@@ -7,23 +7,19 @@
 {% endblock %}
 
 {% block content %}
-<div class="episodes-page">
-    <div class="container">
+<div class="quiz-setup-container">
+    <div class="inner-container">
         <h1>Create a Movie / Series Quiz</h1>
-        <p class="sub-title">
-            Select a movie or series and generate an AI-powered quiz.
-        </p>
+        <p class="sub-title">Select a movie or series and generate an AI-powered quiz.</p>
 
-        <form action="{{ url_for('main.generate_quiz') }}" method="POST" class="search-form">
-
-            <div class="filter-grid">
-
-                <div class="filter-group">
+        <form action="{{ url_for('main.generate_quiz') }}" method="POST" class="quiz-form">
+            <div class="quiz-filter-grid">
+                <div class="quiz-filter-group">
                     <label>Movie / Series Title</label>
                     <input type="text" name="title" placeholder="e.g. Interstellar" required>
                 </div>
 
-                <div class="filter-group">
+                <div class="quiz-filter-group">
                     <label>Type</label>
                     <select name="type">
                         <option value="movie">Movie</option>
@@ -31,26 +27,21 @@
                     </select>
                 </div>
 
-                <div class="filter-group">
+                <div class="quiz-filter-group">
                     <label>Genre (optional)</label>
                     <input type="text" name="genre" placeholder="Sci-Fi, Drama">
                 </div>
 
-                <div class="filter-group">
-                    <label>Release Year</label>
-                    <input type="number" name="year" placeholder="e.g. 2014">
-                </div>
-
-                <div class="filter-group">
+                <div class="quiz-filter-group">
                     <label>IMDb Rating</label>
-                    <div class="range-inputs">
+                    <div class="quiz-range-inputs">
                         <input type="number" step="0.1" name="min_rating" placeholder="0">
                         <span>-</span>
                         <input type="number" step="0.1" name="max_rating" placeholder="10">
                     </div>
                 </div>
 
-                <div class="filter-group">
+                <div class="quiz-filter-group">
                     <label>Difficulty</label>
                     <select name="difficulty">
                         <option value="easy">Easy</option>
@@ -59,7 +50,12 @@
                     </select>
                 </div>
 
-                <div class="filter-group">
+                <div class="quiz-filter-group">
+                    <label>Release Year</label>
+                    <input type="number" name="year" placeholder="e.g. 2014">
+                </div>
+
+                <div class="quiz-filter-group">
                     <label>Number of Questions</label>
                     <select name="question_count">
                         <option value="5">5</option>
@@ -67,15 +63,13 @@
                         <option value="15">15</option>
                     </select>
                 </div>
-
             </div>
 
-            <div style="margin-top:30px;">
-                <button type="submit" class="btn-primary">
+            <div class="quiz-button-wrapper">
+                <button type="submit" class="quiz-btn-primary">
                     🎯 Generate Quiz
                 </button>
             </div>
-
         </form>
     </div>
 </div>

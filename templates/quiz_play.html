@@ -2,35 +2,38 @@
 
 {% block title %}Quiz - BeeMD{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/quiz.css') }}" />
+{% endblock %}
+
 {% block content %}
-<div class="episodes-page">
-    <div class="container">
+<div class="quiz-play-page">
+    <div class="inner-container">
         <h1>Quiz Time 🎬</h1>
         <p class="sub-title">Answer all questions and submit the quiz.</p>
 
         <form action="{{ url_for('main.submit_quiz') }}" method="POST">
             {% for q in quiz.questions %}
-            <div class="episode-item"
-                style="margin-bottom: 20px; border: 1px solid #444; padding: 15px; border-radius: 8px;">
+            <div class="quiz-question-card">
                 <h3>{{ loop.index }}. {{ q.question }}</h3>
 
-                {# Soru indexini dış döngüden alıyoruz #}
                 {% set question_idx = loop.index0 %}
 
                 {% for option in q.options %}
                 <div class="option-row">
-                    <label style="cursor: pointer; display: block; width: 100%;">
+                    <label>
                         <input type="radio" name="q{{ question_idx }}" value="{{ option }}" required>
-                        <span style="margin-left: 8px;">{{ option }}</span>
+                        <span>{{ option }}</span>
                     </label>
                 </div>
                 {% endfor %}
             </div>
             {% endfor %}
 
-            <button type="submit" class="btn-primary" style="margin-top:20px;">
-                ✅ Finish Quiz
-            </button>
+            <div class="quiz-button-wrapper"> <button type="submit" class="quiz-btn-primary">
+                    ✅ Finish Quiz
+                </button>
+            </div>
         </form>
     </div>
 </div>
