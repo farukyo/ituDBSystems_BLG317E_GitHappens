@@ -4,7 +4,7 @@
 <div class="search-results-container">
     <h1>Search Results for "{{ query }}"</h1>
     
-    <!-- Movies Section -->
+
     {% if movies %}
     <div class="results-section">
         <h2>Movies <span class="result-count">({{ movies | length }})</span></h2>
@@ -19,8 +19,7 @@
         </div>
     </div>
     {% endif %}
-    
-    <!-- Series Section -->
+
     {% if series %}
     <div class="results-section">
         <h2>TV Series <span class="result-count">({{ series | length }})</span></h2>
@@ -36,7 +35,7 @@
     </div>
     {% endif %}
     
-    <!-- Episodes Section -->
+
     {% if episodes %}
     <div class="results-section">
         <h2>Episodes <span class="result-count">({{ episodes | length }})</span></h2>
@@ -67,7 +66,7 @@
     </div>
     {% endif %}
     
-    <!-- People Section -->
+
     {% if people %}
     <div class="results-section">
         <h2>Celebrities <span class="result-count">({{ people | length }})</span></h2>
@@ -87,7 +86,7 @@
     </div>
     {% endif %}
     
-    <!-- No Results -->
+
     {% if not movies and not series and not episodes and not people %}
     <div class="no-results">
         <p>No results found for "{{ query }}"</p>

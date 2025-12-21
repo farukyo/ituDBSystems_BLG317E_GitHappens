@@ -13,7 +13,6 @@
         <h1>{{ title | default("All Series") }}</h1>
         <p class="sub-title">Browse and filter the complete TV series database</p>
 
-        <!-- VIEW MODE SELECTOR -->
         <div class="view-selector" style="margin-bottom: 20px; display: flex; gap: 10px;">
             <a href="{{ url_for('series.series', q=request.args.get('q', ''), titleType=request.args.get('titleType', ''), startYear=request.args.get('startYear', ''), endYear=request.args.get('endYear', ''), isAdult=request.args.get('isAdult', '')) }}" 
                class="btn-view {% if not request.args.get('view') %}active{% endif %}">
@@ -25,17 +24,15 @@
             </a>
         </div>
 
-        <!-- SEARCH / FILTERS FORM -->
         <form action="{{ url_for('series.series') }}" method="GET" class="search-form">
             <div class="filter-grid">
-                <!-- Search Box (spans full width on left) -->
+  
                 <div class="search-box">
                     <input type="text" name="q" placeholder="Search series..."
                            value="{{ request.args.get('q', '') }}">
                     <button type="submit">Search</button>
                 </div>
 
-                <!-- Type Filter -->
                 <div class="filter-group">
                     <label>Type</label>
                     <select name="titleType">
@@ -45,7 +42,6 @@
                     </select>
                 </div>
 
-                <!-- Start Year Filter -->
                 <div class="filter-group">
                     <label>Start Year</label>
                     <select name="startYear">
@@ -84,7 +80,7 @@
                     </select>
                 </div>
 
-                <!-- End Year Filter -->
+
                 <div class="filter-group">
                     <label>End Year</label>
                     <select name="endYear">
@@ -123,7 +119,7 @@
                     </select>
                 </div>
 
-                <!-- Content Type Filter -->
+    
                 <div class="filter-group">
                     <label>Content</label>
                     <select name="isAdult">
@@ -133,7 +129,7 @@
                     </select>
                 </div>
 
-                <!-- Apply Button -->
+
                 <div class="filter-buttons">
                     <button type="submit" id="filter-btn">Apply</button>
                 </div>
