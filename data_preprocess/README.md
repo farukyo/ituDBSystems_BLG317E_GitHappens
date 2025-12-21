@@ -6,12 +6,16 @@ This folder contains Python scripts for preprocessing IMDb data before importing
 
 | Script Name | Description |
 |-------------|-------------|
-| `tsv_to_csv_converter.py` | Converts TSV (Tab-Separated Values) files from IMDb to CSV format. Includes progress indicator for large files and supports batch conversion. |
-| `title_type_splitter.py` | Splits `title.basics.csv` into movies and series based on `titleType`. Movies include: movie, short, tvMovie, video. Series include: tvSeries, tvMiniSeries, tvEpisode, tvPilot, tvShort, tvSpecial. |
-| `genre_table_builder.py` | Extracts unique genres from `title.basics.csv` and creates a separate `genre.csv` with auto-incremented `genre_id`. Used for database normalization. |
-| `genre_foreign_key_mapper.py` | Converts text-based genre values in movies/series CSV files to `genre_id` foreign keys using `genre.csv`. Maps genre strings to IDs for database relationships. |
-| `column_dropper.py` | Removes unnecessary columns from movies and series CSV files. Drops `originalTitle` from both, and `endYear` from movies (meaningless for films). |
-| `empty_cell_filler.py` | Fills empty cells in CSV files with '0' value. Used when default values are required instead of NULL for MySQL import. Designed for missing data in the names table. |
+| `tsv_to_csv_converter.py` | Converts IMDb TSV files to CSV format with progress indicator. |
+| `title_type_splitter.py` | Splits titles into movies and series based on titleType. |
+| `genre_table_builder.py` | Creates genre.csv with unique genres and IDs. |
+| `genre_foreign_key_mapper.py` | Maps genre names to foreign key IDs. |
+| `column_dropper.py` | Removes unnecessary columns from CSV files. |
+| `empty_cell_filler.py` | Fills empty cells with '0' for MySQL import. |
+| `cleaner.py` | Cleans characters column in principals.csv (removes brackets/quotes). |
+| `cleaner2.py` | Converts principals.csv to TSV format with cleaning. |
+| `splitter.py` | Splits large principals file into 1M row chunks. |
+| `sqlloader.py` | Generates SQL LOAD DATA commands for principals parts. |
 
 ## Usage Order
 
@@ -23,3 +27,6 @@ For proper data preprocessing, run the scripts in the following order:
 4. `genre_foreign_key_mapper.py` - Replace genre names with foreign keys
 5. `column_dropper.py` - Remove unnecessary columns
 6. `empty_cell_filler.py` - Fill empty cells (if needed)
+7. `cleaner.py` or `cleaner2.py` - Clean principals data
+8. `splitter.py` - Split principals into parts
+9. `sqlloader.py` - Generate SQL for loading parts
