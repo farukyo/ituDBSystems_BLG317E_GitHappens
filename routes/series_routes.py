@@ -68,7 +68,7 @@ def series():
             params["adult"] = int(is_adult)
 
         # 4. Sıralama ve Limit
-        sql += " ORDER BY startYear DESC, seriesTitle ASC LIMIT 100;"
+        sql += " ORDER BY r.numVotes DESC, seriesTitle ASC LIMIT 100;"
 
         result = conn.execute(text(sql), params)
         data = result.fetchall()
