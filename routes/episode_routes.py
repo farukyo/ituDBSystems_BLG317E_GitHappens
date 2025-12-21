@@ -86,7 +86,7 @@ def episode_detail(episode_id):
                 (SELECT COUNT(DISTINCT e2.seNumber) FROM Episode e2 WHERE e2.seriesId = e.seriesId) AS total_seasons,
                 (SELECT COUNT(*) FROM Episode e3 WHERE e3.seriesId = e.seriesId) AS total_episodes,
                 g.genreName,
-                p.peopleId, p.primaryName, pr.category, pr.characters, prof.professionName,
+                p.peopleId, p.primaryName, pr.category, pr.characters, pd.name AS professionName,
                 CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked  
             FROM Episode e
             LEFT JOIN Series s ON e.seriesId = s.seriesId
@@ -94,7 +94,8 @@ def episode_detail(episode_id):
             LEFT JOIN genres g ON sg.genreId = g.genreId
             LEFT JOIN principals pr ON pr.titleId = e.seriesId
             LEFT JOIN people p ON pr.peopleId = p.peopleId
-            LEFT JOIN profession prof ON p.professionId = prof.professionId
+            LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
+            LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
             LEFT JOIN githappens_users.user_likes ul ON e.episodeId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'episode' 
             WHERE e.episodeId = :episodeId
             ORDER BY pr.category, p.primaryName
