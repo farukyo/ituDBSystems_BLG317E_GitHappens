@@ -33,3 +33,5 @@ instance/       # Flask instance folder (local settings)
 *.tsv
 *.csv
 /.venv
+*.iml
+*.xml
