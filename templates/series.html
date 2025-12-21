@@ -138,6 +138,7 @@
                 <div>IMDB</div>
                 <div>GENRE</div>
                 <div>START YEAR</div>
+                <div style="text-align: center;">LIKE</div>
             </div>
         {% endif %}
 
@@ -183,6 +184,14 @@
                                 -
                             {% endif %}
                         </div>
+                        <div style="text-align: center;">
+                            <button class="like-btn {{ 'liked' if row.is_liked else '' }}" 
+                                    data-id="{{ row.seriesId }}" 
+                                    data-type="series"
+                                    onclick="toggleEntityLike(this, event)">
+                                ❤
+                            </button>
+                        </div>
                     </div>
                 {% endfor %}
             {% else %}
@@ -193,4 +202,35 @@
         </div>
     </div>
 </div>
+<script>
+    function toggleEntityLike(btn, event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const entityId = btn.getAttribute('data-id');
+        const entityType = btn.getAttribute('data-type'); 
+
+        let formData = new FormData();
+        formData.append('entity_id', entityId);
+        formData.append('entity_type', entityType);
+
+        fetch('/like_entity', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data === "1") {
+                if (btn.classList.contains('liked')) {
+                    btn.classList.remove('liked');
+                } else {
+                    btn.classList.add('liked');
+                }
+            } else {
+                alert("Login required or error occurred.");
+            }
+        })
+        .catch(err => console.error('Error:', err));
+    }
+</script>
 {% endblock %}

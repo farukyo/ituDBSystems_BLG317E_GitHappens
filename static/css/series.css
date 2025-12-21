@@ -166,7 +166,11 @@ hr {
 /* Table Header */
 .episode-table-header {
     display: grid;
-    grid-template-columns: 2fr 120px 120px 120px 150px;
+    /* ESKİSİ: grid-template-columns: 2fr 120px 120px 120px 150px; */
+    /* YENİSİ (Aşağıdakini yapıştır): */
+    grid-template-columns: 2fr 120px 100px 120px 100px 60px; 
+    
+    /* ... diğer özellikler aynı kalsın ... */
     gap: 20px;
     align-items: center;
     padding: 16px;
@@ -188,7 +192,11 @@ hr {
 /* Series Items */
 .series-item {
     display: grid;
-    grid-template-columns: 2fr 120px 120px 120px 150px;
+    /* ESKİSİ: grid-template-columns: 2fr 120px 120px 120px 150px; */
+    /* YENİSİ (Üsttekiyle aynı olmalı): */
+    grid-template-columns: 2fr 120px 100px 120px 100px 60px;
+    
+    /* ... diğer özellikler aynı kalsın ... */
     gap: 20px;
     align-items: center;
     padding: 16px;
@@ -396,4 +404,25 @@ hr {
     .series-meta {
         font-size: 0.8rem;
     }
+}
+
+/* Like Butonu Stili */
+.like-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #555;
+    transition: transform 0.2s;
+    width: 100%;
+    text-align: center;
+    padding: 0;
+}
+
+.like-btn:hover {
+    transform: scale(1.2);
+}
+
+.like-btn.liked {
+    color: #e50914; /* Kırmızı renk */
 }
