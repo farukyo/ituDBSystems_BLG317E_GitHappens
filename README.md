@@ -135,6 +135,28 @@ Open `database/db.py` to modify MySQL connection settings.
 
 ## 🚀 How to Run
 
+---
+
+### 🗄️ Database Setup
+
+To set up the database, execute the files in the `sql/` folder in the following order:
+
+1. **`userdb.sql`**: Creates the user database (`githappens_users`) and its tables.
+2. **`genres.sql`**: Creates the `genres` table and loads data.
+3. **`all_titles.sql`**: Creates the `all_titles` parent table.
+4. **`movies.sql`**: Creates the `movies` table and links it with `genres`.
+5. **`series.sql`**: Creates the `series` table and links it with `genres`.
+6. **`episodes.sql`**: Creates the `Episode` table.
+7. **`names.sql`**: Creates the `people` and `profession` tables.
+8. **`professionnormalization.sql`**: Normalizes profession data (parses and links).
+9. **`ratings.sql`**: Creates the `ratings` table.
+10. **`principals.sql`**: Creates the `principals` table (relationship between titles and people).
+11. **`addnewadmin.sql`**: Adds a default admin user to the system.
+
+**Important Note:** For data loading operations, you may need to enable the `local_infile` setting in MySQL and increase the timeout duration.
+
+---
+
 ```bash
 # Activate virtual environment
 .\.venv\Scripts\Activate.ps1
