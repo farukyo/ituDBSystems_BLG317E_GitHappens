@@ -61,7 +61,6 @@
     .recommend-column {
         flex: 1;
         min-width: 0;
-        /* Prevents flex item from overflowing */
     }
 
     .recommend-section {
@@ -147,7 +146,7 @@
         }
     }
 
-    /* Robot Bubble Styles */
+
     .robot-container {
         position: fixed;
         top: 100px;
@@ -181,7 +180,6 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         max-width: 250px;
         display: none;
-        /* Hidden by default */
         animation: popIn 0.3s ease-out;
         position: relative;
     }
@@ -216,7 +214,6 @@
     <h1>Personalized Recommendations</h1>
     <p>Here are some recommendations just for you, {{ current_user.username }}.</p>
 
-    <!-- Filter Form -->
     <form class="filter-section" method="GET" action="{{ url_for('main.recommend') }}">
         <div class="filter-group">
             <label for="genre">Genre</label>
@@ -249,7 +246,6 @@
     {% endif %}
 
     <div class="recommend-container">
-        <!-- Left Column: Movies -->
         <div class="recommend-column">
             <div class="recommend-section">
                 <h2>Recommended Movies</h2>
@@ -270,7 +266,6 @@
             </div>
         </div>
 
-        <!-- Right Column: Series -->
         <div class="recommend-column">
             <div class="recommend-section">
                 <h2>Recommended Series</h2>
@@ -293,7 +288,7 @@
     </div>
 </div>
 
-<!-- Robot Bubble UI -->
+
 <div class="robot-container">
     <div class="speech-bubble" id="robotBubble">
         <span id="robotText">Thinking...</span>
@@ -306,7 +301,7 @@
         const bubble = document.getElementById('robotBubble');
         const text = document.getElementById('robotText');
 
-        // Toggle visibility
+
         if (bubble.style.display === 'block') {
             bubble.style.display = 'none';
             return;
