@@ -1,8 +1,4 @@
-/* -----------------------------------------
-   ADMIN PANEL — Clean, Light, Minimal
-------------------------------------------*/
 
-/* Color palette (light mode) */
 :root {
     --bg: #f7f7f7;
     --panel: #ffffff;
@@ -11,7 +7,7 @@
     --muted: #a0a0a0;
 }
 
-/* Reset */
+
 * {
     box-sizing: border-box;
 }
@@ -24,9 +20,7 @@ body {
     display: flex;
 }
 
-/* -----------------------------------------
-   SIDEBAR
-------------------------------------------*/
+
 .admin-sidebar {
     width: 240px;
     background: var(--panel);
@@ -60,9 +54,7 @@ body {
     padding-left: 28px;
 }
 
-/* -----------------------------------------
-   MAIN AREA
-------------------------------------------*/
+
 .admin-main {
     flex: 1;
     margin-left: 240px;
@@ -70,9 +62,7 @@ body {
     flex-direction: column;
 }
 
-/* -----------------------------------------
-   HEADER
-------------------------------------------*/
+
 .admin-header {
     background: var(--panel);
     padding: 14px 24px;
@@ -97,16 +87,12 @@ body {
     font-weight: 600;
 }
 
-/* -----------------------------------------
-   CONTENT
-------------------------------------------*/
+
 .admin-content {
     padding: 30px;
 }
 
-/* -----------------------------------------
-   Flash Messages
-------------------------------------------*/
+
 .flash-container {
     position: fixed;
     top: 100px;

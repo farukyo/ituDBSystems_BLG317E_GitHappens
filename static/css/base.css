@@ -1,20 +1,16 @@
-/* -----------------------------------------
-   BASE.CSS — Shared global styles
-------------------------------------------*/
 
-/* Global Variables */
 :root {
     --accent: #e9601a;
     --bg: #0b1220;
     --muted: #94a3b8;
 }
 
-/* Box sizing */
+
 * {
     box-sizing: border-box;
 }
 
-/* Body */
+
 body {
     font-family: 'Inter', Arial, sans-serif;
     margin: 0;
@@ -26,7 +22,7 @@ body {
     min-height: 100vh;
 }
 
-/* Skip link for accessibility */
+
 .skip-link {
     position: absolute;
     top: -40px;
@@ -42,14 +38,14 @@ body {
     top: 0;
 }
 
-/* Container */
+
 .container {
     max-width: 1100px;
     margin: 0 auto;
     padding: 0 16px;
 }
 
-/* Flash messages */
+
 .flashes {
     color: #ef4444;
     background: rgba(239, 68, 68, 0.1);
@@ -66,9 +62,7 @@ body {
     padding: 0.25rem 0;
 }
 
-/* -----------------------------------------
-   SIDEBAR
-------------------------------------------*/
+
 .sidebar {
     height: 100%;
     width: 0;
@@ -140,9 +134,7 @@ body {
     color: var(--accent);
 }
 
-/* -----------------------------------------
-   HEADER
-------------------------------------------*/
+
 .site-header {
     background: linear-gradient(90deg, #071026 0%, #0f1724 100%);
     padding: 12px 0;
@@ -198,7 +190,7 @@ body {
     font-size: 1.4rem;
 }
 
-/* Search Box */
+
 .search {
     flex-grow: 2;
     max-width: 450px;
@@ -224,7 +216,7 @@ body {
     cursor: pointer;
 }
 
-/* Header user links */
+
 .header-user-links {
     display: flex;
     align-items: center;
@@ -330,9 +322,7 @@ body {
     box-shadow: 0 4px 15px rgba(233, 96, 26, 0.4);
 }
 
-/* -----------------------------------------
-   FOOTER
-------------------------------------------*/
+
 .site-footer {
     padding: 24px 0;
     background: linear-gradient(180deg, rgba(10, 15, 26, 0.7), rgba(6, 10, 18, 0.7));
@@ -422,11 +412,7 @@ body {
     text-align: center;
 }
 
-/* -----------------------------------------
-   RESPONSIVE DESIGN
-------------------------------------------*/
 
-/* Tablet and below (max-width: 768px) */
 @media (max-width: 768px) {
     .nav-row {
         flex-wrap: wrap;
@@ -482,7 +468,7 @@ body {
     }
 }
 
-/* Mobile (max-width: 480px) */
+
 @media (max-width: 480px) {
     .container {
         padding: 0 12px;
@@ -543,16 +529,14 @@ body {
     }
 }
 
-/* Large screens (min-width: 1400px) */
+
 @media (min-width: 1400px) {
     .container {
         max-width: 1300px;
     }
 }
 
-/* -----------------------------------------
-   BEE LOADING POPUP
-------------------------------------------*/
+
 .bee-loading-popup {
     position: fixed;
     top: 50%;

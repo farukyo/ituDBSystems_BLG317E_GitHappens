@@ -1,8 +1,6 @@
-/* ---------------------------------
-   about.css — About page styles
------------------------------------*/
 
-/* About Hero Section */
+
+
 .about-hero {
     padding: 80px 0;
     background: linear-gradient(135deg, rgba(233, 96, 26, 0.1), rgba(11, 18, 32, 0.8));
@@ -30,7 +28,7 @@
     margin: 0;
 }
 
-/* Project Info Section */
+
 .project-info {
     padding: 60px 0;
     margin-bottom: 60px;
@@ -88,7 +86,7 @@
     text-decoration: underline;
 }
 
-/* Section Header */
+
 .section-header {
     text-align: center;
     margin-bottom: 50px;
@@ -109,7 +107,7 @@
     margin: 0;
 }
 
-/* Team Section */
+
 .team-section {
     padding: 60px 0;
     margin-bottom: 60px;
@@ -151,7 +149,7 @@
     object-fit: cover;
 }
 
-/* Utility: focus image higher in the frame (use on specific images) */
+
 .member-image img.focus-top {
     object-position: center 18%;
 }
@@ -203,7 +201,7 @@
     margin: 6px 0;
 }
 
-/* Values Section */
+
 .values-section {
     padding: 60px 0;
     margin-bottom: 60px;
@@ -242,7 +240,7 @@
     font-size: 0.95rem;
 }
 
-/* Instructors Section */
+
 .instructors-section {
     padding: 60px 0;
     margin-bottom: 60px;
@@ -335,7 +333,7 @@
     margin: 0;
 }
 
-/* Responsive design for about page */
+
 @media (max-width: 768px) {
     .about-hero {
         padding: 40px 0;

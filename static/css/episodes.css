@@ -1,6 +1,4 @@
-/* -----------------------------------------
-   EPISODES PAGE ONLY
-------------------------------------------*/
+
 
 .episodes-page {
     padding: 20px 0;
@@ -17,7 +15,7 @@ h1 {
     color: #cfe6ff;
 }
 
-/* Results Header with Info Button */
+
 .results-header {
     display: flex;
     align-items: center;
@@ -50,7 +48,7 @@ h1 {
     transform: scale(1.1);
 }
 
-/* SQL Popup Overlay */
+
 .sql-popup-overlay {
     display: none;
     position: fixed;
@@ -130,7 +128,7 @@ h1 {
     line-height: 1.6;
 }
 
-/* Filter Grid */
+
 .filter-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -172,7 +170,7 @@ h1 {
     opacity: 1;
 }
 
-/* Runtime Range Inputs */
+
 .range-inputs {
     display: flex;
     align-items: center;
@@ -200,7 +198,7 @@ h1 {
     color: var(--muted);
 }
 
-/* Filter Buttons */
+
 .filter-buttons {
     display: flex;
     gap: 10px;
@@ -246,16 +244,16 @@ hr {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin: 25px 0;
 }
-/* Episode List */
+
 .episode-list {
     margin-top: 20px;
 }
-/* --- TABLO DÜZENİ (Masaüstü İçin Sabit Grid) --- */
 
-/* Başlık Satırı */
+
+
 .episode-table-header {
     display: grid !important;
-    /* 6 Sütun: Title (Geniş) | Runtime | Series (Geniş) | Season | Episode | Like */
+    
     grid-template-columns: 3fr 100px 2fr 80px 80px 60px !important;
     gap: 10px;
     padding: 12px 15px;
@@ -267,10 +265,10 @@ hr {
     align-items: center;
 }
 
-/* Liste Satırları */
+
 .episode-item {
     display: grid !important;
-    /* Başlık ile birebir aynı sütun yapısı olmalı */
+    
     grid-template-columns: 3fr 100px 2fr 80px 80px 60px !important;
     gap: 10px;
     align-items: center;
@@ -362,7 +360,7 @@ hr {
     color: rgba(255, 255, 255, 0.4);
 }
 
-/* Responsive design for episodes page */
+
 @media (max-width: 1024px) {
     .episode-table-header {
         display: none;
