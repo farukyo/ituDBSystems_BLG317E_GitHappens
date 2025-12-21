@@ -4,46 +4,35 @@
 
 <h1>{{ 'Edit' if episode else 'New' }} Episode</h1>
 
-<form method="post">
+<form method="post" style="max-width:720px;">
 
   <label>Episode Title</label><br>
-  <input
-    type="text"
-    name="episodeTitle"
-    value="{{ episode.epTitle if episode else '' }}"
-    required>
+  <input type="text" name="episodeTitle" style="width:100%; padding:8px;"
+    value="{{ episode.epTitle if episode else '' }}" required>
   <br><br>
 
   <label>Series Title</label><br>
-  <input
-    type="text"
-    name="seriesTitle"
-    value="{{ episode.seriesTitle if episode else '' }}"
-    required>
+  <input type="text" name="seriesTitle" style="width:100%; padding:8px;"
+    value="{{ episode.seriesTitle if episode else '' }}" required>
   <br><br>
 
   <label>Season Number</label><br>
-  <input
-    type="number"
-    name="seasonNumber"
+  <input type="number" name="seasonNumber" style="padding:8px; width:140px;"
     value="{{ episode.seNumber if episode and episode.seNumber is not none else '' }}">
   <br><br>
 
   <label>Episode Number</label><br>
-  <input
-    type="number"
-    name="episodeNumber"
+  <input type="number" name="episodeNumber" style="padding:8px; width:140px;"
     value="{{ episode.epNumber if episode and episode.epNumber is not none else '' }}">
   <br><br>
 
   <label>Runtime (minutes)</label><br>
-  <input
-    type="number"
-    name="runtimeMinutes"
+  <input type="number" name="runtimeMinutes" style="padding:8px; width:140px;"
     value="{{ episode.runtimeMinutes if episode and episode.runtimeMinutes is not none else '' }}">
   <br><br>
 
-  <button type="submit">Save</button>
+  <button type="submit"
+    style="background:#1976d2;color:#fff;padding:8px 14px;border:none;border-radius:4px;">Save</button>
 </form>
 
 {% endblock %}

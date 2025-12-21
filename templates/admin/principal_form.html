@@ -3,31 +3,35 @@
 
 <h2>{{ "Edit" if principal else "New" }} Principal</h2>
 
-<form method="post">
+<form method="post" style="max-width:720px;">
 
   {% if not principal %}
-    <label>Title Name</label><br>
-    <input type="text" name="titleName" placeholder="Enter movie or series title" required><br><br>
+  <label>Title Name</label><br>
+  <input type="text" name="titleName" style="width:100%; padding:8px;" placeholder="Enter movie or series title"
+    required><br><br>
 
-    <label>People Name</label><br>
-    <input type="text" name="peopleName" placeholder="Enter person name" required><br><br>
+  <label>People Name</label><br>
+  <input type="text" name="peopleName" style="width:100%; padding:8px;" placeholder="Enter person name"
+    required><br><br>
   {% else %}
-    <strong>Title ID:</strong> {{ principal.titleId }}<br>
-    <strong>People ID:</strong> {{ principal.peopleId }}<br><br>
+  <strong>Title ID:</strong> {{ principal.titleId }}<br>
+  <strong>People ID:</strong> {{ principal.peopleId }}<br><br>
   {% endif %}
 
   <label>Category</label><br>
-  <input type="text" name="category"
-         value="{{ principal.category if principal else '' }}"><br><br>
+  <input type="text" name="category" style="width:320px; padding:8px;"
+    value="{{ principal.category if principal else '' }}"><br><br>
 
   <label>Job</label><br>
-  <input type="text" name="job"
-         value="{{ principal.job if principal else '' }}"><br><br>
+  <input type="text" name="job" style="width:320px; padding:8px;"
+    value="{{ principal.job if principal else '' }}"><br><br>
 
   <label>Characters</label><br>
-  <textarea name="characters">{{ principal.characters if principal else '' }}</textarea><br><br>
+  <textarea name="characters"
+    style="width:100%; padding:8px;">{{ principal.characters if principal else '' }}</textarea><br><br>
 
-  <button type="submit">Save</button>
+  <button type="submit"
+    style="background:#1976d2;color:#fff;padding:8px 14px;border:none;border-radius:4px;">Save</button>
 </form>
 
 {% endblock %}

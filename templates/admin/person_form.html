@@ -1,13 +1,16 @@
 {% extends "admin_base.html" %}
 {% block content %}
 <h1>{{ 'Edit' if person else 'New' }} Person</h1>
-<form method="post">
+<form method="post" style="max-width:600px;">
   <label>Name</label><br>
-  <input name="primaryName" value="{{ person.primaryName if person else '' }}"><br>
+  <input name="primaryName" style="width:100%; padding:8px;" value="{{ person.primaryName if person else '' }}"><br><br>
   <label>Birth Year</label><br>
-  <input name="birthYear" value="{{ person.birthYear if person and person.birthYear is not none else '' }}"><br>
+  <input name="birthYear" style="padding:8px; width:200px;"
+    value="{{ person.birthYear if person and person.birthYear is not none else '' }}"><br><br>
   <label>Death Year</label><br>
-  <input name="deathYear" value="{{ person.deathYear if person and person.deathYear is not none else '' }}"><br>
-  <button type="submit">Save</button>
+  <input name="deathYear" style="padding:8px; width:200px;"
+    value="{{ person.deathYear if person and person.deathYear is not none else '' }}"><br><br>
+  <button type="submit"
+    style="background:#1976d2;color:#fff;padding:8px 14px;border:none;border-radius:4px;">Save</button>
 </form>
 {% endblock %}
