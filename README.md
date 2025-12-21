@@ -21,16 +21,16 @@
 - **Celebrities Page**:
     - **Search Bar**: Search for anything related to the people table.
     - **Filters**: Create queries in people and profession tables.
-    - Detail page for celebrities (Planned).
+    - **Detail Page**: View detailed information about a celebrity, including their top projects and professions.
 - **Recommend Page** (Requires Login): Recommends movies, series, or celebrities based on user likes.
-- **Quizzes Page** (Requires Login): Asks random funny questions about chosen topics.
+- **Quizzes Page** (Requires Login): AI-powered trivia quizzes about movies and series.
 - **About Page**: Information about the team and project.
-- **Suggestion Page** (Requires Login): Users can send messages/suggestions (DB or mail connection).
+- **Suggestion Page** (Requires Login): Users can send messages/suggestions to the admin.
 - **Login - Signup Pages**: User authentication.
 - **User Page**:
-    - Holds user information.
+    - Holds user information and score.
     - Lists liked movies, series, celebrities, episodes.
-    - Displays quiz scores.
+    - Displays quiz scores and leaderboard rank.
 
 ---
 
@@ -57,13 +57,19 @@ This guide is for developers who want to contribute to the project.
 │   ├── movies.html         # Movies list
 │   ├── movie.html          # Movie detail
 │   ├── series.html         # Series list
+│   ├── serie.html          # Series detail
 │   ├── episodes.html       # Episodes list
 │   ├── episode.html        # Episode detail
 │   ├── celebrities.html    # Celebrities list
+│   ├── celebrity.html      # Celebrity detail
+│   ├── quiz_setup.html     # Quiz configuration
+│   ├── quiz_play.html      # Quiz interface
+│   ├── quiz_result.html    # Quiz results
+│   ├── recommend.html      # Recommendations
+│   ├── suggestion.html     # User suggestions
 │   ├── login.html          # Login page
 │   ├── signup.html         # Signup page
-│   ├── profile.html        # User profile
-│   └── ...                 # Other pages
+│   └── profile.html        # User profile
 │
 ├── static/                 # Static files
 │   ├── css/                # Stylesheets
@@ -141,19 +147,12 @@ Open `database/db.py` to modify MySQL connection settings.
 
 To set up the database, execute the files in the `sql/` folder in the following order:
 
-1. **`userdb.sql`**: Creates the user database (`githappens_users`) and its tables.
-2. **`genres.sql`**: Creates the `genres` table and loads data.
-3. **`all_titles.sql`**: Creates the `all_titles` parent table.
-4. **`movies.sql`**: Creates the `movies` table and links it with `genres`.
-5. **`series.sql`**: Creates the `series` table and links it with `genres`.
-6. **`episodes.sql`**: Creates the `Episode` table.
-7. **`names.sql`**: Creates the `people` and `profession` tables.
-8. **`professionnormalization.sql`**: Normalizes profession data (parses and links).
-9. **`ratings.sql`**: Creates the `ratings` table.
-10. **`principals.sql`**: Creates the `principals` table (relationship between titles and people).
-11. **`addnewadmin.sql`**: Adds a default admin user to the system.
+1. **`userdb3.sql`**: Creates the user database (`githappens_users`) and its tables (users, likes, suggestions).
+2. **`data1.sql`**: Creates the main data tables (`genres`, `all_titles`, `movies`, `series`, `Episode`, `people`, `ratings`, `principals`) and loads data from CSV files.
+3. **`data2.sql`**: Performs additional data normalization, specifically for professions.
+4. **`adminqueries.sql`**: Adds default admin users to the system.
 
-**Important Note:** For data loading operations, you may need to enable the `local_infile` setting in MySQL and increase the timeout duration.
+**Important Note:** For data loading operations in `data1.sql`, you may need to enable the `local_infile` setting in MySQL and increase the timeout duration as described in the file comments. Ensure the CSV files are in the correct path as specified in the `LOAD DATA` commands.
 
 ---
 
