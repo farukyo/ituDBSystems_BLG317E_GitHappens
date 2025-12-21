@@ -426,3 +426,62 @@ hr {
 .like-btn.liked {
     color: #e50914; /* Kırmızı renk */
 }
+
+/* -----------------------------------------------------------------------
+   VIEW SELECTOR BUTTONS
+------------------------------------------------------------------------*/
+.view-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.btn-view {
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    background-color: #404040;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 0.95rem;
+    height: 42px;
+    display: flex;
+    align-items: center;
+}
+
+.btn-view:hover {
+    background-color: #505050;
+    transform: translateY(-2px);
+}
+
+.btn-view.active {
+    background-color: #e9601a;
+    box-shadow: 0 2px 8px rgba(233, 96, 26, 0.3);
+}
+
+.btn-view.active:hover {
+    background-color: #d35415;
+    transform: translateY(-2px);
+}
+
+/* -----------------------------------------------------------------------
+   GENRE TAGS
+------------------------------------------------------------------------*/
+.genre-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.genre-tag {
+    background: rgba(255, 122, 61, 0.12);
+    color: #ff7a3d;
+    padding: 6px 12px;
+    border-radius: 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
