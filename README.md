@@ -157,6 +157,32 @@ To set up the database, execute the files in the `sql/` folder in the following 
 
 ---
 
+## 🔑 API Setup
+
+Before running the application, you need to set up the Groq API key for AI-powered features.
+
+### Step 1: Create Groq API Key
+1. Go to [https://console.groq.com/keys](https://console.groq.com/keys)
+2. Sign in with your email
+3. Click "Create API Key"
+4. Set project name to: `githappens`
+5. Select duration (e.g., 1 month)
+6. Copy the generated API key (keep it safe, don't lose it)
+
+### Step 2: Configure Environment Variable
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+2. Edit the `.env` file and replace the placeholder values with your actual credentials:
+   ```
+   GROQ_API_KEY=your_actual_api_key_here
+   DB_USER=your_db_username
+   DB_PASSWORD=your_db_password
+   ```
+
+---
+
 ```bash
 # Activate virtual environment
 .\.venv\Scripts\Activate.ps1
