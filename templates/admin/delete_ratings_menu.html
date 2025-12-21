@@ -1,0 +1,46 @@
+{% extends "admin_base.html" %}
+{% block content %}
+
+<h1>Delete {{ title }}</h1>
+
+<form method="post" style="margin-bottom: 20px;">
+    <input type="text" name="search" placeholder="Search by title or ID..." style="padding: 5px; width: 250px;">
+    <button type="submit" style="padding: 5px 15px;">Search</button>
+</form>
+
+<table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
+  <thead>
+    <tr style="background-color: #f2f2f2;">
+      <th style="padding: 10px;">Title</th>
+      <th style="padding: 10px;">TitleId</th>
+      <th style="padding: 10px;">Avg Rating</th>
+      <th style="padding: 10px;">Votes</th>
+      <th style="padding: 10px;">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in items %}
+    <tr>
+      <td style="padding: 10px;">{{ item['primaryTitle'] or 'Unknown' }}</td>
+      <td style="padding: 10px;">{{ item['titleId'] }}</td>
+      <td style="padding: 10px;">{{ item['averageRating'] }}</td>
+      <td style="padding: 10px;">{{ item['numVotes'] }}</td>
+      <td style="padding: 10px;">
+        <form
+          action="{{ url_for('admin.rating_delete', rating_id=item['ratingId']) }}"
+          method="post"
+          style="display: inline;"
+        >
+          <button type="submit"
+                  onclick="return confirm('Delete this rating?')"
+                  style="background-color: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer;">
+            Delete
+          </button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
