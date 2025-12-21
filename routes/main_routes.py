@@ -30,6 +30,7 @@ def search():
     movies = []
     series = []
     episodes = []
+    people = []
     
     with engine.connect() as conn:
         # Search in Movies
@@ -68,12 +69,25 @@ def search():
             episodes = conn.execute(text(sql_episodes), {"q": f"%{search_query}%"}).fetchall()
         except:
             episodes = []
+        
+        # Search in People
+        try:
+            sql_people = """
+                SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear
+                FROM people p
+                WHERE p.primaryName LIKE :q 
+                LIMIT 20
+            """
+            people = conn.execute(text(sql_people), {"q": f"%{search_query}%"}).fetchall()
+        except:
+            people = []
     
     return render_template("search_results.html", 
                            query=search_query,
                            movies=movies,
                            series=series,
-                           episodes=episodes)
+                           episodes=episodes,
+                           people=people)
 
 @main_bp.route("/")
 def index():
