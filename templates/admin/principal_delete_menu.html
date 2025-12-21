@@ -1,0 +1,41 @@
+{% extends "admin_base.html" %}
+{% block content %}
+
+<h2>Delete Principals</h2>
+
+<form method="post">
+    <input type="text" name="search" placeholder="Search by person or title">
+    <button type="submit">Search</button>
+</form>
+
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Person</th>
+        <th>Category</th>
+        <th>Action</th>
+    </tr>
+
+    {% for p in principals %}
+    <tr>
+        <td>{{ p.titleName }}</td>
+        <td>{{ p.primaryName }}</td>
+        <td>{{ p.category }}</td>
+        <td>
+            <form method="post"
+                  action="{{ url_for(
+                      'admin.principal_delete',
+                      title_id=p.titleId,
+                      people_id=p.peopleId
+                  ) }}">
+                <button type="submit"
+                        onclick="return confirm('Delete this principal?')">
+                    Delete
+                </button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

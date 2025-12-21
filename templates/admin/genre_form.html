@@ -3,22 +3,23 @@
 
 <h2>{{ "Edit" if genre else "New" }} Genre</h2>
 
-<form method="post">
+<form method="post" style="max-width:600px;">
 
   {% if not genre %}
-    <label>Genre ID</label><br>
-    <input type="number" name="genreId" required><br><br>
+  <label>Genre ID</label><br>
+  <input type="number" name="genreId" style="padding:8px; width:140px;" required><br><br>
   {% endif %}
 
   <label>Genre Name</label><br>
-  <input name="genreName"
-         value="{{ genre.genreName if genre else '' }}"
-         required><br><br>
+  <input name="genreName" style="width:100%; padding:8px;" value="{{ genre.genreName if genre else '' }}"
+    required><br><br>
 
   <label>Description</label><br>
-  <textarea name="description">{{ genre.description if genre else '' }}</textarea><br><br>
+  <textarea name="description"
+    style="width:100%; padding:8px;">{{ genre.description if genre else '' }}</textarea><br><br>
 
-  <button type="submit">Save</button>
+  <button type="submit"
+    style="background:#1976d2;color:#fff;padding:8px 14px;border:none;border-radius:4px;">Save</button>
 </form>
 
 {% endblock %}

@@ -3,39 +3,36 @@
 
 <h1>{{ 'Edit' if movie else 'New' }} Movie</h1>
 
-<form method="post">
+<form method="post" style="max-width:720px;">
 
-  <label>Movie Title</label><br>
-  <input name="movieTitle"
-         value="{{ movie.movieTitle if movie else '' }}"
-         required><br><br>
+       <label>Movie Title</label><br>
+       <input name="movieTitle" style="width:100%; padding:8px;" value="{{ movie.movieTitle if movie else '' }}"
+              required><br><br>
 
-  <label>Title Type</label><br>
-  <input name="titleType"
-         list="titleTypes"
-         value="{{ movie.titleType if movie and movie.titleType is not none else '' }}">
-  <datalist id="titleTypes">
-    <option value="movie">
-    <option value="short">
-    <option value="tvMovie">
-    <option value="video">
-  </datalist>
-  <br><br>
+       <label>Title Type</label><br>
+       <input name="titleType" list="titleTypes" style="width:100%; padding:8px;"
+              value="{{ movie.titleType if movie and movie.titleType is not none else '' }}">
+       <datalist id="titleTypes">
+              <option value="movie">
+              <option value="short">
+              <option value="tvMovie">
+              <option value="video">
+       </datalist>
+       <br><br>
 
-  <label>Start Year</label><br>
-  <input name="startYear"
-         value="{{ movie.startYear if movie and movie.startYear is not none else '' }}"><br><br>
+       <label>Start Year</label><br>
+       <input name="startYear" style="padding:8px; width:200px;"
+              value="{{ movie.startYear if movie and movie.startYear is not none else '' }}"><br><br>
 
-  <label>Runtime (minutes)</label><br>
-  <input name="runtimeMinutes"
-         value="{{ movie.runtimeMinutes if movie and movie.runtimeMinutes is not none else '' }}"><br><br>
-  <label>
-    <input type="checkbox" name="isAdult"
-           {% if movie and movie.isAdult %}checked{% endif %}>
-    Adult Content
-  </label><br><br>
+       <label>Runtime (minutes)</label><br>
+       <input name="runtimeMinutes" style="padding:8px; width:200px;"
+              value="{{ movie.runtimeMinutes if movie and movie.runtimeMinutes is not none else '' }}"><br><br>
+       <label>
+              <input type="checkbox" name="isAdult" {% if movie and movie.isAdult %}checked{% endif %}> Adult Content
+       </label><br><br>
 
-  <button type="submit">Save</button>
+       <button type="submit"
+              style="background:#1976d2;color:#fff;padding:8px 14px;border:none;border-radius:4px;">Save</button>
 </form>
 
 {% endblock %}

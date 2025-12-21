@@ -27,7 +27,6 @@ def celebrities():
 
     with engine.connect() as conn:
         
-
         # --- 1. SENARYO: FİLTRE YOKSA (EN İYİ PROJESİNE GÖRE SIRALA) ---
         if not has_filters:
             sql = """
@@ -36,43 +35,46 @@ def celebrities():
                 p.primaryName, 
                 p.birthYear, 
                 p.deathYear, 
-                prof.professionName,
+                GROUP_CONCAT(DISTINCT pd.name SEPARATOR ', ') as professionName,
                 MAX(r.averageRating) as top_rating, 
                 CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
             FROM people p
             JOIN principals pr ON p.peopleId = pr.peopleId
             JOIN ratings r ON pr.titleId = r.titleId
-            LEFT JOIN profession prof ON p.professionId = prof.professionId
-            LEFT JOIN githappens_users.user_likes ul ON p.peopleId = ul.entity_id 
-                                   AND ul.user_id = :uid 
-                                   AND ul.entity_type = 'person'
+            -- YENİ PROFESSION YAPISI --
+            LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
+            LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
+            -- ----------------------- --
+            LEFT JOIN githappens_users.user_likes_people ul ON p.peopleId = ul.people_id 
+                       AND ul.user_id = :uid
             WHERE r.numVotes > 1000      
             GROUP BY p.peopleId, p.primaryName, p.birthYear, 
-            p.deathYear, prof.professionName, ul.user_id
+            p.deathYear, ul.user_id
             HAVING COUNT(pr.titleId) >= 1
             ORDER BY top_rating DESC, p.primaryName ASC 
             LIMIT 50
             """
             params = {"uid": uid}
             
-            # Sorguyu çalıştır
             result = conn.execute(text(sql), params)
             data = result.fetchall()
-            
-            # SQL Kodunu Göster
             display_sql = sql.replace(":uid", str(uid))
 
         else:
             page_title = f"Results for '{search_query}'" if search_query else "Search Results"
             
+            # Ana sorguyu GROUP BY ile başlatıyoruz çünkü birden fazla meslek satırı gelecek
             sql = """
-                SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, pr.professionName,
+                SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, 
+                       GROUP_CONCAT(DISTINCT pd.name SEPARATOR ', ') as professionName,
                        CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
                 FROM people p
-                LEFT JOIN profession pr ON p.professionId = pr.professionId
-                LEFT JOIN githappens_users.user_likes ul ON p.peopleId = ul.entity_id 
-                                       AND ul.user_id = :uid 
-                                       AND ul.entity_type = 'person'
+                -- YENİ PROFESSION YAPISI --
+                LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
+                LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
+                -- ----------------------- --
+                LEFT JOIN githappens_users.user_likes_people ul ON p.peopleId = ul.people_id 
+                           AND ul.user_id = :uid
                 WHERE 1=1
             """
             params = {"uid": uid}
@@ -86,8 +88,11 @@ def celebrities():
                 sql += " AND p.primaryName LIKE :q"
                 params["q"] = f"%{search_query}%"
 
+            # Profession filtresi artık 'pd.name' üzerinden yapılıyor
             if profession_list:
-                prof_conditions = [f"pr.professionName LIKE :prof_{i}" for i in range(len(profession_list))]
+                # Burada HAVING kullanmak daha güvenli olurdu ama basitlik adına WHERE'de bırakıyoruz.
+                # Not: Bu filtre seçilen meslek dışındakileri GROUP_CONCAT'ta göstermeyebilir.
+                prof_conditions = [f"pd.name LIKE :prof_{i}" for i in range(len(profession_list))]
                 for i, prof in enumerate(profession_list):
                     params[f"prof_{i}"] = f"%{prof}%"
                 sql += " AND (" + " AND ".join(prof_conditions) + ")"
@@ -103,6 +108,9 @@ def celebrities():
             if death_filter:
                 sql += " AND p.deathYear = :dyear"
                 params["dyear"] = int(death_filter)
+
+            # GROUP BY ekliyoruz ki kişi başına tek satır olsun
+            sql += " GROUP BY p.peopleId, p.primaryName, p.birthYear, p.deathYear, ul.user_id"
 
             if order_filter == "alphabetical":
                 sql += " ORDER BY p.primaryName ASC"
@@ -135,15 +143,18 @@ def celebrity_detail(people_id):
     
     with engine.connect() as conn:
 
+        # Detay sayfasında da GROUP_CONCAT kullanıyoruz
         sql_person = """
-            SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, pr.professionName,
+            SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, 
+                   GROUP_CONCAT(DISTINCT pd.name SEPARATOR ', ') as professionName,
                    CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
             FROM people p
-            LEFT JOIN profession pr ON p.professionId = pr.professionId
-            LEFT JOIN githappens_users.user_likes ul ON p.peopleId = ul.entity_id 
-                                   AND ul.user_id = :uid 
-                                   AND ul.entity_type = 'person'
+            LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
+            LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
+            LEFT JOIN githappens_users.user_likes_people ul ON p.peopleId = ul.people_id 
+                           AND ul.user_id = :uid
             WHERE p.peopleId = :id
+            GROUP BY p.peopleId, p.primaryName, p.birthYear, p.deathYear, ul.user_id
         """
         result = conn.execute(text(sql_person), {"id": people_id, "uid": uid})
         person = result.fetchone()
@@ -189,22 +200,25 @@ def like_celebrity():
     user_id = current_user.id
     
     with engine.connect() as conn:
+        # 1. Kontrol Et (Tablo: user_likes_people, Kolon: people_id)
         check_sql = """
-            SELECT 1 FROM githappens_users.user_likes 
-            WHERE user_id = :uid AND entity_id = :eid AND entity_type = 'person'
+            SELECT 1 FROM githappens_users.user_likes_people 
+            WHERE user_id = :uid AND people_id = :eid
         """
         result = conn.execute(text(check_sql), {"uid": user_id, "eid": people_id}).fetchone()
         
         if result:
+            # 2. Varsa SİL
             delete_sql = """
-                DELETE FROM githappens_users.user_likes 
-                WHERE user_id = :uid AND entity_id = :eid AND entity_type = 'person'
+                DELETE FROM githappens_users.user_likes_people 
+                WHERE user_id = :uid AND people_id = :eid
             """
             conn.execute(text(delete_sql), {"uid": user_id, "eid": people_id})
         else:
+            # 3. Yoksa EKLE
             insert_sql = """
-                INSERT INTO githappens_users.user_likes (user_id, entity_id, entity_type)
-                VALUES (:uid, :eid, 'person')
+                INSERT INTO githappens_users.user_likes_people (user_id, people_id)
+                VALUES (:uid, :eid)
             """
             conn.execute(text(insert_sql), {"uid": user_id, "eid": people_id})
             

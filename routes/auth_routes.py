@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
 from database.db import engine # Veritabanı bağlantısı
 
@@ -7,7 +8,7 @@ auth_bp = Blueprint('auth', __name__)
 
 class User(UserMixin):
     """Flask-Login için MySQL ile uyumlu User modeli."""
-    def __init__(self, id, username, email, password_hash, dob=None, gender=None, is_admin=False):
+    def __init__(self, id, username, email, password_hash, dob=None, gender=None, is_admin=False, score=0):
         self.id = id
         self.username = username
         self.email = email
@@ -16,13 +17,13 @@ class User(UserMixin):
         self.gender = gender
         self.is_admin = bool(is_admin)
         # Orijinal değişkenlerini koruyoruz
-        self.quiz_score = 0
+        self.quiz_score = score
         self.liked_movies = []
         self.liked_series = []
         self.liked_actors = []
 
     def check_password(self, password):
-        return self.password_hash == password
+        return check_password_hash(self.password_hash, password)
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -44,7 +45,8 @@ def login():
                 user_obj = User(
                     id=u['id'], username=u['username'], email=u['email'], 
                     password_hash=u['password_hash'], dob=u['dob'], 
-                    gender=u['gender'], is_admin=u['is_admin']
+                    gender=u['gender'], is_admin=u['is_admin'],
+                    score=u.get('score', 0)
                 )
                 
                 if user_obj.check_password(password):
@@ -75,10 +77,11 @@ def signup():
                 return redirect(url_for('auth.signup'))
 
             # Kayıt (ID AUTO_INCREMENT olduğu için eklemiyoruz)
+            hashed_password = generate_password_hash(password)
             conn.execute(text("""
                 INSERT INTO githappens_users.users (username, email, password_hash, dob, gender) 
                 VALUES (:u, :e, :p, :d, :g)
-            """), {"u": username, "e": email, "p": password, "d": dob, "g": gender})
+            """), {"u": username, "e": email, "p": hashed_password, "d": dob, "g": gender})
             conn.commit()
             
             # Kayıt sonrası otomatik login için kullanıcıyı tekrar çekiyoruz

@@ -14,7 +14,18 @@
 
         <div class="quiz-question-card result-summary">
             <h2>Your Score: <span class="highlight">{{ score }} / {{ total }}</span></h2>
-            <p>Percentage: {{ (score / total * 100) | round(1) }}%</p>
+            <p>Difficulty: <strong>{{ difficulty | title }}</strong></p>
+            <p>Points Earned: <span class="highlight" style="font-size: 1.8rem;">+{{ points }}</span></p>
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+            <p style="font-size: 1.2rem; color: #aaa;">
+                Total Profile Score: <br>
+                <span style="text-decoration: line-through; opacity: 0.6;">{{ old_total_score }}</span>
+                <span style="color: #ff6b00; font-weight: bold; margin: 0 10px;">→</span>
+                <span style="color: #28a745; font-weight: bold; font-size: 1.5rem;">{{ new_total_score }}!</span>
+            </p>
+            <p style="margin-top: 15px; color: #f5c518; font-weight: bold;">
+                🌟 You are in the Top {{ percentile }}% of all users!
+            </p>
         </div>
 
         <div class="quiz-button-wrapper result-actions">

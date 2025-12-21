@@ -1,5 +1,5 @@
-from flask import Flask
-from flask_login import LoginManager
+from flask import Flask, redirect, url_for, request, flash
+from flask_login import LoginManager, current_user
 from sqlalchemy import text
 from database.db import engine
 from admin import admin_bp
@@ -34,9 +34,25 @@ def load_user(user_id):
             return User(
                 id=u['id'], username=u['username'], email=u['email'], 
                 password_hash=u['password_hash'], dob=u['dob'], 
-                gender=u['gender'], is_admin=u['is_admin']
+                gender=u['gender'], is_admin=u['is_admin'],
+                score=u.get('score', 0)
             )
     return None
+
+
+# Admin erişim kontrolü
+@app.before_request
+def check_admin_access():
+    """Admin sayfalarına erişim kontrolü"""
+    if request.path.startswith('/admin'):
+        if not current_user.is_authenticated:
+            flash("You need to log in to access the admin panel.", "warning")
+            return redirect(url_for('auth.login'))
+        
+        if not current_user.is_admin:
+            flash("You do not have permission to access the admin panel. Only administrators can access this area.", "error")
+            return redirect(url_for('main.index'))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True)

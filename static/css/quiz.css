@@ -110,6 +110,141 @@ h1 {
     color: #ff6b00 !important;
 }
 
+/* --- Feedback Styles --- */
+.option-row.correct {
+    background: rgba(40, 167, 69, 0.2) !important;
+    border: 1px solid #28a745 !important;
+    border-radius: 8px;
+}
+
+.option-row.wrong {
+    background: rgba(220, 53, 69, 0.2) !important;
+    border: 1px solid #dc3545 !important;
+    border-radius: 8px;
+}
+
+.option-row.disabled {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.quiz-score-floating {
+    position: fixed;
+    top: 100px;
+    right: 40px;
+    background: #ff6b00;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+}
+
+/* --- Leaderboard Styles --- */
+.quiz-setup-layout {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+}
+
+.quiz-form-section {
+    flex: 1;
+}
+
+.quiz-leaderboard-section {
+    width: 300px;
+    background: #1a1d24;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.leaderboard-title {
+    font-size: 1.2rem;
+    color: #ff6b00;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.leaderboard-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.leaderboard-item-link:hover .leaderboard-item {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.leaderboard-rank {
+    font-weight: bold;
+    color: #888;
+    width: 35px;
+}
+
+.leaderboard-rank.top-1 {
+    color: #f5c518;
+}
+
+.leaderboard-rank.top-2 {
+    color: #c0c0c0;
+}
+
+.leaderboard-rank.top-3 {
+    color: #cd7f32;
+}
+
+.leaderboard-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.leaderboard-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.leaderboard-score {
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+.user-rank-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #333;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.user-rank-footer strong {
+    color: #ff6b00;
+}
+
 /* --- BUTONLAR: TAM ORTALANMIŞ VE TURUNCU --- */
 .quiz-button-wrapper {
     display: flex;

@@ -36,7 +36,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
 
     # 1. ADDED QUIZ SCORE
-    quiz_score = db.Column(db.Integer, nullable=True, default=0)
+    score = db.Column(db.Integer, nullable=True, default=0)
 
     # 2. ADDED RELATIONSHIPS FOR LIKES
     liked_movies = db.relationship(

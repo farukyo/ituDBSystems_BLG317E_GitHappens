@@ -1,0 +1,44 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+
+<h2>Edit User</h2>
+
+<form method="post" style="margin-bottom: 20px;">
+    <input type="text" name="search" placeholder="Search by username or email"
+        value="{{ request.form.get('search', '') }}">
+    <button type="submit">Search</button>
+</form>
+
+<table border="1" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>DOB</th>
+            <th>Gender</th>
+            <th>Score</th>
+            <th>Admin</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.dob if u.dob else 'N/A' }}</td>
+            <td>{{ u.gender if u.gender else 'N/A' }}</td>
+            <td>{{ u.score }}</td>
+            <td>{{ '✅' if u.is_admin else '❌' }}</td>
+            <td>
+                <a href="{{ url_for('admin.user_edit', user_id=u.id) }}">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

@@ -9,8 +9,8 @@
     .serie-detail-page { padding: 40px 0; }
     
     .header-section { margin-bottom: 30px; }
-    .header-section h1 { color: #fff; font-size: 2rem; margin-bottom: 10px; }
-    .header-section .meta-info { color: var(--accent); font-size: 1.1rem; }
+    .header-section h1 { color: #fff; font-size: 2rem; margin-bottom: 10px; margin-top: 0; }
+    .header-section .meta-info { color: var(--accent); font-size: 1.1rem; margin-top: 10px; }
 
     .details-card {
         background: rgba(255, 255, 255, 0.03);
@@ -40,7 +40,6 @@
     .detail-value { color: #fff; font-size: 1.1rem; }
     .detail-value.highlight { color: var(--accent); font-weight: 600; }
     
-    /* Override movie.css col-runtime for this page - already using Start Year */
     .col-runtime::before { content: ""; }
     .detail-grid .col-runtime::before { content: ""; }
 
@@ -90,6 +89,27 @@
     .btn-secondary:hover { background: rgba(255, 255, 255, 0.12); }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { background: #d65a1a; }
+
+    /* --- LIKE BUTONU STİLLERİ (EKLENDİ) --- */
+    .like-btn {
+        background: none;
+        border: none;
+        font-size: 2.5rem; /* Başlık boyutuna uygun büyük kalp */
+        cursor: pointer;
+        color: #555; /* Pasif renk */
+        transition: transform 0.2s, color 0.2s;
+        line-height: 1;
+        padding: 0;
+        margin-left: 15px; /* Başlıktan biraz uzaklaştır */
+    }
+
+    .like-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .like-btn.liked {
+        color: #e50914; /* Aktif renk (Kırmızı) */
+    }
 </style>
 {% endblock %}
 
@@ -97,7 +117,17 @@
 <div class="container serie-detail-page">
 
     <div class="header-section">
-        <h1>{{ series.seriesTitle }}</h1>
+        <div style="display: flex; align-items: center;">
+            <h1>{{ series.seriesTitle }}</h1>
+            
+            <button class="like-btn {{ 'liked' if series.is_liked else '' }}" 
+                    data-id="{{ series.seriesId }}" 
+                    data-type="series"
+                    onclick="toggleEntityLike(this, event)">
+                ❤
+            </button>
+        </div>
+
         <p class="meta-info">
             {{ series.titleType }} 
             {% if series.startYear %} • {{ series.startYear }} - {{ series.endYear or 'Present' }} {% endif %}
@@ -209,4 +239,36 @@
     </div>
 
 </div>
+
+<script>
+    function toggleEntityLike(btn, event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const entityId = btn.getAttribute('data-id');
+        const entityType = btn.getAttribute('data-type'); // 'series'
+
+        let formData = new FormData();
+        formData.append('entity_id', entityId);
+        formData.append('entity_type', entityType);
+
+        fetch('/like_entity', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data === "1") {
+                if (btn.classList.contains('liked')) {
+                    btn.classList.remove('liked');
+                } else {
+                    btn.classList.add('liked');
+                }
+            } else {
+                alert("Login required or error occurred.");
+            }
+        })
+        .catch(err => console.error('Error:', err));
+    }
+</script>
 {% endblock %}

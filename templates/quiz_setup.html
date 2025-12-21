@@ -12,65 +12,68 @@
         <h1>Create a Movie / Series Quiz</h1>
         <p class="sub-title">Select a movie or series and generate an AI-powered quiz.</p>
 
-        <form action="{{ url_for('main.generate_quiz') }}" method="POST" class="quiz-form">
-            <div class="quiz-filter-grid">
-                <div class="quiz-filter-group">
-                    <label>Movie / Series Title</label>
-                    <input type="text" name="title" placeholder="e.g. Interstellar" required>
-                </div>
+        <div class="quiz-setup-layout">
+            <div class="quiz-form-section">
+                <form action="{{ url_for('main.generate_quiz') }}" method="POST" class="quiz-form">
+                    <div class="quiz-filter-grid">
+                        <div class="quiz-filter-group">
+                            <label>Movie / Series Title</label>
+                            <input type="text" name="title" placeholder="e.g. Interstellar" required>
+                        </div>
 
-                <div class="quiz-filter-group">
-                    <label>Type</label>
-                    <select name="type">
-                        <option value="movie">Movie</option>
-                        <option value="series">Series</option>
-                    </select>
-                </div>
+                        <div class="quiz-filter-group">
+                            <label>Difficulty</label>
+                            <select name="difficulty">
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
 
-                <div class="quiz-filter-group">
-                    <label>Genre (optional)</label>
-                    <input type="text" name="genre" placeholder="Sci-Fi, Drama">
-                </div>
-
-                <div class="quiz-filter-group">
-                    <label>IMDb Rating</label>
-                    <div class="quiz-range-inputs">
-                        <input type="number" step="0.1" name="min_rating" placeholder="0">
-                        <span>-</span>
-                        <input type="number" step="0.1" name="max_rating" placeholder="10">
+                        <div class="quiz-filter-group">
+                            <label>Number of Questions</label>
+                            <select name="question_count">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="15">15</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="quiz-filter-group">
-                    <label>Difficulty</label>
-                    <select name="difficulty">
-                        <option value="easy">Easy</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="hard">Hard</option>
-                    </select>
-                </div>
-
-                <div class="quiz-filter-group">
-                    <label>Release Year</label>
-                    <input type="number" name="year" placeholder="e.g. 2014">
-                </div>
-
-                <div class="quiz-filter-group">
-                    <label>Number of Questions</label>
-                    <select name="question_count">
-                        <option value="5">5</option>
-                        <option value="10" selected>10</option>
-                        <option value="15">15</option>
-                    </select>
-                </div>
+                    <div class="quiz-button-wrapper">
+                        <button type="submit" class="quiz-btn-primary">
+                            🎯 Generate Quiz
+                        </button>
+                    </div>
+                </form>
             </div>
 
-            <div class="quiz-button-wrapper">
-                <button type="submit" class="quiz-btn-primary">
-                    🎯 Generate Quiz
-                </button>
+            <div class="quiz-leaderboard-section">
+                <h3 class="leaderboard-title">
+                    🏆 Leaderboard
+                </h3>
+                <div class="leaderboard-list">
+                    {% for user in top_users %}
+                    <a href="{{ url_for('user.profile', user_id=user.id) }}" class="leaderboard-item-link">
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank top-{{ loop.index }}">#{{ loop.index }}</div>
+                            <div class="leaderboard-info">
+                                <span class="leaderboard-name">
+                                    {% if user.gender == 'male' %}👨{% elif user.gender == 'female' %}👩{% else %}👤{%
+                                    endif %}
+                                    {{ user.username }}
+                                </span>
+                                <span class="leaderboard-score">{{ user.score }} pts</span>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                <div class="user-rank-footer">
+                    Your Rank: <strong>#{{ user_rank }}</strong>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,0 +1,16 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+
+<h2>{{ "Edit" if profession else "New" }} Profession</h2>
+
+<form method="post" style="max-width:480px;">
+  <label>Profession Name</label><br>
+  <input type="text" name="professionName" style="width:100%; padding:8px;"
+    value="{{ profession.professionName if profession else '' }}" placeholder="e.g. Actor, Director" required><br><br>
+
+  <button type="submit"
+    style="background:#1976d2;color:#fff;padding:8px 14px;border:none;border-radius:4px;">Save</button>
+  <a href="{{ url_for('admin.professions_menu') }}" style="margin-left:12px;">Cancel</a>
+</form>
+
+{% endblock %}

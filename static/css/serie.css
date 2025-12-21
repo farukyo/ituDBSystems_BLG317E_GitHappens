@@ -72,3 +72,23 @@
     border: 1px solid var(--accent);
     font-size: 0.9rem;
 }
+
+/* Like Button Style for Detail Page */
+.like-btn {
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    cursor: pointer;
+    color: #555;
+    transition: transform 0.2s, color 0.2s;
+    line-height: 1;
+    padding: 0;
+}
+
+.like-btn:hover {
+    transform: scale(1.1);
+}
+
+.like-btn.liked {
+    color: #e50914;
+}
