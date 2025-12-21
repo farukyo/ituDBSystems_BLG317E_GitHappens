@@ -9,7 +9,7 @@ from routes.auth_routes import User
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_super_secret_key_change_this_later'
 
-# Blueprint kayıtları (Orijinal haliyle korundu)
+# Blueprint kayıtları
 app.register_blueprint(admin_bp, url_prefix="/admin")
 app.register_blueprint(main_bp)
 app.register_blueprint(auth_bp)
