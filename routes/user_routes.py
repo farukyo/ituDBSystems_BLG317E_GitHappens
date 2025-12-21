@@ -61,11 +61,12 @@ def profile():
         user_score_res = conn.execute(text("SELECT score FROM githappens_users.users WHERE id = :uid"), {"uid": uid}).fetchone()
         user_score = user_score_res[0] if user_score_res else 0
 
-        # Calculate Percentile
+        # Calculate Percentile (Top X%)
         total_users = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users")).scalar()
         higher_scores = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users WHERE score > :s"), {"s": user_score}).scalar()
         if total_users > 0:
-            percentile = (higher_scores / total_users) * 100
+            # Rank = higher_scores + 1. Top % = (Rank / Total) * 100
+            percentile = ((higher_scores + 1) / total_users) * 100
 
         # A. Beğenilen FİLMLER (user_likes_titles tablosundan)
         sql_mov = """
@@ -109,6 +110,7 @@ def profile():
 
     return render_template("profile.html", 
                            user=current_user, 
+                           score=user_score,
                            liked_movies=liked_movies,
                            liked_series=liked_series,
                            liked_episodes=liked_episodes,

@@ -124,7 +124,7 @@ def index():
         except Exception as e:
             print(f"Error fetching featured series: {e}")
 
-        # Top 5 People (Most liked actors) - GÜNCELLENDİ
+        # Top 5 People (Most liked people)
         try:
             sql_people = """
                 SELECT
@@ -137,10 +137,6 @@ def index():
                     GROUP BY people_id
                 ) l
                 JOIN people p ON l.people_id = p.peopleId
-                LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
-                LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
-                WHERE (pd.name LIKE '%actor%' OR pd.name LIKE '%actress%')
-                GROUP BY p.peopleId, p.primaryName, l.numLikes
                 ORDER BY l.numLikes DESC
                 LIMIT 5
             """
@@ -304,7 +300,8 @@ def submit_quiz():
             total_users = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users")).scalar()
             higher_scores = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users WHERE score > :s"), {"s": new_score}).scalar()
             if total_users > 0:
-                percentile = (higher_scores / total_users) * 100
+                # Rank = higher_scores + 1. Top % = (Rank / Total) * 100
+                percentile = ((higher_scores + 1) / total_users) * 100
     except Exception as e:
         print(f"Skor kaydedilemedi: {e}")
     # -----------------------------------------------

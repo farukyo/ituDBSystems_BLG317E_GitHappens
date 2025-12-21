@@ -167,7 +167,7 @@
     <div class="profile-section">
         <div class="quiz-score-box">
             <span>My Quiz Score:</span>
-            <h3>{{ user.quiz_score | default('0') }}</h3>
+            <h3>{{ score | default('0') }}</h3>
             <p style="color: #f5c518; font-size: 0.9rem; margin-top: 5px; font-weight: bold;">
                 Top {{ percentile }}% of all users
             </p>
