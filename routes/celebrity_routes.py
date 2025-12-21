@@ -66,16 +66,12 @@ def celebrities():
             page_title = f"Results for '{search_query}'" if search_query else "Search Results"
             
             sql = """
-                SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, pr.professionName,
-                       CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
+                SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, pr.professionName
                 FROM people p
                 LEFT JOIN profession pr ON p.professionId = pr.professionId
-                LEFT JOIN githappens_users.user_likes ul ON p.peopleId = ul.entity_id 
-                                       AND ul.user_id = :uid 
-                                       AND ul.entity_type = 'person'
                 WHERE 1=1
             """
-            params = {"uid": uid}
+            params = {}
 
             # --- FİLTRELER ---
             if not search_query and not primary_letter:

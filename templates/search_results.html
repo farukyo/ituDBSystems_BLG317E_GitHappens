@@ -67,8 +67,28 @@
     </div>
     {% endif %}
     
+    <!-- People Section -->
+    {% if people %}
+    <div class="results-section">
+        <h2>People <span class="result-count">({{ people | length }})</span></h2>
+        <div class="results-grid">
+            {% for person in people %}
+            <div class="result-card">
+                <h3><a href="{{ url_for('celebrity.celebrities', q=person.primaryName) }}">{{ person.primaryName }}</a></h3>
+                {% if person.birthYear and person.birthYear != 0 %}
+                    <p class="result-year">
+                        {{ person.birthYear }}
+                        {% if person.deathYear and person.deathYear != 0 %} - {{ person.deathYear }}{% endif %}
+                    </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
     <!-- No Results -->
-    {% if not movies and not series and not episodes %}
+    {% if not movies and not series and not episodes and not people %}
     <div class="no-results">
         <p>No results found for "{{ query }}"</p>
         <p>Try searching with different keywords.</p>

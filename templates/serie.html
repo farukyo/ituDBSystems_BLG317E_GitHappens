@@ -147,6 +147,28 @@
                 </span>
             </div>
 
+            <div class="detail-item">
+                <span class="detail-label">IMDb Rating</span>
+                <span class="detail-value highlight">
+                    {% if rating.rating %}
+                        {{ rating.rating | float | round(1) }}/10
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Votes</span>
+                <span class="detail-value">
+                    {% if rating.votes %}
+                        {{ "{:,}".format(rating.votes) }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </span>
+            </div>
+
         </div>
     </div>
 
