@@ -1,0 +1,41 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+
+<h2>User Suggestions</h2>
+
+<table border="1" cellpadding="10" cellspacing="0" style="width:100%; background: #fff;">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Subject</th>
+            <th>Suggestion</th>
+            <th>Date</th>
+            <th>Resolved</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in suggestions %}
+        <tr>
+            <td>{{ s.suggestion_id }}</td>
+            <td>{{ s.username }}</td>
+            <td>{{ s.subject }}</td>
+            <td style="max-width:300px; white-space:pre-wrap;">{{ s.suggestion_text }}</td>
+            <td>{{ s.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td style="text-align:center;">
+                <form method="post" action="{{ url_for('admin.suggestion_toggle', suggestion_id=s.suggestion_id) }}">
+                    <button type="submit" style="background:none; border:none; cursor:pointer;">
+                        {% if s.is_resolved %}
+                        <span style="font-size:20px; color:green;">✔️</span>
+                        {% else %}
+                        <span style="font-size:20px; color:#ccc;">✖️</span>
+                        {% endif %}
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

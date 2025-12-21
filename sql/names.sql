@@ -1,6 +1,5 @@
 -- =============================================
--- PROFESSION TABLE (names.csv'den oluşturulur)
--- Arama yaparken WHERE LIKE % kullanılmalı
+-- PROFESSION TABLE 
 -- =============================================
 
 CREATE TABLE profession ( 
@@ -70,7 +69,7 @@ CREATE TABLE people (
     ON DELETE SET NULL ON UPDATE CASCADE 
 );
 
--- Geçici tablodan ana tabloya aktar (profession eşleşmesiyle)
+-- Geçici tablodan ana tabloya aktar 
 INSERT INTO people (peopleId, primaryName, birthYear, deathYear, professionId)
 SELECT 
     t.peopleId,

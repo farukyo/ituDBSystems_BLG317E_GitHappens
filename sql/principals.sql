@@ -1,6 +1,5 @@
 -- =============================================
 -- PRINCIPALS TABLE
--- Bileşik anahtar (composite key) kullanıldı
 -- =============================================
 
 CREATE TABLE principals ( 

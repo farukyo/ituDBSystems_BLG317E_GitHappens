@@ -4,81 +4,149 @@
 
 {% block head %}
 <style>
-    /* Bu sayfaya özel stiller */
+    /* KONTEYNER STİLİ */
     .suggestion-container {
         max-width: 600px;
-        margin: 40px auto;
-        padding: 30px;
+        margin: 60px auto;
+        padding: 40px;
         background: linear-gradient(180deg, #1f2937, #111827);
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         border: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
     }
 
+    /* BAŞLIK VE METİN */
     .suggestion-header {
         text-align: center;
         margin-bottom: 30px;
     }
 
     .suggestion-header h1 {
-        color: var(--accent);
+        color: #e9601a; /* Senin tema rengin (Turuncu) */
         margin-bottom: 10px;
+        font-size: 2rem;
     }
 
     .suggestion-header p {
-        color: var(--muted);
+        color: #9ca3af;
+        line-height: 1.6;
     }
 
+    /* FORM ELEMANLARI */
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
 
     .form-group label {
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         color: #e6eef8;
         font-weight: 500;
+        font-size: 0.95rem;
     }
 
     .form-control {
         width: 100%;
-        padding: 12px;
+        padding: 14px;
         background-color: #0b1220;
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
+        border-radius: 10px;
         color: #fff;
         font-family: inherit;
         font-size: 1rem;
-        transition: border-color 0.3s ease;
+        transition: all 0.3s ease;
     }
 
     .form-control:focus {
         outline: none;
-        border-color: var(--accent);
-        box-shadow: 0 0 0 3px rgba(233, 96, 26, 0.1);
+        border-color: #e9601a;
+        box-shadow: 0 0 0 3px rgba(233, 96, 26, 0.15);
+        background-color: #111827;
     }
 
     textarea.form-control {
         resize: vertical;
-        min-height: 150px;
+        min-height: 160px;
     }
 
+    /* BUTON */
     .btn-submit {
         width: 100%;
-        padding: 14px;
-        background: var(--accent);
+        padding: 16px;
+        background: #e9601a;
         color: white;
         border: none;
-        border-radius: 8px;
-        font-size: 1rem;
+        border-radius: 10px;
+        font-size: 1.1rem;
         font-weight: 600;
         cursor: pointer;
         transition: background 0.3s ease, transform 0.2s;
+        margin-top: 10px;
     }
 
     .btn-submit:hover {
         background: #d65211;
         transform: translateY(-2px);
+    }
+
+    /* --- TEŞEKKÜR EKRANI --- */
+    .success-message {
+        text-align: center;
+        padding: 20px 0;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(46, 204, 113, 0.1);
+        color: #2ecc71;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px auto;
+        font-size: 2.5rem;
+    }
+
+    .success-title {
+        color: #fff;
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .success-text {
+        color: #9ca3af;
+        margin-bottom: 30px;
+        font-size: 1.1rem;
+    }
+
+    .btn-home {
+        display: inline-block;
+        padding: 12px 30px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: background 0.3s;
+    }
+
+    .btn-home:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 </style>
 {% endblock %}
@@ -86,6 +154,26 @@
 {% block content %}
 <div class="container">
     <div class="suggestion-container">
+
+        {% if success %}
+        <div class="success-message">
+            <div class="success-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2 class="success-title">Thank You!</h2>
+            <p class="success-text">
+                Your suggestion has been received successfully.<br>
+                We really appreciate your feedback to improve BeeMD.
+            </p>
+            <a href="{{ url_for('main.index') }}" class="btn-home">Return to Home</a>
+            <a href="{{ url_for('main.suggest') }}"
+                style="display:block; margin-top:15px; color:#666; font-size:0.9rem;">Send another suggestion</a>
+        </div>
+
+        {% else %}
         <div class="suggestion-header">
             <h1>We Value Your Feedback</h1>
             <p>Help us improve BeeMD by sharing your thoughts, feature requests, or reporting bugs.</p>
@@ -110,6 +198,8 @@
 
             <button type="submit" class="btn-submit">Send Suggestion</button>
         </form>
+        {% endif %}
+
     </div>
 </div>
 {% endblock %}
