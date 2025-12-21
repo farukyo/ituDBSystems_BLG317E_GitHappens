@@ -58,8 +58,19 @@ def profile():
     liked_series = []
     liked_episodes = []
     liked_celebs = []
+    percentile = 100
     
     with engine.connect() as conn:
+        # Get user's current score
+        user_score_res = conn.execute(text("SELECT score FROM githappens_users.users WHERE id = :uid"), {"uid": uid}).fetchone()
+        user_score = user_score_res[0] if user_score_res else 0
+
+        # Calculate Percentile
+        total_users = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users")).scalar()
+        higher_scores = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users WHERE score > :s"), {"s": user_score}).scalar()
+        if total_users > 0:
+            percentile = (higher_scores / total_users) * 100
+
         # A. Beğenilen FİLMLERİ Çek
         sql_mov = """
             SELECT m.movieId, m.movieTitle, m.startYear, r.averageRating
@@ -104,4 +115,5 @@ def profile():
                            liked_movies=liked_movies,
                            liked_series=liked_series,
                            liked_episodes=liked_episodes,
-                           liked_celebs=liked_celebs)
+                           liked_celebs=liked_celebs,
+                           percentile=round(percentile, 1))

@@ -3,143 +3,158 @@
 {% block title %}{{ user.username }}'s Profile{% endblock %}
 
 {% block head %}
-    <style>
-        .profile-container {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: #1f1f1f;
-            border-radius: 12px;
-            border: 1px solid #333;
-            color: #fff;
-        }
-        .profile-header {
-            border-bottom: 2px solid #d65a1a;
-            padding-bottom: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-        .profile-header h1 {
-            margin: 0;
-            color: #d65a1a;
-            font-size: 2.5rem;
-        }
-        .profile-header p {
-            font-size: 1.1rem;
-            color: #aaa;
-            margin-top: 0.5rem;
-        }
-        .profile-info {
-            display: flex;
-            gap: 3rem;
-            margin-top: 1.5rem;
-        }
-        .profile-info-item {
-            color: #ccc;
-            font-size: 1.1rem;
-        }
-        .profile-info-item span {
-            font-weight: bold;
-            color: #fff;
-            margin-left: 5px;
-        }
-        
-        /* Profil Bölüm Başlıkları */
-        .section-header {
-            margin-top: 40px; 
-            margin-bottom: 20px; 
-            border-bottom: 1px solid rgba(255,255,255,0.1); 
-            padding-bottom: 10px;
-        }
-        .section-header h2 {
-            color: #d65a1a;
-            font-size: 1.8rem;
-            margin: 0;
-        }
+<style>
+    .profile-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: #1f1f1f;
+        border-radius: 12px;
+        border: 1px solid #333;
+        color: #fff;
+    }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-        }
+    .profile-header {
+        border-bottom: 2px solid #d65a1a;
+        padding-bottom: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
 
-        /* Kart Tasarımı */
-        .card {
-            background: rgba(255,255,255,0.05);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.2s, background 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            background: rgba(255,255,255,0.08);
-            border-color: #f5c518;
-        }
-        .card h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.1rem;
-            line-height: 1.4;
-        }
-        .card a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .card a:hover {
-            color: #d65a1a;
-        }
-        .card-meta {
-            display: flex;
-            justify-content: space-between;
-            color: #888;
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
-        .rating-star {
-            color: #d65a1a;
-        }
-        .sub-text {
-            font-size: 0.85rem;
-            color: #f5c518;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        /* Quiz Skoru */
-        .quiz-score-box {
-            background: rgba(245, 197, 24, 0.1);
-            border: 1px solid #d65a1a;
-            padding: 15px;
-            border-radius: 8px;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-        .quiz-score-box h3 {
-            margin: 0;
-            color: #d65a1a;
-        }
-    </style>
+    .profile-header h1 {
+        margin: 0;
+        color: #d65a1a;
+        font-size: 2.5rem;
+    }
+
+    .profile-header p {
+        font-size: 1.1rem;
+        color: #aaa;
+        margin-top: 0.5rem;
+    }
+
+    .profile-info {
+        display: flex;
+        gap: 3rem;
+        margin-top: 1.5rem;
+    }
+
+    .profile-info-item {
+        color: #ccc;
+        font-size: 1.1rem;
+    }
+
+    .profile-info-item span {
+        font-weight: bold;
+        color: #fff;
+        margin-left: 5px;
+    }
+
+    /* Profil Bölüm Başlıkları */
+    .section-header {
+        margin-top: 40px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 10px;
+    }
+
+    .section-header h2 {
+        color: #d65a1a;
+        font-size: 1.8rem;
+        margin: 0;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    /* Kart Tasarımı */
+    .card {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: transform 0.2s, background 0.2s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #f5c518;
+    }
+
+    .card h3 {
+        margin: 0 0 10px 0;
+        font-size: 1.1rem;
+        line-height: 1.4;
+    }
+
+    .card a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .card a:hover {
+        color: #d65a1a;
+    }
+
+    .card-meta {
+        display: flex;
+        justify-content: space-between;
+        color: #888;
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
+
+    .rating-star {
+        color: #d65a1a;
+    }
+
+    .sub-text {
+        font-size: 0.85rem;
+        color: #f5c518;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    /* Quiz Skoru */
+    .quiz-score-box {
+        background: rgba(245, 197, 24, 0.1);
+        border: 1px solid #d65a1a;
+        padding: 15px;
+        border-radius: 8px;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .quiz-score-box h3 {
+        margin: 0;
+        color: #d65a1a;
+    }
+</style>
 {% endblock %}
 
 
 {% block content %}
 <div class="profile-container">
-    
+
     <div class="profile-header">
         <h1>{{ user.username }}</h1>
         <p>Email: {{ user.email }}</p>
 
         <div class="profile-info">
             <div class="profile-info-item">
-                Date of Birth: 
+                Date of Birth:
                 <span>
                     {% if user.dob %}
-                        {{ user.dob.strftime('%d.%m.%Y') }}
+                    {{ user.dob.strftime('%d.%m.%Y') }}
                     {% else %}
-                        N/A
+                    N/A
                     {% endif %}
                 </span>
             </div>
@@ -152,7 +167,10 @@
     <div class="profile-section">
         <div class="quiz-score-box">
             <span>My Quiz Score:</span>
-            <h3>{{ user.quiz_score | default('Not taken yet') }}</h3>
+            <h3>{{ user.quiz_score | default('0') }}</h3>
+            <p style="color: #f5c518; font-size: 0.9rem; margin-top: 5px; font-weight: bold;">
+                Top {{ percentile }}% of all users
+            </p>
         </div>
     </div>
 
@@ -193,7 +211,7 @@
             </h3>
             <div class="card-meta">
                 <span>
-                    {{ serie.startYear }} 
+                    {{ serie.startYear }}
                     {% if serie.endYear %} - {{ serie.endYear }} {% else %} - Present {% endif %}
                 </span>
             </div>
@@ -210,7 +228,8 @@
         {% for ep in liked_episodes %}
         <div class="card">
             <div class="sub-text">
-                <a href="{{ url_for('series.serie_detail', series_id=ep.seriesId) }}" style="color: inherit; font-weight: normal;">
+                <a href="{{ url_for('series.serie_detail', series_id=ep.seriesId) }}"
+                    style="color: inherit; font-weight: normal;">
                     {{ ep.seriesTitle }}
                 </a>
             </div>
@@ -242,10 +261,10 @@
             <div class="card-meta">
                 <span>
                     {% if celeb.birthYear %}
-                        {{ celeb.birthYear }}
-                        {% if celeb.deathYear %} - {{ celeb.deathYear }}{% endif %}
+                    {{ celeb.birthYear }}
+                    {% if celeb.deathYear %} - {{ celeb.deathYear }}{% endif %}
                     {% else %}
-                        -
+                    -
                     {% endif %}
                 </span>
             </div>
