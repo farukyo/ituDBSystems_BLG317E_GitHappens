@@ -4,9 +4,7 @@
     padding: 0;
 }
 
-/* REMOVED the 'body' selector here. 
-  The base.html and home.css are now in control of the page background.
-*/
+
 
 .auth-container {
     background-color: #1f1f1f;
@@ -16,8 +14,6 @@
     border: 1px solid #333;
     width: 100%;
     max-width: 450px;
-
-    /* ADDED: This centers the form in the middle of the <main> area */
     margin: 3rem auto;
 }
 

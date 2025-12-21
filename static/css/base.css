@@ -1,5 +1,5 @@
 /* -----------------------------------------
-   BASE.CSS — Shared global styles
+   BASE.CSS 
 ------------------------------------------*/
 
 /* Global Variables */
@@ -66,9 +66,6 @@ body {
     padding: 0.25rem 0;
 }
 
-/* -----------------------------------------
-   SIDEBAR
-------------------------------------------*/
 .sidebar {
     height: 100%;
     width: 0;
@@ -140,9 +137,7 @@ body {
     color: var(--accent);
 }
 
-/* -----------------------------------------
-   HEADER
-------------------------------------------*/
+
 .site-header {
     background: linear-gradient(90deg, #071026 0%, #0f1724 100%);
     padding: 12px 0;
@@ -330,9 +325,7 @@ body {
     box-shadow: 0 4px 15px rgba(233, 96, 26, 0.4);
 }
 
-/* -----------------------------------------
-   FOOTER
-------------------------------------------*/
+
 .site-footer {
     padding: 24px 0;
     background: linear-gradient(180deg, rgba(10, 15, 26, 0.7), rgba(6, 10, 18, 0.7));
@@ -422,11 +415,6 @@ body {
     text-align: center;
 }
 
-/* -----------------------------------------
-   RESPONSIVE DESIGN
-------------------------------------------*/
-
-/* Tablet and below (max-width: 768px) */
 @media (max-width: 768px) {
     .nav-row {
         flex-wrap: wrap;
@@ -550,9 +538,6 @@ body {
     }
 }
 
-/* -----------------------------------------
-   BEE LOADING POPUP
-------------------------------------------*/
 .bee-loading-popup {
     position: fixed;
     top: 50%;

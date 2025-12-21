@@ -1,5 +1,5 @@
 /* -----------------------------------------
-   EPISODES PAGE ONLY
+   EPISODES PAGE 
 ------------------------------------------*/
 
 .episodes-page {
@@ -246,16 +246,15 @@ hr {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin: 25px 0;
 }
+
 /* Episode List */
 .episode-list {
     margin-top: 20px;
 }
-/* --- TABLO DÜZENİ (Masaüstü İçin Sabit Grid) --- */
 
-/* Başlık Satırı */
+
 .episode-table-header {
     display: grid !important;
-    /* 6 Sütun: Title (Geniş) | Runtime | Series (Geniş) | Season | Episode | Like */
     grid-template-columns: 3fr 100px 2fr 80px 80px 60px !important;
     gap: 10px;
     padding: 12px 15px;
@@ -270,7 +269,6 @@ hr {
 /* Liste Satırları */
 .episode-item {
     display: grid !important;
-    /* Başlık ile birebir aynı sütun yapısı olmalı */
     grid-template-columns: 3fr 100px 2fr 80px 80px 60px !important;
     gap: 10px;
     align-items: center;
@@ -288,10 +286,17 @@ hr {
 
 
 .like-btn {
-    background: none; border: none; font-size: 1.5rem;
-    cursor: pointer; color: #555; transition: transform 0.2s;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #555;
+    transition: transform 0.2s;
 }
-.like-btn.liked { color: #e50914; }
+
+.like-btn.liked {
+    color: #e50914;
+}
 
 .episode-item:first-of-type {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -362,7 +367,7 @@ hr {
     color: rgba(255, 255, 255, 0.4);
 }
 
-/* Responsive design for episodes page */
+
 @media (max-width: 1024px) {
     .episode-table-header {
         display: none;

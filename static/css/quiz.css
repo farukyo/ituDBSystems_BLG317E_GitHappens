@@ -245,11 +245,10 @@ h1 {
     color: #ff6b00;
 }
 
-/* --- BUTONLAR: TAM ORTALANMIŞ VE TURUNCU --- */
+
 .quiz-button-wrapper {
     display: flex;
     justify-content: center;
-    /* Hem Setup hem Play sayfasında butonu ortalar */
     margin: 50px 0;
     width: 100%;
 }
@@ -297,10 +296,9 @@ h1 {
 
 .result-actions {
     gap: 20px;
-    /* Butonlar arası boşluk */
 }
 
-/* İkincil Buton (Back to Home için daha sade bir stil) */
+
 .quiz-btn-secondary {
     background-color: transparent !important;
     color: #ccc !important;

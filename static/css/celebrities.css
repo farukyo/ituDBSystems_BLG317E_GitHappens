@@ -1,4 +1,4 @@
-/* Celebrities Page Specific Styles */
+/* Celebrities Page */
 
 .celebrities-page h1 {
     margin-bottom: 20px;
@@ -22,7 +22,8 @@
 .search-box button {
     padding: 10px 20px;
     border: none;
-    background: var(--accent, #e50914); /* Accent yoksa kırmızı kullan */
+    background: var(--accent, #e50914);
+    /* Accent yoksa kırmızı kullan */
     color: #fff;
     border-radius: 6px;
     cursor: pointer;
@@ -55,30 +56,30 @@
 
 .celebrity-list {
     display: flex;
-    flex-direction: column; 
-    gap: 12px; 
+    flex-direction: column;
+    gap: 12px;
     margin-bottom: 40px;
 }
 
 .celebrity-item-row {
     display: flex;
-    justify-content: space-between; 
-    align-items: center; 
-    
-    width: 100%; 
+    justify-content: space-between;
+    align-items: center;
+
+    width: 100%;
     background-color: #222;
     padding: 20px 25px;
     border-radius: 8px;
-    
-    text-decoration: none; 
+
+    text-decoration: none;
     color: #fff;
-    border: 1px solid transparent; 
+    border: 1px solid transparent;
     transition: all 0.2s ease;
 }
 
 
 .celebrity-item-row:hover {
-    background-color: #333; 
+    background-color: #333;
     transform: translateX(5px);
     border-color: #555;
 }
@@ -101,9 +102,9 @@
 
 .info-right .year {
     font-size: 1rem;
-    color: var(--accent, #e50914); 
+    color: var(--accent, #e50914);
     font-weight: bold;
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 
 
@@ -137,7 +138,8 @@
 }
 
 .info-btn:hover {
-    background: #e67e22; /* Turuncu vurgu */
+    background: #e67e22;
+    /* Turuncu vurgu */
     color: #fff;
     transform: scale(1.1);
 }

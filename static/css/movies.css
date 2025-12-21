@@ -1,9 +1,7 @@
 /* -----------------------------------------------------------------------
-   MOVIES PAGE COMPLETE STYLES
-   (Eski kodları silip bunu yapıştırın)
+   MOVIES PAGE 
 ------------------------------------------------------------------------*/
 
-/* --- GENEL AYARLAR --- */
 .episodes-page {
     padding: 20px 0;
     color: #fff;
@@ -42,7 +40,6 @@ hr {
     grid-template-columns: repeat(5, 1fr);
     gap: 15px;
     align-items: end;
-    /* Etiketler ve kutuları alt hizaya getirir */
 }
 
 .filter-group {
@@ -114,7 +111,6 @@ hr {
     display: flex;
     gap: 10px;
     height: 42px;
-    /* Inputlarla aynı yükseklik */
 }
 
 .filter-buttons button {
@@ -158,8 +154,6 @@ hr {
    2. TABLO YAPISI (ALT KISIM)
 ------------------------------------------------------------------------*/
 
-/* Tablo Başlığı ve Satırlar İçin ORTAK Grid Yapısı */
-/* Tabloyu 6 sütuna sabitliyoruz: Title | Year | Rating | Genre | Runtime | Like */
 .movie-grid-layout {
     display: grid !important;
     grid-template-columns: 3fr 80px 80px 1.5fr 100px 60px !important;
@@ -217,9 +211,7 @@ hr {
     color: #e50914;
 }
 
-/* Kırmızı Kalp */
 
-/* Başlık Satırı */
 .episode-table-header {
     background: rgba(255, 255, 255, 0.05);
     font-weight: 700;
@@ -247,9 +239,7 @@ hr {
     transform: translateY(-1px);
 }
 
-/* --- HÜCRE VE LİNK STİLLERİ --- */
 
-/* Film Başlığı Linki (Altı çizili olmasın) */
 .episode-title-link {
     color: #e9601a;
     /* Accent renk */
@@ -288,7 +278,6 @@ hr {
     max-width: 100%;
 }
 
-/* Sonuç Bulunamadı */
 .no-results {
     text-align: center;
     padding: 60px 20px;
@@ -398,16 +387,15 @@ hr {
     color: white;
 }
 
-/* Butonları dikeyde hizalamak için wrapper */
+
 .action-stack {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    /* Üst butonlar ile stats butonu arasındaki mesafe */
     align-items: flex-end;
 }
 
-/* Küçük Stats Butonu Tasarımı */
+
 .btn-stats-sm {
     display: inline-block;
     padding: 5px 10px;
@@ -428,9 +416,7 @@ hr {
 .btn-stats-mini {
     display: inline-block;
     padding: 5px 10px;
-    /* Daha da küçültmek için padding'i düşürdük */
     font-size: 0.8rem;
-    /* Fontu bir tık daha küçülttük */
     background-color: #f26522;
     color: white !important;
     text-decoration: none;
@@ -444,5 +430,4 @@ hr {
     background-color: transparent;
     color: #f26522 !important;
     border-color: #f26522;
-    /* Hover'da içi boşalsın (daha şık durabilir) */
 }
