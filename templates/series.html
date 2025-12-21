@@ -13,6 +13,18 @@
         <h1>{{ title | default("All Series") }}</h1>
         <p class="sub-title">Browse and filter the complete TV series database</p>
 
+        <!-- VIEW MODE SELECTOR -->
+        <div class="view-selector" style="margin-bottom: 20px; display: flex; gap: 10px;">
+            <a href="{{ url_for('series.series', q=request.args.get('q', ''), titleType=request.args.get('titleType', ''), startYear=request.args.get('startYear', ''), endYear=request.args.get('endYear', ''), isAdult=request.args.get('isAdult', '')) }}" 
+               class="btn-view {% if not request.args.get('view') %}active{% endif %}">
+                📺 Normal View
+            </a>
+            <a href="{{ url_for('series.series', q=request.args.get('q', ''), titleType=request.args.get('titleType', ''), startYear=request.args.get('startYear', ''), endYear=request.args.get('endYear', ''), isAdult=request.args.get('isAdult', ''), view='stats') }}" 
+               class="btn-view {% if request.args.get('view') == 'stats' %}active{% endif %}">
+                📊 Detailed Statistics
+            </a>
+        </div>
+
         <!-- SEARCH / FILTERS FORM -->
         <form action="{{ url_for('series.series') }}" method="GET" class="search-form">
             <div class="filter-grid">
@@ -138,6 +150,7 @@
                 <div>IMDB</div>
                 <div>GENRE</div>
                 <div>START YEAR</div>
+                <div style="text-align: center;">LIKE</div>
             </div>
         {% endif %}
 
@@ -164,7 +177,7 @@
                         <!-- IMDb Rating -->
                         <div class="col-rating">
                             {% if row.averageRating %}
-                                {{ row.averageRating }}
+                                {{ "%.1f"|format(row.averageRating) }}
                             {% else %}
                                 -
                             {% endif %}
@@ -172,7 +185,14 @@
 
                         <!-- Genre -->
                         <div class="col-genre">
-                            <span>{{ row.genre_str if row.genre_str else 'Unknown' }}</span>
+                            <div class="genre-tags">
+                                {% for genre in (row.genre_str.split(', ') if row.genre_str else []) %}
+                                    <span class="genre-tag">{{ genre }}</span>
+                                {% endfor %}
+                                {% if not row.genre_str %}
+                                    <span class="genre-tag">Unknown</span>
+                                {% endif %}
+                            </div>
                         </div>
 
                         <!-- Start Year -->
@@ -182,6 +202,14 @@
                             {% else %}
                                 -
                             {% endif %}
+                        </div>
+                        <div style="text-align: center;">
+                            <button class="like-btn {{ 'liked' if row.is_liked else '' }}" 
+                                    data-id="{{ row.seriesId }}" 
+                                    data-type="series"
+                                    onclick="toggleEntityLike(this, event)">
+                                ❤
+                            </button>
                         </div>
                     </div>
                 {% endfor %}
@@ -193,4 +221,35 @@
         </div>
     </div>
 </div>
+<script>
+    function toggleEntityLike(btn, event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        const entityId = btn.getAttribute('data-id');
+        const entityType = btn.getAttribute('data-type'); 
+
+        let formData = new FormData();
+        formData.append('entity_id', entityId);
+        formData.append('entity_type', entityType);
+
+        fetch('/like_entity', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data === "1") {
+                if (btn.classList.contains('liked')) {
+                    btn.classList.remove('liked');
+                } else {
+                    btn.classList.add('liked');
+                }
+            } else {
+                alert("Login required or error occurred.");
+            }
+        })
+        .catch(err => console.error('Error:', err));
+    }
+</script>
 {% endblock %}

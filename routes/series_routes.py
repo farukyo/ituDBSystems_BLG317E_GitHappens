@@ -17,60 +17,137 @@ def series():
     start_year = request.args.get('startYear')
     end_year = request.args.get('endYear')
     is_adult = request.args.get('isAdult')
+    view = request.args.get('view')
+
+    # Kullanıcı ID'sini al (Giriş yapmamışsa -1)
+    uid = current_user.id if current_user.is_authenticated else -1
 
     with engine.connect() as conn:
-        # 2. Temel Sorgu
-        sql = """
-            SELECT s.seriesId, s.seriesTitle, s.titleType, s.startYear, s.endYear, s.runtimeMinutes, s.isAdult,
-                   r.averageRating, r.numVotes,
-                   (
-                       SELECT GROUP_CONCAT(g.genreName SEPARATOR ', ')
-                       FROM Series_Genres sg
-                       JOIN genres g ON sg.genreId = g.genreId
-                       WHERE sg.seriesId = s.seriesId
-                   ) as genre_str
+        params = {"uid": uid}
+
+        # STATS VIEW - Basit İstatistikler (GROUP BY + COUNT)
+        if view == "stats":
+            sql = """
+            SELECT 
+                s.seriesId,
+                s.seriesTitle,
+                s.startYear,
+                AVG(r.averageRating) AS averageRating,
+                COUNT(DISTINCT pr.peopleId) AS cast_count,
+                COUNT(DISTINCT g.genreId) AS genre_count,
+                GROUP_CONCAT(DISTINCT g.genreName SEPARATOR ', ') AS genre_str,
+                CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
             FROM series s
             LEFT JOIN ratings r ON s.seriesId = r.titleId
+            LEFT JOIN principals pr ON s.seriesId = pr.titleId
+            LEFT JOIN Series_Genres sg ON s.seriesId = sg.seriesId
+            LEFT JOIN genres g ON sg.genreId = g.genreId
+            LEFT JOIN githappens_users.user_likes_titles ul ON s.seriesId = ul.title_id AND ul.user_id = :uid
             WHERE 1=1
-        """
-        params = {}
+            """
 
-        # 3. Filtreleme Mantığı
-        
-        # -- Title Search --
-        if search_query:
-            sql += " AND seriesTitle LIKE :q"
-            params["q"] = f"%{search_query}%"
-        
-        # -- Title Type --
-        if title_type:
-            sql += " AND titleType = :tType"
-            params["tType"] = title_type
+            if search_query:
+                sql += " AND seriesTitle LIKE :q"
+                params["q"] = f"%{search_query}%"
+            
+            if title_type:
+                sql += " AND titleType = :tType"
+                params["tType"] = title_type
 
-        # -- Start Year --
-        if start_year and start_year.isdigit():
-            sql += " AND startYear = :sYear"
-            params["sYear"] = int(start_year)
+            if start_year and start_year.isdigit():
+                sql += " AND startYear = :sYear"
+                params["sYear"] = int(start_year)
 
-        # -- End Year --
-        # DİKKAT: Verilerinde endYear genelde NULL. 
-        # endYear filtresi seçildiğinde: NULL olanlar (devam edenler) + o yıla kadar bitenler
-        if end_year and end_year.isdigit():
-            sql += " AND (endYear IS NULL OR endYear <= :eYear)"
-            params["eYear"] = int(end_year)
+            if end_year and end_year.isdigit():
+                sql += " AND (endYear IS NULL OR endYear <= :eYear)"
+                params["eYear"] = int(end_year)
 
-        # -- Adult Content --
-        if is_adult is not None and is_adult != "":
-            sql += " AND isAdult = :adult"
-            params["adult"] = int(is_adult)
+            if is_adult is not None and is_adult != "":
+                sql += " AND isAdult = :adult"
+                params["adult"] = int(is_adult)
 
-        # 4. Sıralama ve Limit
-        sql += " ORDER BY startYear DESC, seriesTitle ASC LIMIT 100;"
+            sql += """
+            GROUP BY 
+                s.seriesId, s.seriesTitle, s.startYear, r.averageRating
+            ORDER BY r.averageRating DESC
+            LIMIT 100
+            """
+
+        # NORMAL VIEW - Sophisticated Query (5 Tablo JOIN + Nested Query + GROUP BY)
+        else:
+            sql = """
+            SELECT 
+                s.seriesId,
+                s.seriesTitle,
+                s.titleType,
+                s.startYear,
+                s.endYear,
+                s.runtimeMinutes,
+                s.isAdult,
+                AVG(r.averageRating) AS averageRating,
+                SUM(r.numVotes) AS numVotes,
+                GROUP_CONCAT(DISTINCT g.genreName SEPARATOR ', ') AS genre_str,
+                CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END AS is_liked
+            FROM series s
+            LEFT JOIN ratings r 
+                   ON s.seriesId = r.titleId
+            LEFT JOIN Series_Genres sg 
+                   ON s.seriesId = sg.seriesId
+            LEFT JOIN genres g 
+                   ON sg.genreId = g.genreId
+            LEFT JOIN githappens_users.user_likes_titles ul 
+                   ON s.seriesId = ul.title_id AND ul.user_id = :uid
+            WHERE 1=1
+            """
+
+            if search_query:
+                sql += " AND seriesTitle LIKE :q"
+                params["q"] = f"%{search_query}%"
+            
+            if title_type:
+                sql += " AND titleType = :tType"
+                params["tType"] = title_type
+
+            if start_year and start_year.isdigit():
+                sql += " AND startYear = :sYear"
+                params["sYear"] = int(start_year)
+
+            if end_year and end_year.isdigit():
+                sql += " AND (endYear IS NULL OR endYear <= :eYear)"
+                params["eYear"] = int(end_year)
+
+            if is_adult is not None and is_adult != "":
+                sql += " AND isAdult = :adult"
+                params["adult"] = int(is_adult)
+
+            # Nested Query - En az 7 puana sahip dizileri filtrele
+            sql += """
+            AND s.seriesId IN (
+                SELECT r2.titleId
+                FROM ratings r2
+                GROUP BY r2.titleId
+                HAVING AVG(r2.averageRating) >= 7
+            )
+            """
+
+            # GROUP BY - 5 Tablo JOIN sonrası gruplandır
+            sql += """
+            GROUP BY
+                s.seriesId,
+                s.seriesTitle,
+                s.titleType,
+                s.startYear,
+                s.endYear,
+                s.runtimeMinutes,
+                s.isAdult,
+                ul.user_id
+            """
+
+            sql += " ORDER BY numVotes DESC, seriesTitle ASC LIMIT 100;"
 
         result = conn.execute(text(sql), params)
         data = result.fetchall()
 
-    # AJAX request check
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         html_snippets = ""
         for row in data:
@@ -83,7 +160,14 @@ def series():
             """
         return html_snippets
 
-    page_title = f"Results for '{search_query}'" if search_query else "Series Results"
+    # PAGE TITLE
+    if view == "stats":
+        page_title = "Detailed Series Statistics"
+    elif search_query:
+        page_title = f"Results for '{search_query}'"
+    else:
+        page_title = "Series Results"
+
     return render_template("series.html", items=data, title=page_title)
 
 

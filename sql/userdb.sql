@@ -1,0 +1,77 @@
+CREATE DATABASE IF NOT EXISTS githappens_users;
+USE githappens_users;
+
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    dob DATE,
+    gender VARCHAR(20),
+    is_admin TINYINT(1) DEFAULT 0,
+    score INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT unique_email UNIQUE (email),
+    CONSTRAINT check_gender CHECK (gender IN ('male', 'female', 'other', 'prefer_not_to_say'))
+);
+CREATE TABLE user_likes (
+    like_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    entity_id VARCHAR(20) NOT NULL, 
+    entity_type VARCHAR(20) NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_user_likes FOREIGN KEY (user_id) REFERENCES users(id) 
+    ON DELETE CASCADE 
+    ON UPDATE CASCADE,
+    
+    CONSTRAINT unique_user_entity_like UNIQUE (user_id, entity_id),
+    CONSTRAINT check_entity_type CHECK (entity_type IN ('movie', 'series', 'episode', 'person'))
+);
+
+
+USE githappens_users;
+----- normalize user db --- 
+# create extra table for normalization 
+ 
+CREATE TABLE user_likes_titles ( 
+    user_id INT NOT NULL, 
+    title_id VARCHAR(20) NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    PRIMARY KEY (user_id, title_id), 
+    FOREIGN KEY (user_id) REFERENCES users(id) 
+        ON DELETE CASCADE ON UPDATE CASCADE 
+); 
+
+CREATE TABLE user_likes_people ( 
+    user_id INT NOT NULL, 
+    people_id VARCHAR(20) NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    PRIMARY KEY (user_id, people_id), 
+    FOREIGN KEY (user_id) REFERENCES users(id) 
+        ON DELETE CASCADE ON UPDATE CASCADE 
+); 
+# migragate old data 
+INSERT INTO user_likes_titles (user_id, title_id, created_at) 
+SELECT user_id, entity_id, created_at 
+FROM user_likes 
+WHERE entity_id LIKE 'tt%'; 
+
+INSERT INTO user_likes_people (user_id, people_id, created_at) 
+SELECT user_id, entity_id, created_at 
+FROM user_likes 
+WHERE entity_id LIKE 'nm%'; 
+
+# delete old table  
+ 
+DROP TABLE user_likes; 
+--user suggestions
+CREATE TABLE IF NOT EXISTS githappens_users.user_suggestions (
+    suggestion_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    subject VARCHAR(50) NOT NULL, 
+    suggestion_text TEXT NOT NULL, 
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
+    FOREIGN KEY (user_id) REFERENCES githappens_users.users(id) ON DELETE CASCADE
+);
