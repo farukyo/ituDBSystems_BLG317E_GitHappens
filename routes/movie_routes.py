@@ -195,7 +195,27 @@ def movie(movie_id):
         cast_result = conn.execute(cast_sql, {"id": movie_id, "like_id": like_param}).fetchall()
         
         # Mapping kullanarak dict listesine çevir (HTML'de hata almamak için önemli)
-        cast = [dict(row._mapping) for row in cast_result]
+        cast = []
+        for row in cast_result:
+            d = dict(row._mapping)
+            chars = d.get('characters')
+            if chars and isinstance(chars, str):
+                # Clean up corrupted characters field by taking only the first line
+                if '\n' in chars or '\r' in chars:
+                    chars = chars.splitlines()[0]
+                
+                # Clean up JSON-like formatting if present
+                if chars.startswith('['):
+                    import json
+                    try:
+                        parsed = json.loads(chars)
+                        if isinstance(parsed, list) and len(parsed) > 0:
+                            chars = parsed[0]
+                    except:
+                        pass
+                
+                d['characters'] = chars.strip('"')
+            cast.append(d)
 
 
     page_title = f"{movie.movieTitle} ({movie.startYear})"

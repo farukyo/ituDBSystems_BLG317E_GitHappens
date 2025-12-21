@@ -368,7 +368,7 @@
                         <a href="/celebrities?q={{ person.primaryName }}">{{ person.primaryName }}</a>
                     </div>
                     <div class="cast-role">{{ person.category or 'Unknown role' }}</div>
-                    {% if person.characters and person.characters != '\\N' %}
+                    {% if person.characters and person.characters != '\\N' and person.characters != '0' and person.characters != '' %}
                     <div class="cast-character">as {{ person.characters | replace('[', '') | replace(']', '') |
                         replace('"', '') }}</div>
                     {% endif %}

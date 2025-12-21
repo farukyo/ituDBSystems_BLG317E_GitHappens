@@ -527,7 +527,7 @@
                     <div class="cast-role">{{ person.category or person['category'] or 'Unknown role' }}</div>
                     {% set chars = person.characters if person.characters is string else (person['characters'] if
                     person['characters'] else None) %}
-                    {% if chars and chars != '\\N' and chars != '0' %}
+                    {% if chars and chars != '\\N' and chars != '0' and chars != '' %}
                     <div class="cast-character">as {{ chars | replace('[', '') | replace(']', '') | replace('"', '') }}
                     </div>
                     {% endif %}

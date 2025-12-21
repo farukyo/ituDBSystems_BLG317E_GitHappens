@@ -147,15 +147,29 @@ def episode_detail(episode_id):
         for row in rows:
             if row.peopleId and row.peopleId not in seen_people:
                 # Corrupted data kontrolü
-                characters = row.characters
-                if characters and '\n' in characters:
-                    characters = characters.split('\n')[0]
+                chars = row.characters
+                if chars and isinstance(chars, str):
+                    # Clean up corrupted characters field by taking only the first line
+                    if '\n' in chars or '\r' in chars:
+                        chars = chars.splitlines()[0]
+                    
+                    # Clean up JSON-like formatting if present
+                    if chars.startswith('['):
+                        import json
+                        try:
+                            parsed = json.loads(chars)
+                            if isinstance(parsed, list) and len(parsed) > 0:
+                                chars = parsed[0]
+                        except:
+                            pass
+                    
+                    chars = chars.strip('"')
                 
                 cast.append({
                     'peopleId': row.peopleId,
                     'primaryName': row.primaryName,
                     'category': row.category,
-                    'characters': characters,
+                    'characters': chars,
                     'professionName': row.professionName
                 })
                 seen_people.add(row.peopleId)
