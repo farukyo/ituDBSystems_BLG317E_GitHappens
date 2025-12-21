@@ -68,7 +68,6 @@ def profile(user_id=None):
 
         user_score = user_res.score if user_res.score else 0
 
-        # Calculate Percentile (Top X%)
         total_users = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users")).scalar()
         at_or_above = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users WHERE score >= :s"), {"s": user_score}).scalar()
         if total_users > 0:
