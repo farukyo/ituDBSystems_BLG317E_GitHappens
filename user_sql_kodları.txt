@@ -28,3 +28,40 @@ CREATE TABLE user_likes (
     CONSTRAINT unique_user_entity_like UNIQUE (user_id, entity_id),
     CONSTRAINT check_entity_type CHECK (entity_type IN ('movie', 'series', 'episode', 'person'))
 );
+
+
+USE githappens_users;
+----- normalize user db --- 
+# create extra table for normalization 
+ 
+CREATE TABLE user_likes_titles ( 
+    user_id INT NOT NULL, 
+    title_id VARCHAR(20) NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    PRIMARY KEY (user_id, title_id), 
+    FOREIGN KEY (user_id) REFERENCES users(id) 
+        ON DELETE CASCADE ON UPDATE CASCADE 
+); 
+
+CREATE TABLE user_likes_people ( 
+    user_id INT NOT NULL, 
+    people_id VARCHAR(20) NOT NULL, 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    PRIMARY KEY (user_id, people_id), 
+    FOREIGN KEY (user_id) REFERENCES users(id) 
+        ON DELETE CASCADE ON UPDATE CASCADE 
+); 
+# migragate old data 
+INSERT INTO user_likes_titles (user_id, title_id, created_at) 
+SELECT user_id, entity_id, created_at 
+FROM user_likes 
+WHERE entity_id LIKE 'tt%'; 
+
+INSERT INTO user_likes_people (user_id, people_id, created_at) 
+SELECT user_id, entity_id, created_at 
+FROM user_likes 
+WHERE entity_id LIKE 'nm%'; 
+
+# delete old table  
+ 
+DROP TABLE user_likes; 

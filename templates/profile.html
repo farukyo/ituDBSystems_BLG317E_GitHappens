@@ -62,7 +62,7 @@
             gap: 20px;
         }
 
-        /* Kart Tasarımı */
+        /* --- KART TASARIMI GÜNCELLENDİ (Tıklanabilir Alan) --- */
         .card {
             background: rgba(255,255,255,0.05);
             padding: 20px;
@@ -72,25 +72,45 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            
+            /* Önemli: Linkin yayılması için referans noktası */
+            position: relative; 
         }
+        
         .card:hover {
             transform: translateY(-5px);
             background: rgba(255,255,255,0.08);
-            border-color: #f5c518;
+            border-color: #d65a1a;
+            cursor: pointer;
         }
+
         .card h3 {
             margin: 0 0 10px 0;
             font-size: 1.1rem;
             line-height: 1.4;
         }
-        .card a {
+
+        .card h3 a {
             color: #fff;
             text-decoration: none;
             font-weight: bold;
         }
-        .card a:hover {
+        
+        /* Kartın ana linkini (başlık) görünmez bir perde gibi tüm karta yayıyoruz */
+        .card h3 a::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .card h3 a:hover {
             color: #d65a1a;
         }
+
         .card-meta {
             display: flex;
             justify-content: space-between;
@@ -101,11 +121,21 @@
         .rating-star {
             color: #d65a1a;
         }
+
+        /* Episode kartındaki 'Dizi Adı' linki */
         .sub-text {
             font-size: 0.85rem;
             color: #f5c518;
             margin-bottom: 5px;
             font-weight: bold;
+            
+            /* Bu linkin öne çıkması ve ayrı tıklanabilmesi için */
+            position: relative;
+            z-index: 2; 
+        }
+        
+        .sub-text a:hover {
+            text-decoration: underline;
         }
         
         /* Quiz Skoru */
@@ -152,7 +182,7 @@
     <div class="profile-section">
         <div class="quiz-score-box">
             <span>My Quiz Score:</span>
-            <h3>{{ user.quiz_score | default('Not taken yet') }}</h3>
+            <h3>{{ user.score | default(0) }}</h3>
         </div>
     </div>
 

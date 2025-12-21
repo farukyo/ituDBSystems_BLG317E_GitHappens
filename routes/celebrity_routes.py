@@ -45,9 +45,8 @@ def celebrities():
             LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
             LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
             -- ----------------------- --
-            LEFT JOIN githappens_users.user_likes ul ON p.peopleId = ul.entity_id 
-                                   AND ul.user_id = :uid 
-                                   AND ul.entity_type = 'person'
+            LEFT JOIN githappens_users.user_likes_people ul ON p.peopleId = ul.people_id 
+                       AND ul.user_id = :uid
             WHERE r.numVotes > 1000      
             GROUP BY p.peopleId, p.primaryName, p.birthYear, 
             p.deathYear, ul.user_id
@@ -74,9 +73,8 @@ def celebrities():
                 LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
                 LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
                 -- ----------------------- --
-                LEFT JOIN githappens_users.user_likes ul ON p.peopleId = ul.entity_id 
-                                       AND ul.user_id = :uid 
-                                       AND ul.entity_type = 'person'
+                LEFT JOIN githappens_users.user_likes_people ul ON p.peopleId = ul.people_id 
+                           AND ul.user_id = :uid
                 WHERE 1=1
             """
             params = {"uid": uid}
@@ -153,9 +151,8 @@ def celebrity_detail(people_id):
             FROM people p
             LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
             LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
-            LEFT JOIN githappens_users.user_likes ul ON p.peopleId = ul.entity_id 
-                                   AND ul.user_id = :uid 
-                                   AND ul.entity_type = 'person'
+            LEFT JOIN githappens_users.user_likes_people ul ON p.peopleId = ul.people_id 
+                           AND ul.user_id = :uid
             WHERE p.peopleId = :id
             GROUP BY p.peopleId, p.primaryName, p.birthYear, p.deathYear, ul.user_id
         """
@@ -203,22 +200,25 @@ def like_celebrity():
     user_id = current_user.id
     
     with engine.connect() as conn:
+        # 1. Kontrol Et (Tablo: user_likes_people, Kolon: people_id)
         check_sql = """
-            SELECT 1 FROM githappens_users.user_likes 
-            WHERE user_id = :uid AND entity_id = :eid AND entity_type = 'person'
+            SELECT 1 FROM githappens_users.user_likes_people 
+            WHERE user_id = :uid AND people_id = :eid
         """
         result = conn.execute(text(check_sql), {"uid": user_id, "eid": people_id}).fetchone()
         
         if result:
+            # 2. Varsa SİL
             delete_sql = """
-                DELETE FROM githappens_users.user_likes 
-                WHERE user_id = :uid AND entity_id = :eid AND entity_type = 'person'
+                DELETE FROM githappens_users.user_likes_people 
+                WHERE user_id = :uid AND people_id = :eid
             """
             conn.execute(text(delete_sql), {"uid": user_id, "eid": people_id})
         else:
+            # 3. Yoksa EKLE
             insert_sql = """
-                INSERT INTO githappens_users.user_likes (user_id, entity_id, entity_type)
-                VALUES (:uid, :eid, 'person')
+                INSERT INTO githappens_users.user_likes_people (user_id, people_id)
+                VALUES (:uid, :eid)
             """
             conn.execute(text(insert_sql), {"uid": user_id, "eid": people_id})
             
