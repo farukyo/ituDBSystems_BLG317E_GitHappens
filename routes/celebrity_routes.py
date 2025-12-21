@@ -41,10 +41,8 @@ def celebrities():
             FROM people p
             JOIN principals pr ON p.peopleId = pr.peopleId
             JOIN ratings r ON pr.titleId = r.titleId
-            -- YENİ PROFESSION YAPISI --
             LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
             LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
-            -- ----------------------- --
             LEFT JOIN githappens_users.user_likes_people ul ON p.peopleId = ul.people_id 
                        AND ul.user_id = :uid
             WHERE r.numVotes > 1000      
@@ -69,7 +67,6 @@ def celebrities():
                        GROUP_CONCAT(DISTINCT pd.name SEPARATOR ', ') as professionName,
                        CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
                 FROM people p
-                -- YENİ PROFESSION YAPISI --
                 LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
                 LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
                 -- ----------------------- --
