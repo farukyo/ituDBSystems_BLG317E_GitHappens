@@ -6,3 +6,5 @@ from admin.routes.episode import *
 from admin.routes.ratings import *
 from admin.routes.genres import *
 from admin.routes.principals import *
+from admin.routes.professions import *
+from admin.routes.user import *

@@ -1,13 +1,126 @@
 {% extends "admin_base.html" %}
 {% block content %}
+
 <h1>Admin Dashboard</h1>
-<ul>
-  <li><a href="{{ url_for('admin.person_menu') }}">Manage People</a></li>
-  <li><a href="{{ url_for('admin.movie_menu') }}">Manage Movie</a></li>
-  <li><a href="{{ url_for('admin.series_menu') }}">Manage Series</a></li>
-  <li><a href="{{ url_for('admin.episode_menu') }}">Manage Episodes</a></li>
-  <li><a href="{{ url_for('admin.rating_menu') }}">Manage Ratings</a></li>
-  <li><a href="{{ url_for('admin.genre_menu') }}">Manage Genres</a></li>
-  <li><a href="{{ url_for('admin.principals_menu') }}">Manage Principals</a>
-</ul>
+<p style="color: #666; font-size: 14px; margin-bottom: 30px;">Manage all system databases and user data</p>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+
+  <!-- GitHappens Database Section -->
+  <div
+    style="background-color: #f9f9f9; border-left: 4px solid #0066cc; padding: 25px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);">
+    <h2 style="color: #1a1a1a; font-size: 18px; margin-bottom: 5px;">
+      GitHappens Database
+    </h2>
+    <p style="color: #999; font-size: 12px; margin-bottom: 20px;">Content management & metadata</p>
+
+    <ul style="list-style: none; padding: 0;">
+      <li style="margin: 0;">
+        <a href="{{ url_for('admin.person_menu') }}"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #333; font-size: 14px; text-decoration: none; border-radius: 3px; transition: all 0.2s ease;">
+          <span style="font-size: 18px;">⭐️</span>
+          <span style="flex: 1;">People</span>
+          <span style="color: #ccc; font-size: 12px;">→</span>
+        </a>
+      </li>
+      <li style="margin: 0;">
+        <a href="{{ url_for('admin.movie_menu') }}"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #333; font-size: 14px; text-decoration: none; border-radius: 3px; transition: all 0.2s ease;">
+          <span style="font-size: 18px;">🎬</span>
+          <span style="flex: 1;">Movies</span>
+          <span style="color: #ccc; font-size: 12px;">→</span>
+        </a>
+      </li>
+      <li style="margin: 0;">
+        <a href="{{ url_for('admin.series_menu') }}"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #333; font-size: 14px; text-decoration: none; border-radius: 3px; transition: all 0.2s ease;">
+          <span style="font-size: 18px;">📺</span>
+          <span style="flex: 1;">Series</span>
+          <span style="color: #ccc; font-size: 12px;">→</span>
+        </a>
+      </li>
+      <li style="margin: 0;">
+        <a href="{{ url_for('admin.episode_menu') }}"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #333; font-size: 14px; text-decoration: none; border-radius: 3px; transition: all 0.2s ease;">
+          <span style="font-size: 18px;">🎞️</span>
+          <span style="flex: 1;">Episodes</span>
+          <span style="color: #ccc; font-size: 12px;">→</span>
+        </a>
+      </li>
+      <li style="margin: 0;">
+        <a href="{{ url_for('admin.rating_menu') }}"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #333; font-size: 14px; text-decoration: none; border-radius: 3px; transition: all 0.2s ease;">
+          <span style="font-size: 18px;">📈</span>
+          <span style="flex: 1;">Ratings</span>
+          <span style="color: #ccc; font-size: 12px;">→</span>
+        </a>
+      </li>
+      <li style="margin: 0;">
+        <a href="{{ url_for('admin.genre_menu') }}"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #333; font-size: 14px; text-decoration: none; border-radius: 3px; transition: all 0.2s ease;">
+          <span style="font-size: 18px;">🧬</span>
+          <span style="flex: 1;">Genres</span>
+          <span style="color: #ccc; font-size: 12px;">→</span>
+        </a>
+      </li>
+      <li style="margin: 0;">
+        <a href="{{ url_for('admin.principals_menu') }}"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #333; font-size: 14px; text-decoration: none; border-radius: 3px; transition: all 0.2s ease;">
+          <span style="font-size: 18px;">🥷🏻</span>
+          <span style="flex: 1;">Principals</span>
+          <span style="color: #ccc; font-size: 12px;">→</span>
+        </a>
+      </li>
+      <li style="margin: 0;">
+        <a href="{{ url_for('admin.professions_menu') }}"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #333; font-size: 14px; text-decoration: none; border-radius: 3px; transition: all 0.2s ease;">
+          <span style="font-size: 18px;">💼</span>
+          <span style="flex: 1;">Professions</span>
+          <span style="color: #ccc; font-size: 12px;">→</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- User Database Section -->
+  <div
+    style="background-color: #f9f9f9; border-left: 4px solid #16a34a; padding: 25px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);">
+    <h2 style="color: #1a1a1a; font-size: 18px; margin-bottom: 5px;">
+      User Database
+    </h2>
+    <p style="color: #999; font-size: 12px; margin-bottom: 20px;">User accounts & activity management</p>
+
+    <ul style="list-style: none; padding: 0;">
+      <li style="margin: 0;">
+        <a href="{{ url_for('admin.user_menu') }}"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #333; font-size: 14px; text-decoration: none; border-radius: 3px; transition: all 0.2s ease;">
+          <span style="font-size: 18px;">👤</span>
+          <span style="flex: 1;">Users</span>
+          <span style="color: #ccc; font-size: 12px;">→</span>
+        </a>
+      </li>
+      <li style="margin: 0;">
+        <a href="#"
+          style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; color: #333; font-size: 14px; text-decoration: none; border-radius: 3px; opacity: 0.5; cursor: not-allowed; transition: all 0.2s ease;">
+          <span style="font-size: 18px;">💬</span>
+          <span style="flex: 1;">Suggestions</span>
+          <span style="color: #ccc; font-size: 12px;">→</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+</div>
+
+<style>
+  a:hover {
+    background-color: #f0f0f0 !important;
+    color: #0066cc !important;
+  }
+
+  a:active {
+    transform: translateX(2px);
+  }
+</style>
+
 {% endblock %}
