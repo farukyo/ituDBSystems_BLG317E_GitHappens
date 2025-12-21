@@ -539,7 +539,6 @@
     }
     .like-btn:hover { transform: scale(1.2); }
     
-    /* Beğenilince Kırmızı Olsun */
     .like-btn.liked { color: #e50914; }
 </style>
 
@@ -578,13 +577,11 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        // --- 1. BÖLÜM: ÇOKLU SEÇİM (MULTISELECT) MANTIĞI ---
         let expanded = false;
         const selectBox = document.querySelector('.selectBox');
         const checkboxes = document.getElementById("checkboxes");
         const resetBtn = document.getElementById("reset-professions-btn");
 
-        // Kutucuğa tıklanınca menüyü aç/kapat
         if (selectBox) {
             selectBox.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -598,14 +595,12 @@
             });
         }
 
-        // Menünün içine tıklanınca kapanmasın
         if (checkboxes) {
             checkboxes.addEventListener('click', (e) => {
                 e.stopPropagation();
             });
         }
 
-        // Reset butonuna tıklanınca seçimleri kaldır
         if (resetBtn) {
             resetBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -616,7 +611,6 @@
             });
         }
 
-        // Sayfanın boş bir yerine tıklanırsa menüyü kapat
         document.addEventListener('click', (e) => {
             if (expanded) {
                 checkboxes.style.display = "none";
@@ -625,37 +619,31 @@
         });
 
 
-        // --- 2. BÖLÜM: SQL POPUP (EPISODES SAYFASI MANTIĞI) ---
         const showSqlBtn = document.getElementById('showSqlBtn');
         const sqlPopup = document.getElementById('sqlPopup');
         const closeSqlBtn = document.getElementById('closeSqlBtn');
 
         if (showSqlBtn && sqlPopup) {
-            // İkon butonuna basınca Popup'ı aç
             showSqlBtn.addEventListener('click', function () {
                 sqlPopup.classList.add('active');
                 document.body.style.overflow = 'hidden'; // Arka plan kaymasını engelle
             });
 
-            // Kapatma fonksiyonu (Tekrar tekrar yazmamak için)
             const closePopup = () => {
                 sqlPopup.classList.remove('active');
                 document.body.style.overflow = ''; // Kaydırmayı geri aç
             };
 
-            // X butonuna basınca kapat
             if (closeSqlBtn) {
                 closeSqlBtn.addEventListener('click', closePopup);
             }
 
-            // Siyah arka plana (Overlay) basınca kapat
             sqlPopup.addEventListener('click', function (e) {
                 if (e.target === sqlPopup) {
                     closePopup();
                 }
             });
 
-            // ESC tuşuna basınca kapat
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && sqlPopup.classList.contains('active')) {
                     closePopup();

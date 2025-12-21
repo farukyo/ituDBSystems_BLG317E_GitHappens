@@ -33,7 +33,7 @@ def search():
     people = []
     
     with engine.connect() as conn:
-        # Search in Movies
+        
         try:
             sql_movies = """
                 SELECT movieId, movieTitle, startYear, runtimeMinutes 
@@ -45,7 +45,7 @@ def search():
         except:
             movies = []
         
-        # Search in Series
+       
         try:
             sql_series = """
                 SELECT seriesId, seriesTitle, startYear, runtimeMinutes 
@@ -57,7 +57,7 @@ def search():
         except:
             series = []
         
-        # Search in Episodes
+        
         try:
             sql_episodes = """
                 SELECT e.episodeId, e.epTitle, e.runtimeMinutes, e.seNumber, e.epNumber, s.seriesTitle
@@ -70,7 +70,7 @@ def search():
         except:
             episodes = []
         
-        # Search in People
+        
         try:
             sql_people = """
                 SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear
@@ -96,7 +96,7 @@ def index():
     featured_people = []
 
     with engine.connect() as conn:
-        # Top 5 Movies
+        
         try:
             sql_movies = """
                 SELECT m.movieId, m.movieTitle, m.startYear, r.averageRating, r.numVotes
@@ -110,7 +110,7 @@ def index():
         except Exception as e:
             print(f"Error fetching featured movies: {e}")
 
-        # Top 5 Series
+        
         try:
             sql_series = """
                 SELECT s.seriesId, s.seriesTitle, s.startYear, r.averageRating, r.numVotes
@@ -124,7 +124,7 @@ def index():
         except Exception as e:
             print(f"Error fetching featured series: {e}")
 
-        # Top 5 People (Most liked people)
+        
         try:
             sql_people = """
                 SELECT
@@ -161,7 +161,7 @@ def quiz_setup():
     top_users = []
     user_rank = 0
     with engine.connect() as conn:
-        # Top 5 users
+        
         sql_top = """
             SELECT id, username, score, gender 
             FROM githappens_users.users 
@@ -170,7 +170,7 @@ def quiz_setup():
         """
         top_users = conn.execute(text(sql_top)).fetchall()
         
-        # Current user rank
+        
         sql_rank = """
             SELECT COUNT(*) + 1 
             FROM githappens_users.users 
@@ -180,7 +180,7 @@ def quiz_setup():
 
     return render_template("quiz_setup.html", top_users=top_users, user_rank=user_rank)
 
-# Quiz Üretme
+
 @main_bp.route("/quiz/generate", methods=["POST"])
 @login_required
 def generate_quiz():
@@ -227,7 +227,7 @@ def generate_quiz():
         raw_response = chat_completion.choices[0].message.content
         quiz_data = json.loads(raw_response)
         
-        # Store difficulty in the quiz data
+        
         quiz_data["difficulty"] = difficulty
 
         session["quiz"] = quiz_data
@@ -241,7 +241,7 @@ def generate_quiz():
         return redirect(url_for("main.quiz_setup"))
 
 
-# Quiz Oynama Sayfası
+
 @main_bp.route("/quiz/play")
 @login_required
 def quiz_play():
@@ -251,7 +251,7 @@ def quiz_play():
 
     return render_template("quiz_play.html", quiz=quiz)
 
-# Sonuç Hesaplama ve PUAN KAYDETME
+
 @main_bp.route("/quiz/submit", methods=["POST"])
 @login_required
 def submit_quiz():
@@ -269,7 +269,7 @@ def submit_quiz():
         if user_answer == q["answer"]:
             correct += 1
             
-    # Calculate points based on difficulty
+    
     difficulty = quiz.get("difficulty", "medium")
     multiplier = 1
     if difficulty == "medium":
@@ -279,31 +279,31 @@ def submit_quiz():
     
     total_points = correct * multiplier
 
-    # --- YENİ EKLENEN KISIM: SKORU DATABASE'E YAZ ---
+    
     old_score = 0
     new_score = 0
     percentile = 100
     try:
         with engine.connect() as conn:
-            # Get current score before update
+            
             res = conn.execute(text("SELECT score FROM githappens_users.users WHERE id = :uid"), {"uid": current_user.id}).fetchone()
             if res:
                 old_score = res[0]
             
-            # Update score
+            
             update_sql = "UPDATE githappens_users.users SET score = score + :points WHERE id = :uid"
             conn.execute(text(update_sql), {"points": total_points, "uid": current_user.id})
             conn.commit()
             new_score = old_score + total_points
 
-            # Calculate Percentile (Top X%)
+            
             total_users = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users")).scalar()
             at_or_above = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users WHERE score >= :s"), {"s": new_score}).scalar()
             if total_users > 0:
                 percentile = (at_or_above / total_users) * 100
     except Exception as e:
         print(f"Skor kaydedilemedi: {e}")
-    # -----------------------------------------------
+    
 
     return render_template(
         "quiz_result.html",

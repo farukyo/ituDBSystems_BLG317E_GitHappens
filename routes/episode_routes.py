@@ -57,7 +57,6 @@ def episodes():
         
         sql += " LIMIT 100"
         
-        # Build display SQL with actual values
         display_sql = sql
         for key, value in params.items():
             if isinstance(value, str):
@@ -76,7 +75,7 @@ def episodes():
 def episode_detail(episode_id):
     uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
-        # DÜZELTME: 'prof.professionName' yerine alt sorgu eklendi ve 'LEFT JOIN profession' kaldırıldı.
+        
         sql = """
             SELECT 
                 e.episodeId, e.epTitle, e.runtimeMinutes, 
@@ -99,7 +98,6 @@ def episode_detail(episode_id):
             LEFT JOIN genres g ON sg.genreId = g.genreId
             LEFT JOIN principals pr ON pr.titleId = e.seriesId
             LEFT JOIN people p ON pr.peopleId = p.peopleId
-            -- LEFT JOIN profession satırı buradan silindi --
             LEFT JOIN githappens_users.user_likes_titles ul ON e.episodeId = ul.title_id AND ul.user_id = :uid
             WHERE e.episodeId = :episodeId
             ORDER BY pr.category, p.primaryName
@@ -113,7 +111,6 @@ def episode_detail(episode_id):
             flash("Episode not found.")
             return redirect(url_for('episode.episodes'))
         
-        # İlk satırdan episode ve stats bilgilerini al
         first_row = rows[0]
         episode = {
             'episodeId': first_row.episodeId,
@@ -133,7 +130,6 @@ def episode_detail(episode_id):
             'total_episodes': first_row.total_episodes
         }
         
-        # Unique genres listesi çıkar
         genres = []
         seen_genres = set()
         for row in rows:
@@ -141,19 +137,18 @@ def episode_detail(episode_id):
                 genres.append(row.genreName)
                 seen_genres.add(row.genreName)
         
-        # Unique cast listesi çıkar
         cast = []
         seen_people = set()
         for row in rows:
             if row.peopleId and row.peopleId not in seen_people:
-                # Corrupted data kontrolü
+                
                 chars = row.characters
                 if chars and isinstance(chars, str):
-                    # Clean up corrupted characters field by taking only the first line
+                   
                     if '\n' in chars or '\r' in chars:
                         chars = chars.splitlines()[0]
                     
-                    # Clean up JSON-like formatting if present
+                    
                     if chars.startswith('['):
                         import json
                         try:
