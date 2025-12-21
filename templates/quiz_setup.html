@@ -54,17 +54,19 @@
                 </h3>
                 <div class="leaderboard-list">
                     {% for user in top_users %}
-                    <div class="leaderboard-item">
-                        <div class="leaderboard-rank top-{{ loop.index }}">#{{ loop.index }}</div>
-                        <div class="leaderboard-info">
-                            <span class="leaderboard-name">
-                                {% if user.gender == 'Male' %}👨{% elif user.gender == 'Female' %}👩{% else %}👤{% endif
-                                %}
-                                {{ user.username }}
-                            </span>
-                            <span class="leaderboard-score">{{ user.score }} pts</span>
+                    <a href="{{ url_for('user.profile', user_id=user.id) }}" class="leaderboard-item-link">
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank top-{{ loop.index }}">#{{ loop.index }}</div>
+                            <div class="leaderboard-info">
+                                <span class="leaderboard-name">
+                                    {% if user.gender == 'male' %}👨{% elif user.gender == 'female' %}👩{% else %}👤{%
+                                    endif %}
+                                    {{ user.username }}
+                                </span>
+                                <span class="leaderboard-score">{{ user.score }} pts</span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                     {% endfor %}
                 </div>
                 <div class="user-rank-footer">

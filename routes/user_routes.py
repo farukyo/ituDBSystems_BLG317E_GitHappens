@@ -46,9 +46,11 @@ def like_entity():
     return "1"
 
 @user_bp.route("/profile")
+@user_bp.route("/profile/<int:user_id>")
 @login_required
-def profile():
-    uid = current_user.id
+def profile(user_id=None):
+    # Eğer user_id verilmemişse kendi profilimizi gösteriyoruz
+    target_uid = user_id if user_id else current_user.id
     
     liked_movies = []
     liked_series = []
@@ -57,9 +59,15 @@ def profile():
     percentile = 100
     
     with engine.connect() as conn:
-        # Get user's current score
-        user_score_res = conn.execute(text("SELECT score FROM githappens_users.users WHERE id = :uid"), {"uid": uid}).fetchone()
-        user_score = user_score_res[0] if user_score_res else 0
+        # Hedef kullanıcının bilgilerini al
+        user_res = conn.execute(text("SELECT id, username, email, dob, gender, score FROM githappens_users.users WHERE id = :uid"), {"uid": target_uid}).fetchone()
+        
+        if not user_res:
+            from flask import flash, redirect, url_for
+            flash("User not found.")
+            return redirect(url_for('main.index'))
+
+        user_score = user_res.score if user_res.score else 0
 
         # Calculate Percentile (Top X%)
         total_users = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users")).scalar()
@@ -75,10 +83,9 @@ def profile():
             JOIN githappens_users.user_likes_titles ul ON m.movieId = ul.title_id
             LEFT JOIN ratings r ON m.movieId = r.titleId
             WHERE ul.user_id = :uid 
-            -- Filmleri ayırt etmek için ID yapısına bakıyoruz veya join ile veri geliyorsa zaten filmdir
             AND m.movieId LIKE 'tt%' 
         """
-        liked_movies = conn.execute(text(sql_mov), {"uid": uid}).fetchall()
+        liked_movies = conn.execute(text(sql_mov), {"uid": target_uid}).fetchall()
 
         # B. Beğenilen DİZİLER (user_likes_titles tablosundan)
         sql_ser = """
@@ -87,7 +94,7 @@ def profile():
             JOIN githappens_users.user_likes_titles ul ON s.seriesId = ul.title_id
             WHERE ul.user_id = :uid
         """
-        liked_series = conn.execute(text(sql_ser), {"uid": uid}).fetchall()
+        liked_series = conn.execute(text(sql_ser), {"uid": target_uid}).fetchall()
         
         # C. Beğenilen BÖLÜMLER (user_likes_titles tablosundan)
         sql_ep = """
@@ -97,22 +104,23 @@ def profile():
             JOIN githappens_users.user_likes_titles ul ON e.episodeId = ul.title_id
             WHERE ul.user_id = :uid
         """
-        liked_episodes = conn.execute(text(sql_ep), {"uid": uid}).fetchall()
+        liked_episodes = conn.execute(text(sql_ep), {"uid": target_uid}).fetchall()
 
-        # D. Beğenilen ÜNLÜLER (user_likes_people tablosundan - BURASI DEĞİŞTİ)
+        # D. Beğenilen ÜNLÜLER (user_likes_people tablosundan)
         sql_cel = """
             SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear
             FROM people p
             JOIN githappens_users.user_likes_people ul ON p.peopleId = ul.people_id
             WHERE ul.user_id = :uid
         """
-        liked_celebs = conn.execute(text(sql_cel), {"uid": uid}).fetchall()
+        liked_celebs = conn.execute(text(sql_cel), {"uid": target_uid}).fetchall()
 
     return render_template("profile.html", 
-                           user=current_user, 
+                           user=user_res, 
                            score=user_score,
                            liked_movies=liked_movies,
                            liked_series=liked_series,
                            liked_episodes=liked_episodes,
                            liked_celebs=liked_celebs,
-                           percentile=round(percentile, 1))
+                           percentile=round(percentile, 1),
+                           is_own_profile=(target_uid == current_user.id))

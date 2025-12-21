@@ -178,17 +178,24 @@ h1 {
     gap: 15px;
 }
 
+.leaderboard-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
 .leaderboard-item {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 8px;
     border-radius: 8px;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
 
-.leaderboard-item:hover {
-    background: rgba(255, 255, 255, 0.05);
+.leaderboard-item-link:hover .leaderboard-item {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
 }
 
 .leaderboard-rank {
