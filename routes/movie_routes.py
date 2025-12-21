@@ -41,6 +41,7 @@ def movies():
                 r.averageRating,
                 COUNT(DISTINCT pr.peopleId) AS cast_count,
                 COUNT(DISTINCT g.genreId) AS genre_count,
+                GROUP_CONCAT(DISTINCT g.genreName SEPARATOR ', ') AS genre_str,
                 CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
             FROM movies m
             LEFT JOIN ratings r ON m.movieId = r.titleId
@@ -123,7 +124,7 @@ def movies():
                 sql += " AND r.averageRating <= :max_rating"
                 params["max_rating"] = max_rating
 
-            sql += " ORDER BY r.averageRating DESC, m.movieTitle ASC LIMIT 100"
+            sql += " ORDER BY r.numVotes DESC, m.movieTitle ASC LIMIT 100"
 
         data = conn.execute(text(sql), params).fetchall()
 

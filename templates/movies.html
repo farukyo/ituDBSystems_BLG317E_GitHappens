@@ -114,7 +114,13 @@
 
                 {% if request.args.get('view') == 'stats' %}
                     <div class="col-runtime" style="color:#aaa;">{{ movie.cast_count }} Actors</div>
-                    <div class="col-runtime" style="color:#aaa;">{{ movie.genre_count }} Genres</div>
+                    <div class="col-genre">
+                        <div class="genre-tags">
+                            {% for genre in (movie.genre_str.split(', ') if movie.genre_str else []) %}
+                                <span class="genre-tag">{{ genre }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
                 {% else %}
                     <div class="col-genre">
                         <span style="color: #7eb8ff; font-size: 0.9em;">
