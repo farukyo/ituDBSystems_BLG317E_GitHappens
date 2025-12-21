@@ -1,19 +1,34 @@
-#git e yüklenmesine gerek olmayan dosyalar
-venv/           # Sanal ortam klasörü
-.venv/          # Python sanal ortamı
-__pycache__/    # Python bytecode önbelleği
-*.pyc           # Python derlenmiş dosyalar
-*.pyo           # Optimize edilmiş bytecode dosyaları
-*.log           # Log dosyaları
-.env            # Çevre değişkenleri (gizli anahtarlar)
-.DS_Store       # macOS sistem dosyası
-.vscode/        # Visual Studio Code ayarları
-.idea/          # PyCharm/IntelliJ IDEA ayarları
-instance/       # Flask instance klasörü (yerel ayarlar)
-/.venv
-*.tsv
-/.idea
-*.csv
-*.env
+# Python-related ignores
+venv/           # Virtual environment folder
+.venv/          # Python virtual environment
+/.venv          # Local virtual environment (root)
+__pycache__/    # Python bytecode cache
+*.pyc           # Compiled Python files
+*.pyo           # Optimized bytecode files
 
+
+# Environment and secrets
+*.log           # Log files
+.env            # Environment variables (secret keys)
+*.env           # Environment variable files
+
+
+# IDE and editor settings
+.vscode/        # Visual Studio Code settings
+.idea/          # PyCharm/IntelliJ IDEA settings
+ /.idea         # IDE settings folder (JetBrains)
+
+# Flask-specific
+instance/       # Flask instance folder (local settings)
+
+# Data exports
+*.tsv           # Tab-separated value files (data exports)
+*.csv           # Comma-separated value files (data exports)
+
+# OS-specific
+.DS_Store       # macOS system file
+
+.env
 *.pyc
+*.tsv
+*.csv
