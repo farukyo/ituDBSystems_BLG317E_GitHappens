@@ -211,22 +211,26 @@ def serie_detail(series_id):
         cast_data = conn.execute(text(sql_cast), {"id": series_id}).fetchall()
         
         # Characters JSON'ı parse et
-        import json
         cast = []
         for person in cast_data:
-            try:
-                # characters string'i parse et - JSON array veya single string olabilir
-                chars = person.characters
-                if chars and chars != '\\N':
-                    if isinstance(chars, str):
-                        # JSON array ise
-                        if chars.startswith('['):
-                            chars = json.loads(chars)[0] if json.loads(chars) else ''
-                        # Tırnak işaretlerini temizle
-                        chars = chars.strip('"')
-                else:
-                    chars = None
-            except:
+            chars = person.characters
+            if chars and isinstance(chars, str):
+                # Clean up corrupted characters field by taking only the first line
+                if '\n' in chars or '\r' in chars:
+                    chars = chars.splitlines()[0]
+                
+                # Clean up JSON-like formatting if present
+                if chars.startswith('['):
+                    import json
+                    try:
+                        parsed = json.loads(chars)
+                        if isinstance(parsed, list) and len(parsed) > 0:
+                            chars = parsed[0]
+                    except:
+                        pass
+                
+                chars = chars.strip('"')
+            else:
                 chars = None
             
             cast.append({
