@@ -8,3 +8,4 @@ from admin.routes.genres import *
 from admin.routes.principals import *
 from admin.routes.professions import *
 from admin.routes.user import *
+from admin.routes.suggestion import *
