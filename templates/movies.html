@@ -59,26 +59,31 @@
                 </div>
             </div>
         </form>
-        <div class="movie-actions" style="margin-bottom:20px;">
-            <a href="{{ url_for('movie.movies') }}?{{ request.query_string|safe }}&view=stats" class="btn-primary">
+        <div class="movie-actions" style="margin-top: 15px; margin-bottom: 15px;">
+            {% if request.args.get('view') == 'stats' %}
+            <a href="{{ url_for('movie.movies') }}" class="btn-stats-mini">
+                📋 Back to Movie List
+            </a>
+            {% else %}
+            <a href="{{ url_for('movie.movies') }}?{{ request.query_string|safe }}&view=stats" class="btn-stats-mini">
                 📊 Detailed Movie Stats
             </a>
+            {% endif %}
         </div>
 
         <hr>
 
-
-
-
         <div class="episode-list">
             {% if movies %}
-            
+
             {% if request.args.get('view') == 'stats' %}
             <div class="episode-table-header movie-grid-layout">
                 <div>TITLE</div>
                 <div>YEAR</div>
                 <div>RATING</div>
-                <div>CAST COUNT</div> <div>GENRE COUNT</div> <div style="text-align: center;">LIKE</div>
+                <div>CAST COUNT</div>
+                <div>GENRE COUNT</div>
+                <div style="text-align: center;">LIKE</div>
             </div>
             {% else %}
             <div class="episode-table-header movie-grid-layout">
@@ -113,34 +118,32 @@
                 </div>
 
                 {% if request.args.get('view') == 'stats' %}
-                    <div class="col-runtime" style="color:#aaa;">{{ movie.cast_count }} Actors</div>
-                    <div class="col-genre">
-                        <div class="genre-tags">
-                            {% for genre in (movie.genre_str.split(', ') if movie.genre_str else []) %}
-                                <span class="genre-tag">{{ genre }}</span>
-                            {% endfor %}
-                        </div>
+                <div class="col-runtime" style="color:#aaa;">{{ movie.cast_count }} Actors</div>
+                <div class="col-genre">
+                    <div class="genre-tags">
+                        {% for genre in (movie.genre_str.split(', ') if movie.genre_str else []) %}
+                        <span class="genre-tag">{{ genre }}</span>
+                        {% endfor %}
                     </div>
+                </div>
                 {% else %}
-                    <div class="col-genre">
-                        <span style="color: #7eb8ff; font-size: 0.9em;">
-                            {{ movie.genre_str if movie.genre_str else '-' }}
-                        </span>
-                    </div>
-                    <div class="col-runtime">
-                        {% if movie.runtimeMinutes %}
-                        {{ movie.runtimeMinutes }} min
-                        {% else %}
-                        -
-                        {% endif %}
-                    </div>
+                <div class="col-genre">
+                    <span style="color: #7eb8ff; font-size: 0.9em;">
+                        {{ movie.genre_str if movie.genre_str else '-' }}
+                    </span>
+                </div>
+                <div class="col-runtime">
+                    {% if movie.runtimeMinutes %}
+                    {{ movie.runtimeMinutes }} min
+                    {% else %}
+                    -
+                    {% endif %}
+                </div>
                 {% endif %}
 
                 <div style="text-align: center;">
-                    <button class="like-btn {{ 'liked' if movie.is_liked else '' }}" 
-                            data-id="{{ movie.movieId }}" 
-                            data-type="movie"
-                            onclick="toggleEntityLike(this, event)">
+                    <button class="like-btn {{ 'liked' if movie.is_liked else '' }}" data-id="{{ movie.movieId }}"
+                        data-type="movie" onclick="toggleEntityLike(this, event)">
                         ❤
                     </button>
                 </div>
