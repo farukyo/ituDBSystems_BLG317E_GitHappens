@@ -34,7 +34,8 @@ def load_user(user_id):
             return User(
                 id=u['id'], username=u['username'], email=u['email'], 
                 password_hash=u['password_hash'], dob=u['dob'], 
-                gender=u['gender'], is_admin=u['is_admin']
+                gender=u['gender'], is_admin=u['is_admin'],
+                score=u.get('score', 0)
             )
     return None
 

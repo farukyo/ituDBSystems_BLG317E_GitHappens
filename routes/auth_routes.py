@@ -8,7 +8,7 @@ auth_bp = Blueprint('auth', __name__)
 
 class User(UserMixin):
     """Flask-Login için MySQL ile uyumlu User modeli."""
-    def __init__(self, id, username, email, password_hash, dob=None, gender=None, is_admin=False):
+    def __init__(self, id, username, email, password_hash, dob=None, gender=None, is_admin=False, score=0):
         self.id = id
         self.username = username
         self.email = email
@@ -17,7 +17,7 @@ class User(UserMixin):
         self.gender = gender
         self.is_admin = bool(is_admin)
         # Orijinal değişkenlerini koruyoruz
-        self.quiz_score = 0
+        self.quiz_score = score
         self.liked_movies = []
         self.liked_series = []
         self.liked_actors = []
@@ -45,7 +45,8 @@ def login():
                 user_obj = User(
                     id=u['id'], username=u['username'], email=u['email'], 
                     password_hash=u['password_hash'], dob=u['dob'], 
-                    gender=u['gender'], is_admin=u['is_admin']
+                    gender=u['gender'], is_admin=u['is_admin'],
+                    score=u.get('score', 0)
                 )
                 
                 if user_obj.check_password(password):

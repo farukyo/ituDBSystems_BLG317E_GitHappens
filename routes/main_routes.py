@@ -124,7 +124,7 @@ def index():
         except Exception as e:
             print(f"Error fetching featured series: {e}")
 
-        # Top 5 People (Most liked actors) - GÜNCELLENDİ
+        # Top 5 People (Most liked people)
         try:
             sql_people = """
                 SELECT
@@ -137,10 +137,6 @@ def index():
                     GROUP BY people_id
                 ) l
                 JOIN people p ON l.people_id = p.peopleId
-                LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
-                LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
-                WHERE (pd.name LIKE '%actor%' OR pd.name LIKE '%actress%')
-                GROUP BY p.peopleId, p.primaryName, l.numLikes
                 ORDER BY l.numLikes DESC
                 LIMIT 5
             """
@@ -162,7 +158,27 @@ def about():
 @main_bp.route("/quiz/setup")
 @login_required
 def quiz_setup():
-    return render_template("quiz_setup.html")
+    top_users = []
+    user_rank = 0
+    with engine.connect() as conn:
+        # Top 5 users
+        sql_top = """
+            SELECT username, score, gender 
+            FROM githappens_users.users 
+            ORDER BY score DESC 
+            LIMIT 5
+        """
+        top_users = conn.execute(text(sql_top)).fetchall()
+        
+        # Current user rank
+        sql_rank = """
+            SELECT COUNT(*) + 1 
+            FROM githappens_users.users 
+            WHERE score > (SELECT score FROM githappens_users.users WHERE id = :uid)
+        """
+        user_rank = conn.execute(text(sql_rank), {"uid": current_user.id}).scalar()
+
+    return render_template("quiz_setup.html", top_users=top_users, user_rank=user_rank)
 
 # Quiz Üretme
 @main_bp.route("/quiz/generate", methods=["POST"])
@@ -210,6 +226,9 @@ def generate_quiz():
 
         raw_response = chat_completion.choices[0].message.content
         quiz_data = json.loads(raw_response)
+        
+        # Store difficulty in the quiz data
+        quiz_data["difficulty"] = difficulty
 
         session["quiz"] = quiz_data
         session.modified = True
@@ -250,13 +269,39 @@ def submit_quiz():
         if user_answer == q["answer"]:
             correct += 1
             
+    # Calculate points based on difficulty
+    difficulty = quiz.get("difficulty", "medium")
+    multiplier = 1
+    if difficulty == "medium":
+        multiplier = 2
+    elif difficulty == "hard":
+        multiplier = 3
+    
+    total_points = correct * multiplier
+
     # --- YENİ EKLENEN KISIM: SKORU DATABASE'E YAZ ---
+    old_score = 0
+    new_score = 0
+    percentile = 100
     try:
         with engine.connect() as conn:
-            # Kullanıcının mevcut skoruna doğru cevap sayısını ekle
-            update_sql = "UPDATE users SET score = score + :points WHERE id = :uid"
-            conn.execute(text(update_sql), {"points": correct, "uid": current_user.id})
+            # Get current score before update
+            res = conn.execute(text("SELECT score FROM githappens_users.users WHERE id = :uid"), {"uid": current_user.id}).fetchone()
+            if res:
+                old_score = res[0]
+            
+            # Update score
+            update_sql = "UPDATE githappens_users.users SET score = score + :points WHERE id = :uid"
+            conn.execute(text(update_sql), {"points": total_points, "uid": current_user.id})
             conn.commit()
+            new_score = old_score + total_points
+
+            # Calculate Percentile (Top X%)
+            total_users = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users")).scalar()
+            higher_scores = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users WHERE score > :s"), {"s": new_score}).scalar()
+            if total_users > 0:
+                # Rank = higher_scores + 1. Top % = (Rank / Total) * 100
+                percentile = ((higher_scores + 1) / total_users) * 100
     except Exception as e:
         print(f"Skor kaydedilemedi: {e}")
     # -----------------------------------------------
@@ -264,7 +309,12 @@ def submit_quiz():
     return render_template(
         "quiz_result.html",
         score=correct,
-        total=total
+        total=total,
+        points=total_points,
+        difficulty=difficulty,
+        old_total_score=old_score,
+        new_total_score=new_score,
+        percentile=round(percentile, 1)
     )
 
 

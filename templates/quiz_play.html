@@ -8,13 +8,17 @@
 
 {% block content %}
 <div class="quiz-play-page">
+    <div class="quiz-score-floating">
+        Score: <span id="current-score">0</span> / {{ quiz.questions|length }}
+    </div>
+
     <div class="inner-container">
         <h1>Quiz Time 🎬</h1>
         <p class="sub-title">Answer all questions and submit the quiz.</p>
 
-        <form action="{{ url_for('main.submit_quiz') }}" method="POST">
+        <form action="{{ url_for('main.submit_quiz') }}" method="POST" id="quiz-form">
             {% for q in quiz.questions %}
-            <div class="quiz-question-card">
+            <div class="quiz-question-card" data-answer="{{ q.answer }}">
                 <h3>{{ loop.index }}. {{ q.question }}</h3>
 
                 {% set question_idx = loop.index0 %}
@@ -22,7 +26,8 @@
                 {% for option in q.options %}
                 <div class="option-row">
                     <label>
-                        <input type="radio" name="q{{ question_idx }}" value="{{ option }}" required>
+                        <input type="radio" name="q{{ question_idx }}" value="{{ option }}" required
+                            onclick="checkAnswer(this)">
                         <span>{{ option }}</span>
                     </label>
                 </div>
@@ -30,11 +35,53 @@
             </div>
             {% endfor %}
 
-            <div class="quiz-button-wrapper"> <button type="submit" class="quiz-btn-primary">
+            <div class="quiz-button-wrapper">
+                <button type="submit" class="quiz-btn-primary">
                     ✅ Finish Quiz
                 </button>
             </div>
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let score = 0;
+    const totalQuestions = {{ quiz.questions| length }};
+
+    function checkAnswer(input) {
+        const card = input.closest('.quiz-question-card');
+        const correctAnswer = card.getAttribute('data-answer');
+        const selectedAnswer = input.value;
+        const options = card.querySelectorAll('.option-row');
+
+        // Disable all options in this card
+        options.forEach(opt => {
+            opt.classList.add('disabled');
+            const radio = opt.querySelector('input');
+            radio.disabled = true;
+
+            // Highlight correct answer
+            if (radio.value === correctAnswer) {
+                opt.classList.add('correct');
+            }
+        });
+
+        // If wrong, highlight selected
+        if (selectedAnswer === correctAnswer) {
+            score++;
+            document.getElementById('current-score').innerText = score;
+        } else {
+            input.closest('.option-row').classList.add('wrong');
+        }
+    }
+
+    // Ensure disabled inputs are enabled before submit so they are sent to backend
+    document.getElementById('quiz-form').addEventListener('submit', function () {
+        this.querySelectorAll('input[type="radio"]').forEach(input => {
+            input.disabled = false;
+        });
+    });
+</script>
 {% endblock %}

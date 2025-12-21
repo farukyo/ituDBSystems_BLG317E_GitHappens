@@ -50,7 +50,24 @@ def like_entity():
 def profile():
     uid = current_user.id
     
+    liked_movies = []
+    liked_series = []
+    liked_episodes = []
+    liked_celebs = []
+    percentile = 100
+    
     with engine.connect() as conn:
+        # Get user's current score
+        user_score_res = conn.execute(text("SELECT score FROM githappens_users.users WHERE id = :uid"), {"uid": uid}).fetchone()
+        user_score = user_score_res[0] if user_score_res else 0
+
+        # Calculate Percentile (Top X%)
+        total_users = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users")).scalar()
+        higher_scores = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users WHERE score > :s"), {"s": user_score}).scalar()
+        if total_users > 0:
+            # Rank = higher_scores + 1. Top % = (Rank / Total) * 100
+            percentile = ((higher_scores + 1) / total_users) * 100
+
         # A. Beğenilen FİLMLER (user_likes_titles tablosundan)
         sql_mov = """
             SELECT m.movieId, m.movieTitle, m.startYear, r.averageRating
@@ -93,7 +110,9 @@ def profile():
 
     return render_template("profile.html", 
                            user=current_user, 
+                           score=user_score,
                            liked_movies=liked_movies,
                            liked_series=liked_series,
                            liked_episodes=liked_episodes,
-                           liked_celebs=liked_celebs)
+                           liked_celebs=liked_celebs,
+                           percentile=round(percentile, 1))
