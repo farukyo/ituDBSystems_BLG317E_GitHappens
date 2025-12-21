@@ -75,3 +75,6 @@ CREATE TABLE IF NOT EXISTS githappens_users.user_suggestions (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (user_id) REFERENCES githappens_users.users(id) ON DELETE CASCADE
 );
+
+ALTER TABLE githappens_users.user_suggestions
+ADD COLUMN is_resolved TINYINT(1) DEFAULT 0;
