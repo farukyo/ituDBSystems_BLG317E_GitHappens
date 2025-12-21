@@ -163,7 +163,7 @@ def quiz_setup():
     with engine.connect() as conn:
         # Top 5 users
         sql_top = """
-            SELECT username, score, gender 
+            SELECT id, username, score, gender 
             FROM githappens_users.users 
             ORDER BY score DESC 
             LIMIT 5
