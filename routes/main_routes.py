@@ -124,7 +124,7 @@ def index():
         except Exception as e:
             print(f"Error fetching featured series: {e}")
 
-        # Top 5 People (Most liked actors)
+        # Top 5 People (Most liked actors) - GÜNCELLENDİ
         try:
             sql_people = """
                 SELECT
@@ -138,8 +138,10 @@ def index():
                     GROUP BY entity_id
                 ) l
                 JOIN people p ON l.entity_id = p.peopleId
-                LEFT JOIN profession prof ON p.professionId = prof.professionId
-                WHERE (prof.professionName LIKE '%actor%' OR prof.professionName LIKE '%actress%')
+                LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
+                LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
+                WHERE (pd.name LIKE '%actor%' OR pd.name LIKE '%actress%')
+                GROUP BY p.peopleId, p.primaryName, l.numLikes
                 ORDER BY l.numLikes DESC
                 LIMIT 5
             """
@@ -163,15 +165,14 @@ def about():
 def quiz_setup():
     return render_template("quiz_setup.html")
 
-# Quiz Üretme: Formdan gelen verileri alır ve session'a kaydeder
+# Quiz Üretme
 @main_bp.route("/quiz/generate", methods=["POST"])
 @login_required
 def generate_quiz():
     title = request.form.get("title")
     difficulty = request.form.get("difficulty")
-    count = int(request.form.get("question_count", 10)) # Sayıyı aldık
+    count = int(request.form.get("question_count", 10))
 
-    # Yapay zekaya JSON formatında cevap vermesini emrediyoruz
     prompt = f"""
     Create a detailed and fun trivia quiz with {count} multiple-choice questions about the movie/topic: "{title}".
     Difficulty level: {difficulty}.
@@ -197,7 +198,6 @@ def generate_quiz():
     """
 
     try:
-        # Groq API Çağrısı
         chat_completion = client.chat.completions.create(
             messages=[
                 {
@@ -205,15 +205,13 @@ def generate_quiz():
                     "content": prompt,
                 }
             ],
-            model="llama-3.3-70b-versatile", # Ücretsiz ve çok güçlü bir model
-            response_format={"type": "json_object"} # JSON dönmesini garanti eder
+            model="llama-3.3-70b-versatile",
+            response_format={"type": "json_object"}
         )
 
-        # Yanıtı JSON olarak işle
         raw_response = chat_completion.choices[0].message.content
         quiz_data = json.loads(raw_response)
 
-        # Session'a kaydet
         session["quiz"] = quiz_data
         session.modified = True
 
@@ -235,7 +233,7 @@ def quiz_play():
 
     return render_template("quiz_play.html", quiz=quiz)
 
-# Sonuç Hesaplama
+# Sonuç Hesaplama ve PUAN KAYDETME
 @main_bp.route("/quiz/submit", methods=["POST"])
 @login_required
 def submit_quiz():
@@ -252,10 +250,21 @@ def submit_quiz():
         user_answer = request.form.get(f"q{i}")
         if user_answer == q["answer"]:
             correct += 1
+            
+    # --- YENİ EKLENEN KISIM: SKORU DATABASE'E YAZ ---
+    try:
+        with engine.connect() as conn:
+            # Kullanıcının mevcut skoruna doğru cevap sayısını ekle
+            update_sql = "UPDATE users SET score = score + :points WHERE id = :uid"
+            conn.execute(text(update_sql), {"points": correct, "uid": current_user.id})
+            conn.commit()
+    except Exception as e:
+        print(f"Skor kaydedilemedi: {e}")
+    # -----------------------------------------------
 
     return render_template(
         "quiz_result.html",
-        score=correct,  # Artık 'score' 30 değil, 3 olacak
+        score=correct,
         total=total
     )
 
@@ -269,27 +278,22 @@ def recommend():
     top_genres = []
     all_genres = []
 
-    # Filter parameters
     selected_genre = request.args.get('genre')
     start_year = request.args.get('start_year')
     end_year = request.args.get('end_year')
 
     with engine.connect() as conn:
-        # 0. Fetch all genres for the dropdown
         all_genres = conn.execute(text("SELECT genreName FROM genres ORDER BY genreName")).fetchall()
         all_genres = [g[0] for g in all_genres]
 
-        # Determine which genres to use for recommendation
         target_genre_ids = []
         
         if selected_genre:
-            # If user selected a genre, use that
             genre_res = conn.execute(text("SELECT genreId FROM genres WHERE genreName = :name"), {"name": selected_genre}).fetchone()
             if genre_res:
                 target_genre_ids = [genre_res[0]]
-                top_genres = [selected_genre] # For display
+                top_genres = [selected_genre]
         else:
-            # Otherwise, use user's top genres
             sql_genres = """
                 SELECT g.genreId, g.genreName, COUNT(*) as genre_count
                 FROM (
@@ -314,7 +318,6 @@ def recommend():
             top_genres = [row.genreName for row in top_genres_result]
             target_genre_ids = [row.genreId for row in top_genres_result]
 
-        # Build query conditions
         year_condition = ""
         params = {"uid": user_id}
         
@@ -325,12 +328,10 @@ def recommend():
             year_condition += " AND m.startYear <= :end_year"
             params["end_year"] = int(end_year)
 
-        # Series year condition (uses s.startYear)
         series_year_condition = year_condition.replace("m.startYear", "s.startYear")
 
 
         if target_genre_ids:
-            # 2. Recommend Movies
             ids_str = ','.join(map(str, target_genre_ids))
             
             sql_rec_movies = f"""
@@ -352,7 +353,6 @@ def recommend():
             except Exception as e:
                 print(f"Error recommending movies: {e}")
 
-            # 3. Recommend Series
             sql_rec_series = f"""
                 SELECT DISTINCT s.seriesId, s.seriesTitle, s.startYear, r.averageRating, r.numVotes
                 FROM series s
@@ -373,9 +373,6 @@ def recommend():
                 print(f"Error recommending series: {e}")
 
         else:
-            # Fallback: Top rated content if no likes and no filter
-            # Apply year filter if present
-            
             sql_top_movies = f"""
                 SELECT m.movieId, m.movieTitle, m.startYear, r.averageRating, r.numVotes
                 FROM movies m
@@ -452,14 +449,8 @@ def suggest():
         subject = request.form.get("subject")
         message_body = request.form.get("message")
         
-        # Sender info
         user_email = current_user.email
         user_name = current_user.username
-        
-        # -------------------------------------------------------
-        # MAIL SENDING LOGIC WILL BE ADDED HERE
-        # (SMTP or API code to be added in the future)
-        # -------------------------------------------------------
         
         flash("Thank you! Your suggestion has been sent successfully.")
         return redirect(url_for('main.index'))

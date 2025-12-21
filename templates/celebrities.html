@@ -495,8 +495,8 @@
                     <h3 class="name" style="color: #d65a1a; margin: 0; font-weight: bold;">{{ person.primaryName }}</h3>
                     
                     <span class="profession" style="color: #bbb; font-size: 0.9rem;">
-                    {% if person.professionName and person.professionName != '0' and person.professionName != 0 %}
-                        {{ person.professionName | replace('_', ' ') | replace(',', ', ') | title }}
+                    {% if person.professionName and person.professionName != '0' %}
+                        {{ person.professionName | title }}
                     {% endif %}
                     </span>
                 </div>
