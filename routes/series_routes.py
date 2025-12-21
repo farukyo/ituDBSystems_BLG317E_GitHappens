@@ -18,8 +18,11 @@ def series():
     end_year = request.args.get('endYear')
     is_adult = request.args.get('isAdult')
 
+    # Kullanıcı ID'sini al (Giriş yapmamışsa -1)
+    uid = current_user.id if current_user.is_authenticated else -1
+
     with engine.connect() as conn:
-        # 2. Temel Sorgu
+        # 2. Temel Sorgu (is_liked ve JOIN eklendi)
         sql = """
             SELECT s.seriesId, s.seriesTitle, s.titleType, s.startYear, s.endYear, s.runtimeMinutes, s.isAdult,
                    r.averageRating, r.numVotes,
@@ -28,14 +31,16 @@ def series():
                        FROM Series_Genres sg
                        JOIN genres g ON sg.genreId = g.genreId
                        WHERE sg.seriesId = s.seriesId
-                   ) as genre_str
+                   ) as genre_str,
+                   CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
             FROM series s
             LEFT JOIN ratings r ON s.seriesId = r.titleId
+            LEFT JOIN githappens_users.user_likes_titles ul ON s.seriesId = ul.title_id AND ul.user_id = :uid
             WHERE 1=1
         """
-        params = {}
+        params = {"uid": uid}
 
-        # 3. Filtreleme Mantığı
+        # ... (Geri kalan filtreleme kodları aynı kalacak) ...
         
         # -- Title Search --
         if search_query:
@@ -53,8 +58,6 @@ def series():
             params["sYear"] = int(start_year)
 
         # -- End Year --
-        # DİKKAT: Verilerinde endYear genelde NULL. 
-        # endYear filtresi seçildiğinde: NULL olanlar (devam edenler) + o yıla kadar bitenler
         if end_year and end_year.isdigit():
             sql += " AND (endYear IS NULL OR endYear <= :eYear)"
             params["eYear"] = int(end_year)
@@ -70,7 +73,6 @@ def series():
         result = conn.execute(text(sql), params)
         data = result.fetchall()
 
-    # AJAX request check
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         html_snippets = ""
         for row in data:
