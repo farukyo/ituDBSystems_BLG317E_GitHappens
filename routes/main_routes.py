@@ -298,10 +298,9 @@ def submit_quiz():
 
             # Calculate Percentile (Top X%)
             total_users = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users")).scalar()
-            higher_scores = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users WHERE score > :s"), {"s": new_score}).scalar()
+            at_or_above = conn.execute(text("SELECT COUNT(*) FROM githappens_users.users WHERE score >= :s"), {"s": new_score}).scalar()
             if total_users > 0:
-                # Rank = higher_scores + 1. Top % = (Rank / Total) * 100
-                percentile = ((higher_scores + 1) / total_users) * 100
+                percentile = (at_or_above / total_users) * 100
     except Exception as e:
         print(f"Skor kaydedilemedi: {e}")
     # -----------------------------------------------
