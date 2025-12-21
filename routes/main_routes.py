@@ -497,10 +497,28 @@ def suggest():
         subject = request.form.get("subject")
         message_body = request.form.get("message")
         
-        user_email = current_user.email
-        user_name = current_user.username
+        if not subject or not message_body:
+            flash("Please fill in all fields.", "warning")
+            return redirect(url_for('main.suggest'))
+
+        try:
+            with engine.connect() as conn:
+                sql = """
+                    INSERT INTO githappens_users.user_suggestions (user_id, subject, suggestion_text)
+                    VALUES (:uid, :sub, :msg)
+                """
+                conn.execute(text(sql), {
+                    "uid": current_user.id,
+                    "sub": subject,
+                    "msg": message_body
+                })
+                conn.commit()
+            
+            return render_template("suggestion.html", success=True)
+            
+        except Exception as e:
+            print(f"Error saving suggestion: {e}")
+            flash("An error occurred while sending your suggestion.", "danger")
+            return redirect(url_for('main.suggest'))
         
-        flash("Thank you! Your suggestion has been sent successfully.")
-        return redirect(url_for('main.index'))
-        
-    return render_template("suggestion.html")
+    return render_template("suggestion.html", success=False)

@@ -66,3 +66,12 @@ WHERE entity_id LIKE 'nm%';
 # delete old table  
  
 DROP TABLE user_likes; 
+--user suggestions
+CREATE TABLE IF NOT EXISTS githappens_users.user_suggestions (
+    suggestion_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    subject VARCHAR(50) NOT NULL, 
+    suggestion_text TEXT NOT NULL, 
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
+    FOREIGN KEY (user_id) REFERENCES githappens_users.users(id) ON DELETE CASCADE
+);
