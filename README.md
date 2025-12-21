@@ -147,9 +147,10 @@ Open `database/db.py` to modify MySQL connection settings.
 
 To set up the database, execute the files in the `sql/` folder in the following order:
 
-1. **`userdb3.sql`**: Creates the user database (`githappens_users`) and its tables (users, likes, suggestions).
-2. **`data1.sql`**: Creates the main data tables (`genres`, `all_titles`, `movies`, `series`, `Episode`, `people`, `ratings`, `principals`) and loads data from CSV files.
-3. **`data2.sql`**: Performs additional data normalization, specifically for professions.
+
+1. **`data1.sql`**: Creates the main data tables (`genres`, `all_titles`, `movies`, `series`, `Episode`, `people`, `ratings`, `principals`) and loads data from CSV files.
+2. **`data2.sql`**: Performs additional data normalization, specifically for professions.
+3. **`userdb3.sql`**: Creates the user database (`githappens_users`) and its tables (users, likes, suggestions).
 4. **`adminqueries.sql`**: Adds default admin users to the system.
 
 **Important Note:** For data loading operations in `data1.sql`, you may need to enable the `local_infile` setting in MySQL and increase the timeout duration as described in the file comments. Ensure the CSV files are in the correct path as specified in the `LOAD DATA` commands.
