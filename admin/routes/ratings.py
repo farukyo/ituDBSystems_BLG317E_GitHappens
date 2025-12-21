@@ -226,16 +226,19 @@ def rating_delete_menu():
                 text("""
                     SELECT 
                         r.ratingId,
-                        COALESCE(
-                            m.movieTitle,
-                            s.seriesTitle
-                        ) AS primaryTitle
+                        r.titleId,
+                        r.averageRating,
+                        r.numVotes,
+                        COALESCE(m.movieTitle, s.seriesTitle, e.epTitle) AS primaryTitle
                     FROM ratings r
                     LEFT JOIN movies m ON r.titleId = m.movieId
                     LEFT JOIN Series s ON r.titleId = s.seriesId
+                    LEFT JOIN Episode e ON r.titleId = e.episodeId
                     WHERE 
                         m.movieTitle LIKE :q OR
-                        s.seriesTitle LIKE :q
+                        s.seriesTitle LIKE :q OR
+                        e.epTitle LIKE :q OR
+                        r.titleId LIKE :q
                     LIMIT 50
                 """),
                 {"q": f"%{query}%"}
@@ -245,20 +248,21 @@ def rating_delete_menu():
                 text("""
                     SELECT 
                         r.ratingId,
-                        COALESCE(
-                            m.movieTitle,
-                            s.seriesTitle
-                        ) AS primaryTitle
+                        r.titleId,
+                        r.averageRating,
+                        r.numVotes,
+                        COALESCE(m.movieTitle, s.seriesTitle, e.epTitle) AS primaryTitle
                     FROM ratings r
                     LEFT JOIN movies m ON r.titleId = m.movieId
                     LEFT JOIN Series s ON r.titleId = s.seriesId
-                    ORDER BY primaryTitle
+                    LEFT JOIN Episode e ON r.titleId = e.episodeId
+                    ORDER BY r.ratingId DESC
                     LIMIT 20
                 """)
             ).mappings().all()
 
     return render_template(
-        "admin/delete_generic_menu.html",
+        "admin/delete_ratings_menu.html",
         title="Ratings",
         singular="Rating",
         items=ratings,
