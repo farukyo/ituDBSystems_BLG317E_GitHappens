@@ -47,7 +47,7 @@ def movies():
             LEFT JOIN principals pr ON m.movieId = pr.titleId
             LEFT JOIN movie_genres mg ON m.movieId = mg.movieId
             LEFT JOIN genres g ON mg.genreId = g.genreId
-            LEFT JOIN githappens_users.user_likes ul ON m.movieId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'movie'
+            LEFT JOIN githappens_users.user_likes_titles ul ON m.movieId = ul.title_id AND ul.user_id = :uid
             WHERE 1=1
             """
 
@@ -92,7 +92,7 @@ def movies():
                 CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
             FROM movies m 
             LEFT JOIN ratings r ON m.movieId = r.titleId
-            LEFT JOIN githappens_users.user_likes ul ON m.movieId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'movie'
+            LEFT JOIN githappens_users.user_likes_titles ul ON m.movieId = ul.title_id AND ul.user_id = :uid
             WHERE 1=1
             """
 
@@ -158,7 +158,7 @@ def movie(movie_id):
                    CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked  
             FROM movies m
             LEFT JOIN ratings r ON m.movieId = r.titleId
-            LEFT JOIN githappens_users.user_likes ul ON m.movieId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'movie' 
+            LEFT JOIN githappens_users.user_likes_titles ul ON m.movieId = ul.title_id AND ul.user_id = :uid
             WHERE m.movieId = :movieId
         """
         result = conn.execute(text(sql), {"movieId": movie_id, "uid": uid})

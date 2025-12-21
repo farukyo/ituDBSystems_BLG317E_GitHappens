@@ -26,7 +26,7 @@ def episodes():
                    CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked  
             FROM Episode e
             LEFT JOIN Series s ON e.seriesId = s.seriesId
-            LEFT JOIN githappens_users.user_likes ul ON e.episodeId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'episode' 
+            LEFT JOIN githappens_users.user_likes_titles ul ON e.episodeId = ul.title_id AND ul.user_id = :uid
             WHERE 1=1
         """
         params = {"uid": uid}
@@ -76,8 +76,7 @@ def episodes():
 def episode_detail(episode_id):
     uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
-        # Tek karmaşık sorgu ile tüm bilgileri çek
-        # Episode + Series + Stats (scalar subquery) + Genres + Cast
+        # DÜZELTME: 'prof.professionName' yerine alt sorgu eklendi ve 'LEFT JOIN profession' kaldırıldı.
         sql = """
             SELECT 
                 e.episodeId, e.epTitle, e.runtimeMinutes, 
@@ -86,7 +85,13 @@ def episode_detail(episode_id):
                 (SELECT COUNT(DISTINCT e2.seNumber) FROM Episode e2 WHERE e2.seriesId = e.seriesId) AS total_seasons,
                 (SELECT COUNT(*) FROM Episode e3 WHERE e3.seriesId = e.seriesId) AS total_episodes,
                 g.genreName,
-                p.peopleId, p.primaryName, pr.category, pr.characters, pd.name AS professionName,
+                p.peopleId, p.primaryName, pr.category, pr.characters, 
+                (
+                    SELECT GROUP_CONCAT(pd.name SEPARATOR ', ') 
+                    FROM profession_assignments pa 
+                    JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id 
+                    WHERE pa.peopleId = p.peopleId
+                ) as professionName,
                 CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked  
             FROM Episode e
             LEFT JOIN Series s ON e.seriesId = s.seriesId
@@ -94,9 +99,8 @@ def episode_detail(episode_id):
             LEFT JOIN genres g ON sg.genreId = g.genreId
             LEFT JOIN principals pr ON pr.titleId = e.seriesId
             LEFT JOIN people p ON pr.peopleId = p.peopleId
-            LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
-            LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
-            LEFT JOIN githappens_users.user_likes ul ON e.episodeId = ul.entity_id AND ul.user_id = :uid AND ul.entity_type = 'episode' 
+            -- LEFT JOIN profession satırı buradan silindi --
+            LEFT JOIN githappens_users.user_likes_titles ul ON e.episodeId = ul.title_id AND ul.user_id = :uid
             WHERE e.episodeId = :episodeId
             ORDER BY pr.category, p.primaryName
         """

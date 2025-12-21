@@ -2,6 +2,7 @@
 # Handles series listing page with search functionality and AJAX support.
 
 from flask import Blueprint, render_template, request
+from flask_login import current_user
 from sqlalchemy import text
 from database.db import engine
 
@@ -88,14 +89,17 @@ def series():
 
 @series_bp.route("/series/<series_id>")
 def serie_detail(series_id):
+    uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
         # 1. Dizi Temel Bilgileri
         sql_series = """
-            SELECT seriesId, seriesTitle, titleType, startYear, endYear, runtimeMinutes, isAdult
-            FROM series
-            WHERE seriesId = :id
+            SELECT s.seriesId, s.seriesTitle, s.titleType, s.startYear, s.endYear, s.runtimeMinutes, s.isAdult,
+                   CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
+            FROM series s
+            LEFT JOIN githappens_users.user_likes_titles ul ON s.seriesId = ul.title_id AND ul.user_id = :uid
+            WHERE s.seriesId = :id
         """
-        series = conn.execute(text(sql_series), {"id": series_id}).fetchone()
+        series = conn.execute(text(sql_series), {"id": series_id, "uid": uid}).fetchone()
 
         if not series:
             from flask import flash, redirect, url_for
