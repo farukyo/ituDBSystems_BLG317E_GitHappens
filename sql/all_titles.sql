@@ -1,6 +1,5 @@
 -- =============================================
--- ALL_TITLES TABLE (Çatı Tablo)
--- movieId – seriesId – titleId bağlantısı için gerekli
+-- ALL_TITLES TABLE
 -- =============================================
 
 CREATE TABLE all_titles ( 

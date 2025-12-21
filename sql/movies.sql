@@ -1,6 +1,5 @@
 -- =============================================
 -- MOVIES TABLE
--- movie.genreId kaldırıldı, ara tablo Movie_Genres oluşturuldu
 -- =============================================
 
 -- Ana tablo
@@ -16,7 +15,7 @@ CREATE TABLE movies (
     ON DELETE CASCADE ON UPDATE CASCADE 
 );
 
--- Ara tablo (Many-to-Many ilişki)
+-- Ara tablo 
 CREATE TABLE Movie_Genres ( 
     movieId VARCHAR(20), 
     genreId INT, 
@@ -30,7 +29,7 @@ CREATE TABLE Movie_Genres (
     ON DELETE CASCADE 
 );
 
--- Geçici tablo (veri yükleme için)
+-- Geçici tablo
 CREATE TABLE temp_movies_load ( 
     movieId VARCHAR(20), 
     titleType VARCHAR(50), 
@@ -61,10 +60,10 @@ SELECT
     IF(isAdult = '1', TRUE, FALSE) 
 FROM temp_movies_load;
 
--- Genre ilişkilerini ara tabloya ekle (recursive CTE ile virgülle ayrılmış değerleri parse et)
+-- Genre ilişkilerini ara tabloya ekle 
 INSERT IGNORE INTO Movie_Genres (movieId, genreId)
 WITH RECURSIVE genre_split AS (
-    -- 1. Adım: İlk parçayı al (Base Case)
+    --  İlk parçayı al 
     SELECT 
         movieId,
         SUBSTRING_INDEX(genres_string, ',', 1) AS genreId_raw,
@@ -74,7 +73,7 @@ WITH RECURSIVE genre_split AS (
     
     UNION ALL
     
-    -- 2. Adım: Kalan parçaları döngüyle al (Recursive Case)
+    -- Kalan parçaları döngüyle al (Recursive Case)
     SELECT 
         movieId,
         SUBSTRING_INDEX(remainder, ',', 1),
@@ -82,7 +81,7 @@ WITH RECURSIVE genre_split AS (
     FROM genre_split
     WHERE remainder != ''
 )
--- 3. Adım: Temizle ve kaydet
+--  Temizle ve kaydet
 SELECT movieId, CAST(genreId_raw AS UNSIGNED) 
 FROM genre_split
 WHERE genreId_raw != '';
