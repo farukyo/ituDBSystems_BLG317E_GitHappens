@@ -21,7 +21,7 @@ def movies():
     uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
 
-        # GENRE LIST (HER MODDA LAZIM)
+        
         genre_sql = """
             SELECT DISTINCT g.genreName 
             FROM genres g
@@ -128,7 +128,7 @@ def movies():
 
         data = conn.execute(text(sql), params).fetchall()
 
-    # 🔹 PAGE TITLE
+    
     if view == "stats":
         page_title = "Detailed Movie Statistics"
     elif title_query:
@@ -168,7 +168,7 @@ def movie(movie_id):
         if not movie:
             flash(f"Movie with ID {movie_id} not found.")
             return redirect(url_for('movie.movies'))
-        # Film Detay sayfasında (movie.html) kullanıldığı için türleri çekelim:
+        
         genre_sql = """
             SELECT g.genreName 
             FROM movie_genres mg
@@ -178,7 +178,7 @@ def movie(movie_id):
         genre_result = conn.execute(text(genre_sql), {"movieId": movie_id})
         genres = [row[0] for row in genre_result.fetchall()]
         
-        # Rating bilgilerini stats dict'ine toplayıp template'e gönderelim
+        
         stats = {
             'averageRating': movie.averageRating,
             'numVotes': movie.numVotes
@@ -194,17 +194,17 @@ def movie(movie_id):
         like_param = f"%{movie_id}" if not str(movie_id).startswith('tt') else movie_id
         cast_result = conn.execute(cast_sql, {"id": movie_id, "like_id": like_param}).fetchall()
         
-        # Mapping kullanarak dict listesine çevir (HTML'de hata almamak için önemli)
+        
         cast = []
         for row in cast_result:
             d = dict(row._mapping)
             chars = d.get('characters')
             if chars and isinstance(chars, str):
-                # Clean up corrupted characters field by taking only the first line
+                
                 if '\n' in chars or '\r' in chars:
                     chars = chars.splitlines()[0]
                 
-                # Clean up JSON-like formatting if present
+                
                 if chars.startswith('['):
                     import json
                     try:

@@ -7,7 +7,6 @@
     <meta name="description" content="BeeMD - Discover movies, series and the people behind them">
     <title>{% block title %}BeeMD{% endblock %}</title>
 
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/beemd.png') }}">
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
@@ -15,7 +14,6 @@
 </head>
 
 <body>
-    <!-- Skip to main content for accessibility -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <div id="sidebar" class="sidebar" role="navigation" aria-label="Main navigation">
@@ -134,7 +132,6 @@
     </footer>
     {% endblock %}
 
-    <!-- Bee Loading Popup -->
     <div id="beeLoadingPopup" class="bee-loading-popup">
         <div class="bee-loading-content">
             <div class="bee-loading-text">🍯 Buzzing through the database...</div>
@@ -160,7 +157,6 @@
 
     <script>
     function toggleEntityLike(btn, event) {
-        // Tıklama olayının yukarı (satıra/linke) gitmesini engelle
         if(event) {
             event.preventDefault();
             event.stopPropagation();
@@ -180,12 +176,9 @@
         .then(response => response.text())
         .then(data => {
             if (data === "1") {
-                // Başarılıysa kalbin rengini değiştir (toggle)
                 btn.classList.toggle('liked');
             } else {
-                // Giriş yapılmamışsa veya hata varsa
                 alert("Please log in to like items.");
-                // İstersen: window.location.href = "/login";
             }
         })
         .catch(err => console.error('Like Error:', err));

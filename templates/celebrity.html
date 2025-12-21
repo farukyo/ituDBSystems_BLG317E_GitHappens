@@ -5,8 +5,8 @@
 {% block head %}
 <style>
     .celebrity-detail-page {
-        padding: 40px 0;     /* Eski haline yakın */
-        max-width: 1100px;   /* 1000px -> 1100px (Hafif genişledi) */
+        padding: 40px 0;     
+        max-width: 1100px;   
         margin: 0 auto;
     }
 
@@ -18,22 +18,22 @@
 
     .celebrity-header h1 {
         color: #d65a1a;
-        font-size: 3rem; /* 2.5rem -> 3rem (Biraz büyüdü) */
+        font-size: 3rem; 
         margin-bottom: 10px;
     }
 
-    /* KART TASARIMI (Hafif Büyütüldü) */
+    
     .celebrity-details-card {
         background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 14px; /* 12px -> 14px */
-        padding: 35px;       /* 30px -> 35px (İç boşluk biraz arttı) */
-        margin-bottom: 35px; /* Kartlar arası mesafe biraz arttı */
+        border-radius: 14px; 
+        padding: 35px;       
+        margin-bottom: 35px; 
     }
 
     .card-title {
         color: #d65a1a;
-        font-size: 1.5rem;   /* 1.2rem -> 1.5rem (Biraz büyüdü) */
+        font-size: 1.5rem;   
         font-weight: 600;
         margin-bottom: 25px;
         padding-bottom: 12px;
@@ -42,8 +42,8 @@
 
     .detail-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Sütun genişliği biraz arttı */
-        gap: 30px; /* 25px -> 30px */
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+        gap: 30px; 
     }
 
     .detail-item {
@@ -54,7 +54,7 @@
 
     .detail-label {
         color: #d65a1a;
-        font-size: 1rem;    /* 0.85rem -> 1rem (Biraz büyüdü) */
+        font-size: 1rem;    
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -62,26 +62,26 @@
 
     .detail-value {
         color: #fff;
-        font-size: 1.3rem; /* 1.1rem -> 1.3rem (Biraz büyüdü) */
+        font-size: 1.3rem; 
         line-height: 1.4;
     }
 
-    /* --- TOP RATED WORKS İÇİN ÖZEL STİLLER (Hafif Büyütüldü) --- */
+    
     .work-item {
         background: rgba(255,255,255,0.05);
-        padding: 20px;       /* 15px -> 20px */
+        padding: 20px;       
         border-radius: 10px;
         border: 1px solid rgba(255,255,255,0.1);
         transition: transform 0.2s;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        min-height: 110px; /* Minimum yükseklik biraz arttı */
+        min-height: 110px; 
     }
 
     .work-item h4 {
         margin: 0 0 12px 0;
-        font-size: 1.2rem; /* 1rem -> 1.2rem */
+        font-size: 1.2rem; 
         line-height: 1.3;
     }
 
@@ -89,16 +89,15 @@
         display: flex; 
         justify-content: space-between; 
         align-items: center;
-        font-size: 1.1rem; /* 0.85rem -> 1.1rem */
+        font-size: 1.1rem; 
         color: #aaa;
     }
 
-    /* BUTONLAR */
     .btn-back {
         display: inline-flex;
         align-items: center;
         gap: 10px;
-        padding: 14px 28px; /* Buton biraz büyüdü */
+        padding: 14px 28px; 
         background: rgba(255, 255, 255, 0.08);
         color: #fff;
         text-decoration: none;
@@ -115,7 +114,7 @@
     .like-btn {
         background: none; 
         border: none; 
-        font-size: 2.5rem; /* Kalp ikonu biraz büyüdü (2rem -> 2.5rem) */
+        font-size: 2.5rem; 
         cursor: pointer; 
         color: #555; 
         transition: transform 0.2s;
@@ -126,7 +125,6 @@
     }
     .like-btn.liked { color: #e50914; }
     .like-btn:hover { transform: scale(1.1); }
-    /* --- YENİ EKLENEN: SQL POPUP STİLLERİ --- */
     .info-btn {
         background: rgba(255, 255, 255, 0.1);
         border: none;
@@ -144,7 +142,6 @@
         color: #fff;
     }
 
-    /* --- GÜNCELLENEN SQL POPUP STİLLERİ (VS Code Teması) --- */
     .sql-popup-overlay {
     display: none;
     position: fixed;

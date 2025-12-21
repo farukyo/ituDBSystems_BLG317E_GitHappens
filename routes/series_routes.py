@@ -11,7 +11,7 @@ series_bp = Blueprint('series', __name__)
 
 @series_bp.route("/series")
 def series():
-    # 1. URL Parametrelerini Al
+    
     search_query = request.args.get('q')
     title_type = request.args.get('titleType')
     start_year = request.args.get('startYear')
@@ -19,13 +19,13 @@ def series():
     is_adult = request.args.get('isAdult')
     view = request.args.get('view')
 
-    # Kullanıcı ID'sini al (Giriş yapmamışsa -1)
+    
     uid = current_user.id if current_user.is_authenticated else -1
 
     with engine.connect() as conn:
         params = {"uid": uid}
 
-        # STATS VIEW - Basit İstatistikler (GROUP BY + COUNT)
+        
         if view == "stats":
             sql = """
             SELECT 
@@ -73,7 +73,7 @@ def series():
             LIMIT 100
             """
 
-        # NORMAL VIEW - Sophisticated Query (5 Tablo JOIN + Nested Query + GROUP BY)
+        
         else:
             sql = """
             SELECT 
@@ -120,7 +120,7 @@ def series():
                 sql += " AND isAdult = :adult"
                 params["adult"] = int(is_adult)
 
-            # Nested Query - En az 7 puana sahip dizileri filtrele
+            
             sql += """
             AND s.seriesId IN (
                 SELECT r2.titleId
@@ -130,7 +130,7 @@ def series():
             )
             """
 
-            # GROUP BY - 5 Tablo JOIN sonrası gruplandır
+            
             sql += """
             GROUP BY
                 s.seriesId,
@@ -160,7 +160,7 @@ def series():
             """
         return html_snippets
 
-    # PAGE TITLE
+    
     if view == "stats":
         page_title = "Detailed Series Statistics"
     elif search_query:
@@ -175,7 +175,7 @@ def series():
 def serie_detail(series_id):
     uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
-        # 1. Dizi Temel Bilgileri
+        
         sql_series = """
             SELECT s.seriesId, s.seriesTitle, s.titleType, s.startYear, s.endYear, s.runtimeMinutes, s.isAdult,
                    CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
@@ -190,7 +190,7 @@ def serie_detail(series_id):
             flash("Series not found.")
             return redirect(url_for('series.series'))
 
-        # 2. Türler (Genres)
+        
         sql_genres = """
             SELECT g.genreName
             FROM Series_Genres sg
@@ -199,7 +199,7 @@ def serie_detail(series_id):
         """
         genres = [r.genreName for r in conn.execute(text(sql_genres), {"id": series_id}).fetchall()]
 
-        # 3. Oyuncular (Cast) - Sadece acting categories
+        
         sql_cast = """
             SELECT p.peopleId, p.primaryName, pr.category, pr.characters
             FROM principals pr
@@ -210,16 +210,16 @@ def serie_detail(series_id):
         """
         cast_data = conn.execute(text(sql_cast), {"id": series_id}).fetchall()
         
-        # Characters JSON'ı parse et
+        
         cast = []
         for person in cast_data:
             chars = person.characters
             if chars and isinstance(chars, str):
-                # Clean up corrupted characters field by taking only the first line
+                
                 if '\n' in chars or '\r' in chars:
                     chars = chars.splitlines()[0]
                 
-                # Clean up JSON-like formatting if present
+                
                 if chars.startswith('['):
                     import json
                     try:
@@ -241,7 +241,7 @@ def serie_detail(series_id):
             })
 
 
-        # 4. İstatistikler (Seasons ve Episodes)
+        
         try:
             sql_stats = """
                 SELECT COUNT(DISTINCT seNumber) as total_seasons,
@@ -255,13 +255,13 @@ def serie_detail(series_id):
                 "total_episodes": stats_result.total_episodes if stats_result else 0
             }
         except:
-            # Episode tablosu yoksa default değer
+            
             stats = {
                 "total_seasons": 0,
                 "total_episodes": 0
             }
 
-        # 5. Rating ve Votes
+        
         sql_rating = """
             SELECT averageRating, numVotes
             FROM ratings

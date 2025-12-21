@@ -1,6 +1,3 @@
-# Celebrity Routes Module
-# Handles celebrity listing and details with 'is_liked' check.
-
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import current_user, login_required
 from sqlalchemy import text
@@ -27,7 +24,6 @@ def celebrities():
 
     with engine.connect() as conn:
         
-        # --- 1. SENARYO: FİLTRE YOKSA (EN İYİ PROJESİNE GÖRE SIRALA) ---
         if not has_filters:
             sql = """
             SELECT 
@@ -61,7 +57,7 @@ def celebrities():
         else:
             page_title = f"Results for '{search_query}'" if search_query else "Search Results"
             
-            # Ana sorguyu GROUP BY ile başlatıyoruz çünkü birden fazla meslek satırı gelecek
+            
             sql = """
                 SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, 
                        GROUP_CONCAT(DISTINCT pd.name SEPARATOR ', ') as professionName,
@@ -76,7 +72,7 @@ def celebrities():
             """
             params = {"uid": uid}
 
-            # --- FİLTRELER ---
+            
             if not search_query and not primary_letter:
                 sql += " AND p.primaryName REGEXP '^[A-Za-z]'"
                 sql += " AND CHAR_LENGTH(p.primaryName) >= 3"
@@ -85,10 +81,9 @@ def celebrities():
                 sql += " AND p.primaryName LIKE :q"
                 params["q"] = f"%{search_query}%"
 
-            # Profession filtresi artık 'pd.name' üzerinden yapılıyor
+            
             if profession_list:
-                # Burada HAVING kullanmak daha güvenli olurdu ama basitlik adına WHERE'de bırakıyoruz.
-                # Not: Bu filtre seçilen meslek dışındakileri GROUP_CONCAT'ta göstermeyebilir.
+                
                 prof_conditions = [f"pd.name LIKE :prof_{i}" for i in range(len(profession_list))]
                 for i, prof in enumerate(profession_list):
                     params[f"prof_{i}"] = f"%{prof}%"
@@ -106,7 +101,7 @@ def celebrities():
                 sql += " AND p.deathYear = :dyear"
                 params["dyear"] = int(death_filter)
 
-            # GROUP BY ekliyoruz ki kişi başına tek satır olsun
+            
             sql += " GROUP BY p.peopleId, p.primaryName, p.birthYear, p.deathYear, ul.user_id"
 
             if order_filter == "alphabetical":
@@ -140,7 +135,7 @@ def celebrity_detail(people_id):
     
     with engine.connect() as conn:
 
-        # Detay sayfasında da GROUP_CONCAT kullanıyoruz
+        
         sql_person = """
             SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, 
                    GROUP_CONCAT(DISTINCT pd.name SEPARATOR ', ') as professionName,
@@ -197,7 +192,7 @@ def like_celebrity():
     user_id = current_user.id
     
     with engine.connect() as conn:
-        # 1. Kontrol Et (Tablo: user_likes_people, Kolon: people_id)
+        
         check_sql = """
             SELECT 1 FROM githappens_users.user_likes_people 
             WHERE user_id = :uid AND people_id = :eid
@@ -205,14 +200,14 @@ def like_celebrity():
         result = conn.execute(text(check_sql), {"uid": user_id, "eid": people_id}).fetchone()
         
         if result:
-            # 2. Varsa SİL
+            
             delete_sql = """
                 DELETE FROM githappens_users.user_likes_people 
                 WHERE user_id = :uid AND people_id = :eid
             """
             conn.execute(text(delete_sql), {"uid": user_id, "eid": people_id})
         else:
-            # 3. Yoksa EKLE
+            
             insert_sql = """
                 INSERT INTO githappens_users.user_likes_people (user_id, people_id)
                 VALUES (:uid, :eid)

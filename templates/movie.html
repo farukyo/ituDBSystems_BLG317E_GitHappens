@@ -79,7 +79,7 @@
         font-weight: 600;
     }
 
-    /* Genre Tags */
+    
     .genre-tags {
         display: flex;
         flex-wrap: wrap;
@@ -95,7 +95,7 @@
         font-weight: 500;
     }
 
-    /* Cast Section */
+    
     .cast-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -162,7 +162,7 @@
         font-style: italic;
     }
 
-    /* Movie Stats */
+    
     .movie-stats {
         display: flex;
         gap: 30px;
@@ -232,32 +232,32 @@
         font-style: italic;
     }
 
-    /* --- EKLENECEK KALP BUTONU STİLİ --- */
+    
     .like-btn {
         background: none;
-        /* Arka planı şeffaf yap */
+        
         border: none;
-        /* Kenarlığı kaldır */
+        
         font-size: 2.5rem;
-        /* Boyutu başlığa uygun şekilde büyüt */
+        
         cursor: pointer;
-        /* Üzerine gelince el işareti çıksın */
+        
         color: #555;
-        /* Varsayılan renk (Gri) */
+        
         transition: transform 0.2s, color 0.2s;
         line-height: 1;
         padding: 0 0 0 15px;
-        /* Soldan biraz boşluk bırak */
+        
     }
 
     .like-btn:hover {
         transform: scale(1.1);
-        /* Üzerine gelince hafif büyüsün */
+        
     }
 
     .like-btn.liked {
         color: #e50914;
-        /* Beğenilince Kırmızı olsun */
+        
     }
 </style>
 {% endblock %}
@@ -265,7 +265,7 @@
 {% block content %}
 <div class="container movie-detail-page">
 
-    <!-- Movie Header -->
+    
     <div class="movie-header">
         <div class="movie-header">
             <div style="display: flex; align-items: center; gap: 15px;">
@@ -289,7 +289,7 @@
             {% endif %}
         </div>
 
-        <!-- Movie Details Card -->
+        
         <div class="movie-details-card">
             <h3 class="movie-title">Movie Information</h3>
             <div class="detail-grid">
@@ -360,7 +360,7 @@
             </div>
         </div>
 
-        <!-- Cast & Crew Card -->
+        
         <div class="movie-details-card">
             <h3 class="movie-title">Cast & Crew</h3>
             {% if cast %}
@@ -389,7 +389,7 @@
             {% endif %}
         </div>
 
-        <!-- Action Buttons -->
+        
         <div class="movie-actions">
             <a href="{{ url_for('movie.movies') }}" class="btn-back">
                 ← Back to Movies

@@ -80,7 +80,7 @@
         font-weight: 600;
     }
 
-    /* Genre Tags */
+    
     .genre-tags {
         display: flex;
         flex-wrap: wrap;
@@ -96,7 +96,7 @@
         font-weight: 500;
     }
 
-    /* Cast Section */
+    
     .cast-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -233,7 +233,7 @@
         font-style: italic;
     }
 
-    /* Header Title Row */
+    
     .header-title-row {
         display: flex;
         align-items: center;
@@ -244,7 +244,7 @@
         margin: 0;
     }
 
-    /* Info Button */
+    
     .info-btn {
         display: flex;
         align-items: center;
@@ -266,7 +266,7 @@
         transform: scale(1.1);
     }
 
-    /* SQL Popup Overlay */
+    
     .sql-popup-overlay {
         display: none;
         position: fixed;
@@ -374,7 +374,7 @@
 {% block content %}
 <div class="container episode-detail-page">
 
-    <!-- Episode Header with SQL Button -->
+    
     <div class="episode-header">
         <div class="header-title-row">
             <h1>{{ episode.epTitle or 'Untitled Episode' }}</h1>
@@ -401,7 +401,7 @@
         {% endif %}
     </div>
 
-    <!-- Episode Details Card -->
+    
     <div class="episode-details-card">
         <h3 class="card-title">Episode Information</h3>
         <div class="detail-grid">
@@ -453,12 +453,12 @@
         </div>
     </div>
 
-    <!-- Series Info Card -->
+    
     <div class="episode-details-card">
         <h3 class="card-title">Series Information</h3>
         <div class="detail-grid">
 
-            <!-- Genre'lar -->
+           
             <div class="detail-item">
                 <span class="detail-label">Genres</span>
                 {% if genres %}
@@ -472,7 +472,7 @@
                 {% endif %}
             </div>
 
-            <!-- Dizi İstatistikleri -->
+            
             <div class="detail-item">
                 <span class="detail-label">Series Stats</span>
                 {% if stats %}
@@ -491,7 +491,7 @@
                 {% endif %}
             </div>
 
-            <!-- Dizi Yılları -->
+            
             <div class="detail-item">
                 <span class="detail-label">Years</span>
                 <span class="detail-value">
@@ -507,7 +507,7 @@
         </div>
     </div>
 
-    <!-- Cast & Crew Card -->
+    
     <div class="episode-details-card">
         <h3 class="card-title">Cast & Crew</h3>
         {% if cast %}
@@ -537,7 +537,7 @@
         {% endif %}
     </div>
 
-    <!-- Action Buttons -->
+    
     <div class="episode-actions">
         <a href="{{ url_for('episode.episodes') }}" class="btn-back">
             ← Back to Episodes
@@ -549,7 +549,7 @@
         {% endif %}
     </div>
 
-    <!-- SQL Query Popup -->
+    
     <div class="sql-popup-overlay" id="sqlPopup">
         <div class="sql-popup">
             <div class="sql-popup-header">
@@ -569,19 +569,19 @@
 {% block scripts %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // SQL Query Popup functionality
+        
         const showSqlBtn = document.getElementById('showSqlBtn');
         const sqlPopup = document.getElementById('sqlPopup');
         const closeSqlBtn = document.getElementById('closeSqlBtn');
 
         if (showSqlBtn && sqlPopup) {
-            // Open popup
+            
             showSqlBtn.addEventListener('click', function () {
                 sqlPopup.classList.add('active');
                 document.body.style.overflow = 'hidden';
             });
 
-            // Close popup with X button
+            
             if (closeSqlBtn) {
                 closeSqlBtn.addEventListener('click', function () {
                     sqlPopup.classList.remove('active');
@@ -589,7 +589,7 @@
                 });
             }
 
-            // Close popup when clicking overlay
+            
             sqlPopup.addEventListener('click', function (e) {
                 if (e.target === sqlPopup) {
                     sqlPopup.classList.remove('active');
@@ -597,7 +597,7 @@
                 }
             });
 
-            // Close popup with Escape key
+           
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape' && sqlPopup.classList.contains('active')) {
                     sqlPopup.classList.remove('active');

@@ -13,17 +13,17 @@
 
     <form action="{{ url_for('episode.episodes') }}" method="get" id="episode-filter-form">
 
-        <!-- Filter Grid -->
+        
         <div class="filter-grid">
 
-            <!-- Episode Title -->
+            
             <div class="filter-group">
                 <label for="epTitle">Episode Title</label>
                 <input type="text" id="epTitle" name="epTitle" placeholder="Search title..."
                     value="{{ request.args.get('epTitle') or '' }}">
             </div>
 
-            <!-- Runtime Range -->
+            
             <div class="filter-group">
                 <label for="runtimeMin">Runtime (min)</label>
                 <div class="range-inputs">
@@ -35,21 +35,21 @@
                 </div>
             </div>
 
-            <!-- Series Name -->
+            
             <div class="filter-group">
                 <label for="seriesName">Series Name</label>
                 <input type="text" id="seriesName" name="seriesName" placeholder="Search series..."
                     value="{{ request.args.get('seriesName') or '' }}">
             </div>
 
-            <!-- Season Number -->
+            
             <div class="filter-group">
                 <label for="seNumber">Season Number</label>
                 <input type="number" id="seNumber" name="seNumber" placeholder="Season" min="1"
                     value="{{ request.args.get('seNumber') or '' }}">
             </div>
 
-            <!-- Episode Number -->
+           
             <div class="filter-group">
                 <label for="epNumber">Episode Number</label>
                 <input type="number" id="epNumber" name="epNumber" placeholder="Episode" min="1"
@@ -58,7 +58,7 @@
 
         </div>
 
-        <!-- Buttons -->
+        
         <div class="filter-buttons">
             <button type="submit" id="episode-filter-btn">Search</button>
             <a href="{{ url_for('episode.episodes') }}" class="btn-reset">Reset Filters</a>
@@ -80,7 +80,7 @@
         </button>
     </div>
 
-    <!-- SQL Query Popup -->
+    
     <div class="sql-popup-overlay" id="sqlPopup">
         <div class="sql-popup">
             <div class="sql-popup-header">

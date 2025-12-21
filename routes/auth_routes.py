@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
-from database.db import engine # Veritabanı bağlantısı
+from database.db import engine 
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -16,7 +16,6 @@ class User(UserMixin):
         self.dob = dob
         self.gender = gender
         self.is_admin = bool(is_admin)
-        # Orijinal değişkenlerini koruyoruz
         self.quiz_score = score
         self.liked_movies = []
         self.liked_series = []
@@ -70,13 +69,13 @@ def signup():
         gender = request.form.get("gender")
         
         with engine.connect() as conn:
-            # Email kontrolü
+           
             existing = conn.execute(text("SELECT id FROM githappens_users.users WHERE email = :email"), {"email": email}).fetchone()
             if existing:
                 flash("Email already exists.")
                 return redirect(url_for('auth.signup'))
 
-            # Kayıt (ID AUTO_INCREMENT olduğu için eklemiyoruz)
+            
             hashed_password = generate_password_hash(password)
             conn.execute(text("""
                 INSERT INTO githappens_users.users (username, email, password_hash, dob, gender) 
@@ -84,7 +83,7 @@ def signup():
             """), {"u": username, "e": email, "p": hashed_password, "d": dob, "g": gender})
             conn.commit()
             
-            # Kayıt sonrası otomatik login için kullanıcıyı tekrar çekiyoruz
+            
             u = conn.execute(text("SELECT * FROM githappens_users.users WHERE email = :email"), {"email": email}).fetchone()._mapping
             new_user = User(id=u['id'], username=u['username'], email=u['email'], password_hash=u['password_hash'])
             login_user(new_user)
