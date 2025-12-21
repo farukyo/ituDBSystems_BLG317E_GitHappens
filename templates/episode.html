@@ -378,11 +378,8 @@
     <div class="episode-header">
         <div class="header-title-row">
             <h1>{{ episode.epTitle or 'Untitled Episode' }}</h1>
-            <button class="like-btn {{ 'liked' if episode.is_liked else '' }}" 
-                    data-id="{{ episode.episodeId }}" 
-                    data-type="episode"
-                    onclick="toggleEntityLike(this, event)"
-                    style="margin-right: 10px;">
+            <button class="like-btn {{ 'liked' if episode.is_liked else '' }}" data-id="{{ episode.episodeId }}"
+                data-type="episode" onclick="toggleEntityLike(this, event)" style="margin-right: 10px;">
                 ❤
             </button>
             <button type="button" class="info-btn" id="showSqlBtn" title="Show SQL Queries">

@@ -231,24 +231,33 @@
         color: var(--muted);
         font-style: italic;
     }
+
     /* --- EKLENECEK KALP BUTONU STİLİ --- */
     .like-btn {
-        background: none;     /* Arka planı şeffaf yap */
-        border: none;         /* Kenarlığı kaldır */
-        font-size: 2.5rem;    /* Boyutu başlığa uygun şekilde büyüt */
-        cursor: pointer;      /* Üzerine gelince el işareti çıksın */
-        color: #555;          /* Varsayılan renk (Gri) */
+        background: none;
+        /* Arka planı şeffaf yap */
+        border: none;
+        /* Kenarlığı kaldır */
+        font-size: 2.5rem;
+        /* Boyutu başlığa uygun şekilde büyüt */
+        cursor: pointer;
+        /* Üzerine gelince el işareti çıksın */
+        color: #555;
+        /* Varsayılan renk (Gri) */
         transition: transform 0.2s, color 0.2s;
         line-height: 1;
-        padding: 0 0 0 15px;  /* Soldan biraz boşluk bırak */
+        padding: 0 0 0 15px;
+        /* Soldan biraz boşluk bırak */
     }
 
     .like-btn:hover {
-        transform: scale(1.1); /* Üzerine gelince hafif büyüsün */
+        transform: scale(1.1);
+        /* Üzerine gelince hafif büyüsün */
     }
 
     .like-btn.liked {
-        color: #e50914;       /* Beğenilince Kırmızı olsun */
+        color: #e50914;
+        /* Beğenilince Kırmızı olsun */
     }
 </style>
 {% endblock %}
@@ -259,144 +268,143 @@
     <!-- Movie Header -->
     <div class="movie-header">
         <div class="movie-header">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <h1 style="margin: 0;">{{ movie.title or movie.movieTitle or 'Movie' }}</h1>
-            
-            <button class="like-btn {{ 'liked' if movie.is_liked else '' }}" 
-                    data-id="{{ movie.movieId }}" 
-                    data-type="movie"
-                    onclick="toggleEntityLike(this, event)">
-                ❤
-            </button>
-        </div>
-        {% if movie.originalTitle or movie.tagline %}
-        <p class="movie-info">
-            {% if movie.originalTitle and movie.originalTitle != (movie.title or movie.movieTitle) %}
-            Original: {{ movie.originalTitle }}
-            {% endif %}
-            {% if movie.tagline %}
-            {% if movie.originalTitle and movie.originalTitle != (movie.title or movie.movieTitle) %} — {% endif %}
-            {{ movie.tagline }}
-            {% endif %}
-        </p>
-        {% endif %}
-    </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <h1 style="margin: 0;">{{ movie.title or movie.movieTitle or 'Movie' }}</h1>
 
-    <!-- Movie Details Card -->
-    <div class="movie-details-card">
-        <h3 class="movie-title">Movie Information</h3>
-        <div class="detail-grid">
-
-            <div class="detail-item">
-                <span class="detail-label">Movie ID</span>
-                <span class="detail-value">{{ movie.movieId or movie.tconst or 'N/A' }}</span>
+                <button class="like-btn {{ 'liked' if movie.is_liked else '' }}" data-id="{{ movie.movieId }}"
+                    data-type="movie" onclick="toggleEntityLike(this, event)">
+                    ❤
+                </button>
             </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Title</span>
-                <span class="detail-value highlight">{{ movie.title or movie.movieTitle or 'N/A' }}</span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Year</span>
-                <span class="detail-value">{{ movie.startYear or movie.releaseYear or 'N/A' }}</span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Runtime</span>
-                <span class="detail-value">
-                    {% if movie.runtimeMinutes %}
-                    {{ movie.runtimeMinutes }} minutes
-                    {% else %}
-                    N/A
-                    {% endif %}
-                </span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Genres</span>
-                <span class="detail-value">
-                    {% if genres %}
-                    <div class="genre-tags">
-                        {% for genre in genres %}
-                        <span class="genre-tag">{{ genre }}</span>
-                        {% endfor %}
-                    </div>
-                    {% else %}
-                    <span class="no-data">No genres available</span>
-                    {% endif %}
-                </span>
-            </div>
-
-            <div class="detail-item">
-                <span class="detail-label">Stats</span>
-                {% if stats %}
-                <div class="movie-stats">
-                    {% if stats.averageRating %}
-                    <div class="stat-item">
-                        <span class="stat-number">{{ stats.averageRating | float | round(1) }}</span>
-                        <span class="stat-label">Rating</span>
-                    </div>
-                    {% endif %}
-                    {% if stats.numVotes %}
-                    <div class="stat-item">
-                        <span class="stat-number">{{ "{:,}".format(stats.numVotes) }}</span>
-                        <span class="stat-label">Votes</span>
-                    </div>
-                    {% endif %}
-                </div>
-                {% else %}
-                <span class="no-data">No stats available</span>
+            {% if movie.originalTitle or movie.tagline %}
+            <p class="movie-info">
+                {% if movie.originalTitle and movie.originalTitle != (movie.title or movie.movieTitle) %}
+                Original: {{ movie.originalTitle }}
                 {% endif %}
-            </div>
-
+                {% if movie.tagline %}
+                {% if movie.originalTitle and movie.originalTitle != (movie.title or movie.movieTitle) %} — {% endif %}
+                {{ movie.tagline }}
+                {% endif %}
+            </p>
+            {% endif %}
         </div>
-    </div>
 
-    <!-- Cast & Crew Card -->
-    <div class="movie-details-card">
-        <h3 class="movie-title">Cast & Crew</h3>
-        {% if cast %}
-        <div class="cast-grid">
-            {% for person in cast %}
-            <div class="cast-item">
-                <div class="cast-avatar">
-                    {{ person.primaryName[0] if person.primaryName else '?' }}
+        <!-- Movie Details Card -->
+        <div class="movie-details-card">
+            <h3 class="movie-title">Movie Information</h3>
+            <div class="detail-grid">
+
+                <div class="detail-item">
+                    <span class="detail-label">Movie ID</span>
+                    <span class="detail-value">{{ movie.movieId or movie.tconst or 'N/A' }}</span>
                 </div>
-                <div class="cast-info">
-                    <div class="cast-name">
-                        <a href="/celebrities?q={{ person.primaryName }}">{{ person.primaryName }}</a>
+
+                <div class="detail-item">
+                    <span class="detail-label">Title</span>
+                    <span class="detail-value highlight">{{ movie.title or movie.movieTitle or 'N/A' }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Year</span>
+                    <span class="detail-value">{{ movie.startYear or movie.releaseYear or 'N/A' }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Runtime</span>
+                    <span class="detail-value">
+                        {% if movie.runtimeMinutes %}
+                        {{ movie.runtimeMinutes }} minutes
+                        {% else %}
+                        N/A
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Genres</span>
+                    <span class="detail-value">
+                        {% if genres %}
+                        <div class="genre-tags">
+                            {% for genre in genres %}
+                            <span class="genre-tag">{{ genre }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <span class="no-data">No genres available</span>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Stats</span>
+                    {% if stats %}
+                    <div class="movie-stats">
+                        {% if stats.averageRating %}
+                        <div class="stat-item">
+                            <span class="stat-number">{{ stats.averageRating | float | round(1) }}</span>
+                            <span class="stat-label">Rating</span>
+                        </div>
+                        {% endif %}
+                        {% if stats.numVotes %}
+                        <div class="stat-item">
+                            <span class="stat-number">{{ "{:,}".format(stats.numVotes) }}</span>
+                            <span class="stat-label">Votes</span>
+                        </div>
+                        {% endif %}
                     </div>
-                    <div class="cast-role">{{ person.category or 'Unknown role' }}</div>
-                    {% if person.characters and person.characters != '\\N' and person.characters != '0' and person.characters != '' %}
-                    <div class="cast-character">as {{ person.characters | replace('[', '') | replace(']', '') |
-                        replace('"', '') }}</div>
+                    {% else %}
+                    <span class="no-data">No stats available</span>
                     {% endif %}
                 </div>
+
             </div>
-            {% endfor %}
         </div>
-        {% else %}
-        <p class="no-data">No cast information available for this movie.</p>
-        {% endif %}
+
+        <!-- Cast & Crew Card -->
+        <div class="movie-details-card">
+            <h3 class="movie-title">Cast & Crew</h3>
+            {% if cast %}
+            <div class="cast-grid">
+                {% for person in cast %}
+                <div class="cast-item">
+                    <div class="cast-avatar">
+                        {{ person.primaryName[0] if person.primaryName else '?' }}
+                    </div>
+                    <div class="cast-info">
+                        <div class="cast-name">
+                            <a href="/celebrities?q={{ person.primaryName }}">{{ person.primaryName }}</a>
+                        </div>
+                        <div class="cast-role">{{ person.category or 'Unknown role' }}</div>
+                        {% if person.characters and person.characters != '\\N' and person.characters != '0' and
+                        person.characters != '' %}
+                        <div class="cast-character">as {{ person.characters | replace('[', '') | replace(']', '') |
+                            replace('"', '') }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="no-data">No cast information available for this movie.</p>
+            {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="movie-actions">
+            <a href="{{ url_for('movie.movies') }}" class="btn-back">
+                ← Back to Movies
+            </a>
+
+            {% if movie.imdb_url %}
+            <a href="{{ movie.imdb_url }}" class="btn-primary" target="_blank" rel="noopener">
+                View on IMDB
+            </a>
+            {% elif movie.externalUrl %}
+            <a href="{{ movie.externalUrl }}" class="btn-primary" target="_blank" rel="noopener">
+                View External
+            </a>
+            {% endif %}
+        </div>
+
     </div>
-
-    <!-- Action Buttons -->
-    <div class="movie-actions">
-        <a href="{{ url_for('movie.movies') }}" class="btn-back">
-            ← Back to Movies
-        </a>
-
-        {% if movie.imdb_url %}
-        <a href="{{ movie.imdb_url }}" class="btn-primary" target="_blank" rel="noopener">
-            View on IMDB
-        </a>
-        {% elif movie.externalUrl %}
-        <a href="{{ movie.externalUrl }}" class="btn-primary" target="_blank" rel="noopener">
-            View External
-        </a>
-        {% endif %}
-    </div>
-
-</div>
-{% endblock %}
+    {% endblock %}
