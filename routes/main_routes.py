@@ -132,12 +132,11 @@ def index():
                     p.primaryName,
                     l.numLikes
                 FROM (
-                    SELECT entity_id, COUNT(*) as numLikes
-                    FROM githappens_users.user_likes
-                    WHERE entity_type = 'person'
-                    GROUP BY entity_id
+                    SELECT people_id, COUNT(*) as numLikes
+                    FROM githappens_users.user_likes_people
+                    GROUP BY people_id
                 ) l
-                JOIN people p ON l.entity_id = p.peopleId
+                JOIN people p ON l.people_id = p.peopleId
                 LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
                 LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
                 WHERE (pd.name LIKE '%actor%' OR pd.name LIKE '%actress%')
@@ -298,16 +297,16 @@ def recommend():
                 SELECT g.genreId, g.genreName, COUNT(*) as genre_count
                 FROM (
                     SELECT mg.genreId
-                    FROM githappens_users.user_likes ul
-                    JOIN Movie_Genres mg ON ul.entity_id = mg.movieId
-                    WHERE ul.user_id = :uid AND ul.entity_type = 'movie'
+                    FROM githappens_users.user_likes_titles ul
+                    JOIN Movie_Genres mg ON ul.title_id = mg.movieId
+                    WHERE ul.user_id = :uid
                     
                     UNION ALL
                     
                     SELECT sg.genreId
-                    FROM githappens_users.user_likes ul
-                    JOIN Series_Genres sg ON ul.entity_id = sg.seriesId
-                    WHERE ul.user_id = :uid AND ul.entity_type = 'serie'
+                    FROM githappens_users.user_likes_titles ul
+                    JOIN Series_Genres sg ON ul.title_id = sg.seriesId
+                    WHERE ul.user_id = :uid
                 ) as user_genres
                 JOIN genres g ON user_genres.genreId = g.genreId
                 GROUP BY g.genreId, g.genreName
@@ -341,7 +340,7 @@ def recommend():
                 JOIN ratings r ON m.movieId = r.titleId
                 WHERE mg.genreId IN ({ids_str})
                 AND m.movieId NOT IN (
-                    SELECT entity_id FROM githappens_users.user_likes WHERE user_id = :uid AND entity_type = 'movie'
+                    SELECT title_id FROM githappens_users.user_likes_titles WHERE user_id = :uid
                 )
                 AND r.numVotes > 1000
                 {year_condition}
@@ -360,7 +359,7 @@ def recommend():
                 JOIN ratings r ON s.seriesId = r.titleId
                 WHERE sg.genreId IN ({ids_str})
                 AND s.seriesId NOT IN (
-                    SELECT entity_id FROM githappens_users.user_likes WHERE user_id = :uid AND entity_type = 'serie'
+                    SELECT title_id FROM githappens_users.user_likes_titles WHERE user_id = :uid
                 )
                 AND r.numVotes > 1000
                 {series_year_condition}
