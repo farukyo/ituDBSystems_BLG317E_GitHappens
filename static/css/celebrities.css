@@ -1,10 +1,10 @@
-/* Celebrities Page Specific Styles */
+
 
 .celebrities-page h1 {
     margin-bottom: 20px;
 }
 
-/* --- Search Bar --- */
+
 .search-box {
     display: flex;
     gap: 10px;
@@ -29,7 +29,7 @@
     font-weight: bold;
 }
 
-/* --- Filters --- */
+
 .filters {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -107,7 +107,7 @@
 }
 
 
-/* --- RESULTS HEADER & INFO BUTTON (Episodes Style) --- */
+
 .results-header {
     display: flex;
     align-items: center;
@@ -137,12 +137,12 @@
 }
 
 .info-btn:hover {
-    background: #e67e22; /* Turuncu vurgu */
+    background: #e67e22; 
     color: #fff;
     transform: scale(1.1);
 }
 
-/* --- SQL POPUP OVERLAY --- */
+
 .sql-popup-overlay {
     display: none;
     position: fixed;

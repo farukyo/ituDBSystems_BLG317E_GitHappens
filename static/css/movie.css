@@ -1,4 +1,4 @@
-/* Movie Detail Page Styles */
+
 :root {
     --bg: #0f1724;
     --card: #0f1724;
@@ -6,19 +6,19 @@
     --muted: rgba(255, 255, 255, 0.45);
 }
 
-/* Container */
+
 .container {
     max-width: 1100px;
     margin: 0 auto;
     padding: 24px;
 }
 
-/* Page */
+
 .movie-detail-page {
     padding: 36px 0;
 }
 
-/* Header */
+
 .movie-header {
     margin-bottom: 24px;
 }
@@ -35,7 +35,7 @@
     font-size: 1rem;
 }
 
-/* Card */
+
 .movie-details-card {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -44,7 +44,7 @@
     margin-bottom: 20px;
 }
 
-/* Section Title */
+
 .movie-title {
     margin: 0 0 18px 0;
     color: #cfe6ff;
@@ -54,7 +54,7 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Grid for details */
+
 .detail-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -86,7 +86,7 @@
     font-weight: 700;
 }
 
-/* Genres */
+
 .genre-tags {
     display: flex;
     flex-wrap: wrap;
@@ -102,7 +102,7 @@
     font-weight: 600;
 }
 
-/* Stats */
+
 .movie-stats {
     display: flex;
     gap: 22px;
@@ -196,7 +196,7 @@
     font-style: italic;
 }
 
-/* Actions */
+
 .movie-actions {
     display: flex;
     gap: 12px;
@@ -234,13 +234,13 @@
     background: #d65a1a;
 }
 
-/* Fallback text */
+
 .no-data {
     color: var(--muted);
     font-style: italic;
 }
 
-/* Responsive */
+
 @media (max-width:1000px) {
     .detail-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -285,9 +285,7 @@
     }
 }
 
-/* -----------------------------------------------------------------------
-   VIEW SELECTOR BUTTONS
-------------------------------------------------------------------------*/
+
 .view-selector {
     display: flex;
     gap: 10px;

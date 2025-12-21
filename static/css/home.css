@@ -1,8 +1,4 @@
-/* -----------------------------------------
-   HOME PAGE ONLY
-------------------------------------------*/
 
-/* Tilted Background Tiles - Full page coverage with 3 large rows */
 .tilted-bg {
     position: fixed;
     top: -20%;
@@ -66,7 +62,7 @@
     }
 }
 
-/* Hero Section */
+
 .hero {
     position: relative;
     padding: 80px 0;
@@ -112,7 +108,7 @@
     gap: 12px;
 }
 
-/* Buttons */
+
 .btn {
     display: inline-block;
     padding: 12px 20px;
@@ -140,7 +136,7 @@
     box-shadow: 0 8px 32px rgba(233, 96, 26, 0.4);
 }
 
-/* Floating Posters - Asymmetric layout */
+
 .hero-art {
     width: 380px;
     height: 400px;
@@ -203,7 +199,7 @@
     z-index: 1;
 }
 
-/* Featured Section */
+
 .featured {
     padding: 40px 0;
     color: #cfe6ff;
@@ -234,7 +230,7 @@
     box-shadow: 0 12px 32px rgba(233, 96, 26, 0.25);
 }
 
-/* Responsive design for home page */
+
 @media (max-width: 992px) {
     .hero-art {
         width: 300px;

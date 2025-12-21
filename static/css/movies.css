@@ -1,9 +1,4 @@
-/* -----------------------------------------------------------------------
-   MOVIES PAGE COMPLETE STYLES
-   (Eski kodları silip bunu yapıştırın)
-------------------------------------------------------------------------*/
 
-/* --- GENEL AYARLAR --- */
 .episodes-page {
     padding: 20px 0;
     color: #fff;
@@ -29,20 +24,18 @@ hr {
     margin: 30px 0;
 }
 
-/* -----------------------------------------------------------------------
-   1. FİLTRELEME ALANI (ÜST KISIM)
-------------------------------------------------------------------------*/
+
 .search-form {
     width: 100%;
 }
 
 .filter-grid {
     display: grid;
-    /* 5 Eşit sütun: Title, Genre, Year, Rating, Buttons */
+    
     grid-template-columns: repeat(5, 1fr);
     gap: 15px;
     align-items: end;
-    /* Etiketler ve kutuları alt hizaya getirir */
+    
 }
 
 .filter-group {
@@ -54,37 +47,37 @@ hr {
 .filter-group label {
     font-size: 0.85rem;
     color: #cfe6ff;
-    /* Hafif mavi etiket rengi */
+    
     font-weight: 600;
     margin-left: 2px;
 }
 
-/* Input ve Select Kutuları */
+
 .filter-group input,
 .filter-group select {
     width: 100%;
     padding: 10px 12px;
     background: #1a1f2e;
-    /* Koyu arka plan */
+    
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 6px;
     color: #fff;
     font-size: 14px;
     box-sizing: border-box;
-    /* Padding taşmasını önler */
+    
     transition: border-color 0.2s;
     height: 42px;
-    /* Tüm kutuları aynı yükseklikte tut */
+    
 }
 
 .filter-group input:focus,
 .filter-group select:focus {
     outline: none;
     border-color: #e9601a;
-    /* Odaklanınca turuncu */
+
 }
 
-/* Dropdown ok işareti (Select) */
+
 .filter-group select {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -98,7 +91,7 @@ hr {
     background: #1a1f2e;
 }
 
-/* Range Input (Rating Min-Max) */
+
 .range-inputs {
     display: flex;
     align-items: center;
@@ -109,12 +102,12 @@ hr {
     color: rgba(255, 255, 255, 0.3);
 }
 
-/* Butonlar */
+
 .filter-buttons {
     display: flex;
     gap: 10px;
     height: 42px;
-    /* Inputlarla aynı yükseklik */
+    
 }
 
 .filter-buttons button {
@@ -154,12 +147,7 @@ hr {
     color: #fff;
 }
 
-/* -----------------------------------------------------------------------
-   2. TABLO YAPISI (ALT KISIM)
-------------------------------------------------------------------------*/
 
-/* Tablo Başlığı ve Satırlar İçin ORTAK Grid Yapısı */
-/* Tabloyu 6 sütuna sabitliyoruz: Title | Year | Rating | Genre | Runtime | Like */
 .movie-grid-layout {
     display: grid !important;
     grid-template-columns: 3fr 80px 80px 1.5fr 100px 60px !important;
@@ -171,7 +159,7 @@ hr {
 .episode-table-header.movie-grid-layout {
     background: rgba(255, 255, 255, 0.05);
     border-bottom: 2px solid #f5c518;
-    /* Sarı çizgi */
+    
     font-weight: bold;
     color: #cfe6ff;
     text-transform: uppercase;
@@ -197,7 +185,7 @@ hr {
     }
 }
 
-/* Like Butonu Stili */
+
 .like-btn {
     background: none;
     border: none;
@@ -217,9 +205,7 @@ hr {
     color: #e50914;
 }
 
-/* Kırmızı Kalp */
 
-/* Başlık Satırı */
 .episode-table-header {
     background: rgba(255, 255, 255, 0.05);
     font-weight: 700;
@@ -231,7 +217,7 @@ hr {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Film Satırları */
+
 .episode-item {
     background: rgba(255, 255, 255, 0.02);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -247,21 +233,19 @@ hr {
     transform: translateY(-1px);
 }
 
-/* --- HÜCRE VE LİNK STİLLERİ --- */
 
-/* Film Başlığı Linki (Altı çizili olmasın) */
 .episode-title-link {
     color: #e9601a;
-    /* Accent renk */
+    
     text-decoration: none;
-    /* ÇİZGİYİ KALDIRIR */
+    
     font-weight: 600;
     font-size: 1.05rem;
     display: block;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    /* Çok uzun isimleri ... yapar */
+    
 }
 
 .episode-title-link:hover {
@@ -269,7 +253,7 @@ hr {
     color: #ff7a3d;
 }
 
-/* Diğer Sütun Yazıları */
+
 .col-year,
 .col-rating,
 .col-runtime {
@@ -277,7 +261,7 @@ hr {
     font-size: 0.95rem;
 }
 
-/* Genre (Tür) Badges */
+
 .col-genre span {
     display: inline-block;
     color: #7eb8ff;
@@ -288,7 +272,7 @@ hr {
     max-width: 100%;
 }
 
-/* Sonuç Bulunamadı */
+
 .no-results {
     text-align: center;
     padding: 60px 20px;
@@ -303,9 +287,7 @@ hr {
     margin-bottom: 5px;
 }
 
-/* -----------------------------------------------------------------------
-   3. MOBİL UYUMLULUK
-------------------------------------------------------------------------*/
+
 @media (max-width: 1024px) {
 
     /* Filtreleri 2 sütuna düşür */
