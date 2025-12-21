@@ -1,0 +1,59 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+
+<h2>Assign Professions to Person</h2>
+
+<form method="post">
+    <label>Person Name</label><br>
+    <input type="text" name="personName" id="personName" placeholder="Enter person's full name" required><br><br>
+
+    <button type="button" onclick="loadCurrentProfessions()">Load Current Professions</button>
+    <br><br>
+
+    <fieldset>
+        <legend>Select Professions:</legend>
+        {% for prof in professions %}
+        <label>
+            <input type="checkbox" name="professions" value="{{ prof.professionId }}" class="profession-checkbox" {% if
+                prof.professionId in current_professions %}checked{% endif %}>
+            {{ prof.professionName }}
+        </label><br>
+        {% endfor %}
+    </fieldset>
+    <br>
+
+    <button type="submit">Save Assignments</button>
+    <a href="{{ url_for('admin.professions_menu') }}">Cancel</a>
+</form>
+
+<script>
+    function loadCurrentProfessions() {
+        const personName = document.getElementById('personName').value;
+        if (!personName) {
+            alert('Please enter a person name first');
+            return;
+        }
+
+        // AJAX call to get current professions
+        fetch(`/admin/professions/current?name=${encodeURIComponent(personName)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Uncheck all
+                document.querySelectorAll('.profession-checkbox').forEach(cb => {
+                    cb.checked = false;
+                });
+
+                // Check current professions
+                data.professionIds.forEach(id => {
+                    const checkbox = document.querySelector(`input[value="${id}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            })
+            .catch(err => {
+                alert('Person not found or error loading data');
+                console.error(err);
+            });
+    }
+</script>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+
+<h2>Delete User</h2>
+
+<form method="post" style="margin-bottom: 20px;">
+    <input type="text" name="search" placeholder="Search by username or email"
+        value="{{ request.form.get('search', '') }}">
+    <button type="submit">Search</button>
+</form>
+
+<table border="1" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Score</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.id }}</td>
+            <td>{{ u.username }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.score }}</td>
+            <td>
+                <form method="post" action="{{ url_for('admin.user_delete', user_id=u.id) }}"
+                    onsubmit="return confirm('Delete user {{ u.username }}?');">
+                    <button type="submit" style="background: red; color: white;">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

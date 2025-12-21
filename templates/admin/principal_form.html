@@ -1,0 +1,33 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+
+<h2>{{ "Edit" if principal else "New" }} Principal</h2>
+
+<form method="post">
+
+  {% if not principal %}
+    <label>Title Name</label><br>
+    <input type="text" name="titleName" placeholder="Enter movie or series title" required><br><br>
+
+    <label>People Name</label><br>
+    <input type="text" name="peopleName" placeholder="Enter person name" required><br><br>
+  {% else %}
+    <strong>Title ID:</strong> {{ principal.titleId }}<br>
+    <strong>People ID:</strong> {{ principal.peopleId }}<br><br>
+  {% endif %}
+
+  <label>Category</label><br>
+  <input type="text" name="category"
+         value="{{ principal.category if principal else '' }}"><br><br>
+
+  <label>Job</label><br>
+  <input type="text" name="job"
+         value="{{ principal.job if principal else '' }}"><br><br>
+
+  <label>Characters</label><br>
+  <textarea name="characters">{{ principal.characters if principal else '' }}</textarea><br><br>
+
+  <button type="submit">Save</button>
+</form>
+
+{% endblock %}

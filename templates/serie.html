@@ -39,6 +39,10 @@
     .detail-label { color: #cfe6ff; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
     .detail-value { color: #fff; font-size: 1.1rem; }
     .detail-value.highlight { color: var(--accent); font-weight: 600; }
+    
+    /* Override movie.css col-runtime for this page - already using Start Year */
+    .col-runtime::before { content: ""; }
+    .detail-grid .col-runtime::before { content: ""; }
 
     .genre-tags { display: flex; flex-wrap: wrap; gap: 8px; }
     .genre-tag {
@@ -105,9 +109,9 @@
         <div class="detail-grid">
 
             <div class="detail-item">
-                <span class="detail-label">Runtime</span>
+                <span class="detail-label">Start Year</span>
                 <span class="detail-value">
-                    {{ series.runtimeMinutes }} min / ep
+                    {{ series.startYear if series.startYear else 'N/A' }}
                 </span>
             </div>
 
@@ -144,25 +148,25 @@
             </div>
 
             <div class="detail-item">
-                <span class="detail-label">Stats</span>
-                {% if rating %}
-                <div class="movie-stats">
+                <span class="detail-label">IMDb Rating</span>
+                <span class="detail-value highlight">
                     {% if rating.rating %}
-                    <div class="stat-item">
-                        <span class="stat-number">{{ rating.rating | float | round(1) }}</span>
-                        <span class="stat-label">Rating</span>
-                    </div>
+                        {{ rating.rating | float | round(1) }}/10
+                    {% else %}
+                        N/A
                     {% endif %}
+                </span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Votes</span>
+                <span class="detail-value">
                     {% if rating.votes %}
-                    <div class="stat-item">
-                        <span class="stat-number">{{ "{:,}".format(rating.votes) }}</span>
-                        <span class="stat-label">Votes</span>
-                    </div>
+                        {{ "{:,}".format(rating.votes) }}
+                    {% else %}
+                        N/A
                     {% endif %}
-                </div>
-                {% else %}
-                <span class="no-data">No stats available</span>
-                {% endif %}
+                </span>
             </div>
 
         </div>
@@ -181,9 +185,9 @@
                     <div class="cast-name">
                         <a href="/celebrities?q={{ person.primaryName }}">{{ person.primaryName }}</a>
                     </div>
-                    <div class="cast-role">{{ person.category }}</div>
-                    {% if person.characters and person.characters != '\\N' %}
-                    <div class="cast-character">as {{ person.characters | replace('[', '') | replace(']', '') | replace('"', '') }}</div>
+                    <div class="cast-role">{{ person.category | title }}</div>
+                    {% if person.characters %}
+                    <div class="cast-character">as {{ person.characters }}</div>
                     {% endif %}
                 </div>
             </div>

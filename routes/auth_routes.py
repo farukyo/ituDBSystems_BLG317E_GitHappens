@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import UserMixin, login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import text
 from database.db import engine # Veritabanı bağlantısı
 
@@ -22,7 +23,7 @@ class User(UserMixin):
         self.liked_actors = []
 
     def check_password(self, password):
-        return self.password_hash == password
+        return check_password_hash(self.password_hash, password)
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
@@ -75,10 +76,11 @@ def signup():
                 return redirect(url_for('auth.signup'))
 
             # Kayıt (ID AUTO_INCREMENT olduğu için eklemiyoruz)
+            hashed_password = generate_password_hash(password)
             conn.execute(text("""
                 INSERT INTO githappens_users.users (username, email, password_hash, dob, gender) 
                 VALUES (:u, :e, :p, :d, :g)
-            """), {"u": username, "e": email, "p": password, "d": dob, "g": gender})
+            """), {"u": username, "e": email, "p": hashed_password, "d": dob, "g": gender})
             conn.commit()
             
             # Kayıt sonrası otomatik login için kullanıcıyı tekrar çekiyoruz
