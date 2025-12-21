@@ -15,3 +15,12 @@ INSERT INTO githappens_users.users (
     1, -- is_admin: 1 (Admin yetkisi verildi)
     0
 );
+
+
+SET SQL_SAFE_UPDATES = 0; -- Korumayı kapat
+
+UPDATE users
+SET is_admin = 1
+WHERE username = 'adminfaruk';
+
+SET SQL_SAFE_UPDATES = 1; -- Korumayı tekrar aç
