@@ -1,0 +1,698 @@
+\documentclass[12pt,a4paper]{article}
+
+% ---------- Page & typography ----------
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\linespread{1.3}
+\setlength{\parindent}{1.25em}
+\setlength{\parskip}{0.25em}
+
+% ---------- Figures, tables ----------
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% ---------- Lists ----------
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*}
+\setlist[enumerate]{leftmargin=*}
+
+% ---------- Links ----------
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+% ---------- Code blocks ----------
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  frame=single,
+  tabsize=4,
+  breaklines=true,
+  showstringspaces=false,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red}
+}
+\lstdefinelanguage{SQL}{
+  keywords={SELECT,FROM,WHERE,JOIN,LEFT,RIGHT,INNER,OUTER,ON,GROUP,BY,ORDER,HAVING,INSERT,INTO,VALUES,UPDATE,SET,DELETE,CREATE,TABLE,PRIMARY,KEY,FOREIGN,REFERENCES,AND,OR,NOT,DISTINCT,LIMIT,AS,COUNT,AVG,MIN,MAX,SUM},
+  sensitive=false,
+  morecomment=[l]{--},
+  morestring=[b]'
+}
+
+\renewcommand{\refname}{REFERENCES}
+
+\begin{document}
+
+% =========================================================
+% Cover Page (smaller font than before)
+% =========================================================
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    
+    {\Huge \bfseries Database Systems Course Term Project Report \par}
+    \vspace{1.5cm}
+    
+    {\Large BLG317E - Database Systems \par}
+    \vspace{0.5cm}
+    
+    {\Large Istanbul Technical University \par}
+    \vspace{2cm}
+    
+    {\large
+    Team Members: \\
+    Eyl\"ul Ebrar G\"ulbeyaz - 820230304 \\
+    Faruk Yi\u{g}it Olu\c{s}an - 820230308 \\
+    Ceyda Nur Akalın - 820230311 \\
+    Turgut Emre S\"urenk\"ok - 820230322 \\
+    \c{S}evval Hayyar - 820230338
+    \par}
+    
+    \vspace{1.5cm}
+    
+    {\large
+    Instructor: Ali \c{C}akmak \par}
+
+    {\large
+    TA: Elif Yıldırım \par}
+    
+    \vfill
+    
+    {\large
+    FALL 2025--2026 \par}
+\end{titlepage}
+
+
+% =========================================================
+% TOC
+% =========================================================
+\thispagestyle{empty}
+\setcounter{tocdepth}{3}
+\tableofcontents
+\clearpage
+\setcounter{page}{1}
+
+% =========================================================
+\section{Introduction}
+BEEMD (Bee Movie Database) is a database-driven web application built on top of a relational schema derived from the IMDb Non-Commercial dataset. The goal of the project is to provide an interactive and social platform where users can browse movies,
+series, episodes, and people; perform filtered searches, view detail pages, get personalized recommendations and compete in AI-powered quizzes.
+
+This report describes the dataset and preprocessing pipeline, the database design (ER model and normalization), the
+configuration and loading process, website navigation and features, representative SQL queries, team contributions, and
+the main difficulties encountered during development.
+
+% =========================================================
+\section{Technologies Used}
+\subsection{Relational DBMS / Tool}
+\begin{itemize}
+  \item \textbf{RDBMS:} MySQL
+  \item \textbf{Import/Administration:} SQL scripts are under \texttt{/sql} folder, used bulk loading files via \texttt{LOAD DATA} commands.
+\end{itemize}
+
+\subsection{Programming Language and Framework}
+\begin{itemize}
+  \item \textbf{Backend:} Python (Flask, Flask-Login for authentication)
+  \item \textbf{DB Layer:} SQLAlchemy (Core) with PyMySQL driver (executing raw SQL queries)
+  \item \textbf{Frontend:} HTML5, CSS3, JavaScript (Jinja2 templates)
+  \item \textbf{Data Processing:} Pandas, NumPy (used for dataset preprocessing)
+  \item \textbf{AI Features:} Groq API (for quiz generation)
+\end{itemize}
+
+% =========================================================
+\section{Dataset}
+\subsection{Dataset Source}
+We used the \textbf{IMDb Non-Commercial Dataset} as the primary source:
+\begin{itemize}
+  \item \url{https://developer.imdb.com/non-commercial-datasets/}
+\end{itemize}
+
+\subsection{Dataset Outline (Tables)}
+Our schema is based on a subset of IMDb entities, organized into relational tables such as:
+\texttt{all\_titles}, \texttt{movies}, \texttt{series}, \texttt{episode}, \texttt{people}, \texttt{ratings}, \texttt{principals},
+\texttt{genres}, and the junction tables \texttt{movie\_genres} and \texttt{series\_genres}. In addition, we implemented a separate
+user subsystem database for authentication, likes, and suggestions.
+
+% =========================================================
+\subsection{Preprocessing Pipeline}
+To import large IMDb data reliably into MySQL, we implemented a preprocessing pipeline using Python scripts:
+\begin{itemize}
+  \item Converted IMDb \textbf{TSV} files to \textbf{CSV} (handling large fields and providing a progress indicator).
+  \item Split titles into \textbf{movies} and \textbf{series} using \texttt{titleType}.
+  \item Built a \textbf{genre dimension table} and mapped genre names to \textbf{foreign keys}.
+  \item Dropped unnecessary columns to reduce import time and storage.
+  \item Filled empty numeric cells (e.g., with \texttt{0}) to prevent MySQL import failures.
+  \item Cleaned the \texttt{characters} field in \texttt{principals} (removing brackets/quotes).
+  \item Split very large principals data into chunks (1M rows) and generated SQL loaders for batch import.
+\end{itemize}
+
+% =========================================================
+\section{Database Design}
+\subsection{ER Diagram}
+\par This section explains the Entity–Relationship (ER) diagram (Figure~\ref{fig:er}) of the BEEMD database in detail, including the rationale behind entity selection and relationship cardinalities (1:N, M:N).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.98\textwidth]{figures/dataset_er.png}
+  \caption{ER Diagram of the BEEMD Database}
+  \label{fig:er}
+\end{figure}
+
+\subsection*{Core Design Philosophy}
+The ER diagram was designed to model real-world relationships present in the IMDb dataset while minimizing redundancy and ensuring data integrity through normalization. Entities were identified based on whether they represent independent real-world objects with their own attributes and lifecycle.
+
+\subsection*{Main Entities and Relationships}
+
+\subsubsection*{1. Titles (Core Entity)}
+The Titles entity represents all audiovisual works in the database. It is the central entity because most other entities (ratings, genres, people, episodes) depend on it.
+
+\textbf{Why Titles is an entity:}
+\begin{itemize}
+    \item Each title has a unique identifier (title\_id)
+    \item Titles have independent attributes such as title name, release year, adult flag, and type
+    \item Many other entities reference titles via foreign keys
+\end{itemize}
+
+\textbf{Relationships:}
+\par \textbf{Titles – Ratings: 1:1}: Each title has at most one rating entry, and each rating belongs to exactly one title.
+\par \textbf{Titles – Principals: 1:N}: A single title can have many associated people (actors, directors, writers), but each principal record belongs to one title.
+
+
+\subsubsection*{2. Movies and Series (Specialization of Titles)}
+Movies and series are modeled as separate entities derived from the Titles entity.
+
+\textbf{Why specialization was used:}
+\begin{itemize}
+    \item Movies and series share common attributes (stored in Titles)
+    \item They also have type-specific behaviors and relationships
+    \item This avoids null-heavy tables and improves semantic clarity
+\end{itemize}
+
+\textbf{Relationship:}
+\par \textbf{Titles – Movies: 1:1}
+\par \textbf{Titles – Series: 1:1}: Each movie or series corresponds to exactly one title entry.
+
+
+\subsubsection*{3. Episodes (Weak Entity)}
+Episodes are modeled as a separate entity because they depend on a parent series.
+
+\textbf{Why Episodes is a weak entity:}
+\begin{itemize}
+    \item An episode cannot exist without a series
+    \item Episode attributes (season number, episode number) only make sense in the context of a series
+\end{itemize}
+
+\textbf{Relationships:}
+\par \textbf{Series – Episodes: 1:N}: A series can have many episodes, but each episode belongs to exactly one series. This relationship is enforced using a foreign key referencing the series table.
+
+
+\subsubsection*{4. People}
+The People entity represents individuals such as actors, directors, and other crew members.
+
+\textbf{Why People is an entity:}
+\begin{itemize}
+    \item People exist independently of titles
+    \item A person can participate in many different titles
+    \item People have their own attributes (name, birth year, death year)
+\end{itemize}
+
+\subsubsection*{5. Titles – People Relationship (Principals Table)}
+The relationship between titles and people is inherently many-to-many (M:N):
+\begin{itemize}
+    \item A title can involve many people
+    \item A person can work on many titles
+\end{itemize}
+
+\textbf{Resolution:} \\
+This M:N relationship is resolved using the Principals associative entity.
+
+\textbf{Principals attributes include:}
+\begin{itemize}
+    \item title\_id (FK $\rightarrow$ Titles)
+    \item person\_id (FK $\rightarrow$ People)
+    \item role / category (actor, director, writer, etc.)
+    \item character information
+\end{itemize}
+This design allows storing role-specific attributes while preserving normalization.
+
+\subsubsection*{6. Genres}
+Genres are modeled as a separate entity to avoid multi-valued attributes.
+
+\textbf{Why Genres is an entity:}
+\begin{itemize}
+    \item A title can belong to multiple genres
+    \item A genre can be associated with many titles
+\end{itemize}
+
+\textbf{Relationship:} Titles – Genres: M:N
+
+
+\textbf{Resolution:} Implemented using junction tables: \texttt{movie\_genres}, \texttt{series\_genres}. This design ensures compliance with First Normal Form (1NF) and easy genre-based filtering and querying.
+
+\subsubsection*{7. Professions (Normalized Attribute)}
+Professions associated with people were originally multi-valued.
+
+\textbf{Normalization approach:}
+\begin{itemize}
+    \item \textbf{profession\_dictionary:} stores unique profession names
+    \item \textbf{profession\_assignments:} links people to professions
+\end{itemize}
+
+\textbf{Relationship:}  People – Professions: M:N : This structure eliminates redundancy and supports flexible profession queries.
+
+
+
+
+
+\subsection{Relational Schema (Relation Map)}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.98\textwidth]{figures/relation_map.png}
+  \caption{Relational Schema / Relation Map}
+  \label{fig:relmap}
+\end{figure}
+
+This section explains how the ER diagram was transformed into a relational schema and how entities and relationships were mapped into tables using primary and foreign keys.
+
+\subsection*{ER to Relational Mapping Strategy}
+Each strong entity in the ER diagram was mapped to a separate relational table. 
+
+\begin{itemize}
+    \item Primary keys were assigned to uniquely identify each tuple, and foreign keys were used to represent relationships between entities.
+    \item Many-to-many ($M:N$) relationships were resolved using junction tables, while one-to-many ($1:N$) relationships were implemented by placing foreign keys on the “many” side.
+\end{itemize}
+
+\subsection*{Table-by-Table Mapping Explanation}
+
+\subsubsection*{1. \texttt{all\_titles} Table}
+The \texttt{all\_titles} table represents the core Titles entity.
+\begin{itemize}
+    \item \textbf{Primary Key:} \texttt{title\_id}
+    \item \textbf{Stored Attributes:} title name, release year, title type (movie, series, episode), adult flag
+\end{itemize}
+This table serves as the parent table for movies, series, episodes, ratings, and principals.
+
+\subsubsection*{2. \texttt{movies} and \texttt{series} Tables}
+The \texttt{movies} and \texttt{series} tables represent specialized entities derived from the Titles entity.
+\begin{itemize}
+    \item \textbf{Primary Key / Foreign Key:} \texttt{title\_id} (PK, FK $\rightarrow$ \texttt{all\_titles.title\_id})
+\end{itemize}
+This design enforces a $1:1$ relationship between Titles and Movies/Series and ensures that every movie or series must exist in the Titles table.
+
+\subsubsection*{3. \texttt{episodes} Table}
+The \texttt{episodes} table represents the weak Episode entity.
+\begin{itemize}
+    \item \textbf{Primary Key:} \texttt{episodeId}
+    \item \textbf{Foreign Key:} \texttt{seriesId} $\rightarrow$ \texttt{series.seriesId}
+\end{itemize}
+This implements the $1:N$ relationship between Series and Episodes, where one series can have multiple episodes.
+
+\subsubsection*{4. \texttt{ratings} Table}
+The \texttt{ratings} table stores rating information for titles.
+\begin{itemize}
+    \item \textbf{Primary Key / Foreign Key:} \texttt{title\_id} (PK, FK $\rightarrow$ \texttt{all\_titles.title\_id})
+\end{itemize}
+This enforces a $1:1$ relationship between titles and ratings, ensuring that each rating belongs to exactly one title.
+
+\subsubsection*{5. \texttt{people} Table}
+The \texttt{people} table represents individuals involved in titles.
+\begin{itemize}
+    \item \textbf{Primary Key:} \texttt{person\_id}
+    \item \textbf{Attributes:} name, birth year, death year
+\end{itemize}
+People are modeled independently because they can participate in multiple titles.
+
+\subsubsection*{6. \texttt{principals} Table (Associative Entity)}
+The \texttt{principals} table resolves the many-to-many relationship between Titles and People.
+\begin{itemize}
+    \item \textbf{Composite Key / Foreign Keys:} \texttt{title\_id} (FK $\rightarrow$ \texttt{all\_titles}), \texttt{person\_id} (FK $\rightarrow$ \texttt{people})
+    \item \textbf{Additional Attributes:} category (actor, director, etc.), character information
+\end{itemize}
+This table enables storing role-specific data while preserving normalization.
+
+\subsubsection*{7. \texttt{genres}, \texttt{movie\_genres}, \texttt{series\_genres} Tables}
+Genres are normalized into a separate dimension table.
+\begin{itemize}
+    \item \textbf{\texttt{genres}:} stores unique genre names
+    \item \textbf{\texttt{movie\_genres}:} links movies to genres
+    \item \textbf{\texttt{series\_genres}:} links series to genres
+    \item \textbf{Relationship Type:} Many-to-many ($M:N$)
+\end{itemize}
+These junction tables contain foreign keys referencing both the genre and the related title.
+
+\subsubsection*{8. \texttt{profession\_dictionary} and \texttt{profession\_assignments} Tables}
+To normalize multi-valued profession data:
+\begin{itemize}
+    \item \textbf{\texttt{profession\_dictionary}:} stores unique profession names
+    \item \textbf{\texttt{profession\_assignments}:} links people to professions
+    \item \textbf{Relationship:} Many-to-many ($M:N$)
+\end{itemize}
+This design avoids repeating profession names and supports profession-based queries.
+
+
+\section*{4.3 Normalization}
+Normalization was applied to eliminate redundancy, prevent update anomalies, and improve data consistency. During the design process, the schema was iteratively refined to comply with the First, Second, and Third Normal Forms (1NF, 2NF, 3NF).
+
+\subsection*{First Normal Form (1NF)}
+\textbf{Rule:} All attributes must contain atomic (indivisible) values, and there must be no repeating groups or multi-valued attributes.
+
+\subsubsection*{Genres (Before $\rightarrow$ After)}
+\textbf{Before normalization:}
+\begin{itemize}
+    \item Genres were stored as comma-separated values in the titles table (e.g., "Drama,Comedy,Romance"), violating 1NF.
+\end{itemize}
+
+\textbf{Problems:}
+\begin{itemize}
+    \item Difficult to query individual genres
+    \item Redundant storage of genre names
+    \item Update anomalies
+\end{itemize}
+
+\textbf{After normalization:}
+\begin{itemize}
+    \item A separate \texttt{genres} table was created
+    \item Many-to-many relationships were implemented using \texttt{movie\_genres} and \texttt{series\_genres} junction tables
+\end{itemize}
+
+\textbf{Result:} Each field contains a single atomic value, and genre-based queries become efficient and reliable.
+
+\subsubsection*{Professions (Before $\rightarrow$ After)}
+\textbf{Before normalization:}
+\begin{itemize}
+    \item Professions associated with people were stored as multi-valued fields.
+\end{itemize}
+
+\textbf{After normalization:}
+\begin{itemize}
+    \item \texttt{profession\_dictionary} stores unique profession names
+    \item \texttt{profession\_assignments} links people to professions
+\end{itemize}
+This transformation ensures compliance with 1NF and removes redundancy.
+
+\subsection*{Second Normal Form (2NF)}
+\textbf{Rule:} All non-key attributes must be fully functionally dependent on the entire primary key.
+
+\subsubsection*{Principals Table}
+The \texttt{principals} table uses a composite key consisting of \texttt{title\_id} and \texttt{person\_id}.
+
+\textbf{Design consideration:}
+\begin{itemize}
+    \item Attributes such as role category and character information depend on both \texttt{title\_id} and \texttt{person\_id}
+    \item No partial dependency exists
+\end{itemize}
+
+\textbf{Result:} The table satisfies 2NF and accurately models the relationship between titles and people.
+
+\subsection*{Third Normal Form (3NF)}
+\textbf{Rule:} There must be no transitive dependencies between non-key attributes.
+
+\subsubsection*{Titles, Ratings, and People Separation}
+\textbf{Before normalization (conceptual):}
+\begin{itemize}
+    \item Rating information could have been stored in the titles table
+    \item Person-related attributes could have been duplicated across multiple records
+\end{itemize}
+
+\textbf{After normalization:}
+\begin{itemize}
+    \item Ratings are stored in a separate \texttt{ratings} table
+    \item People attributes are isolated in the \texttt{people} table
+\end{itemize}
+
+\textbf{Result:} Each non-key attribute depends only on the primary key of its table, satisfying 3NF and preventing update anomalies.
+
+% =========================================================
+\section{Configuration and Database Connection}
+\subsection{Environment Variables}
+The application is configured via an \texttt{.env} file:
+\begin{itemize}
+  \item \texttt{DB\_USER}, \texttt{DB\_PASSWORD}, \texttt{DB\_HOST}, \texttt{DB\_NAME}
+  \item \texttt{GROQ\_API\_KEY} for AI-powered features (quiz/recommendation)
+\end{itemize}
+
+\subsection{Database Setup (SQL Script Order)}
+To set up the database, the SQL scripts are executed in the following order:
+\begin{enumerate}
+  \item \texttt{data1.sql}: creates core dataset tables and loads CSV data using \texttt{LOAD DATA}.
+  \item \texttt{data2.sql}: additional normalization operations (e.g., professions).
+  \item \texttt{userdb3.sql}: creates the user database and tables (users, likes, suggestions).
+  \item \texttt{adminqueries.sql}: inserts default admin users.
+\end{enumerate}
+
+\subsection{Import Notes (MySQL)}
+For bulk loading operations, MySQL may require enabling \texttt{local\_infile} and increasing timeouts (as noted in the SQL files).
+We mitigated import instability by cleaning CSV files, filling empty cells, and splitting large files into smaller chunks.
+
+% =========================================================
+\section{Website Operation and Navigation}
+\subsection{Pages and Menus}
+The website provides the following main pages:
+\begin{itemize}
+  \item \textbf{Home Page:} landing page of the application.
+  \item \textbf{Movies Page:} lists movies and provides navigation to movie detail pages.
+  \item \textbf{Series Page:} lists series and connects to episode information.
+  \item \textbf{Episodes Page:} includes search filters; each episode links to a detail page.
+  \item \textbf{Celebrities Page:} supports searching/filtering people and profession data; includes a detailed celebrity page
+  with professions and top projects.
+  \item \textbf{Recommend Page (Login Required):} recommends movies/series/celebrities based on user likes.
+  \item \textbf{Quizzes Page (Login Required):} AI-powered trivia quizzes about movies and series.
+  \item \textbf{Suggestion Page (Login Required):} users send messages/suggestions to admins.
+  \item \textbf{Login / Signup:} authentication pages.
+  \item \textbf{User Profile:} shows user information, likes, quiz scores, and leaderboard rank.
+  \item \textbf{Admin Panel:} CRUD operations for selected entities (admin-only).
+\end{itemize}
+
+\subsection{Core Functionalities}
+\begin{itemize}
+  \item Filtering and searching on list pages (title, type, years, adult flag, etc.).
+  \item Detail pages combining multiple relations (ratings, genres, cast/crew via principals).
+  \item Authentication and authorization, ensuring security via password hashing (PBKDF2/SHA256) and login-protected features.
+  \item Personalized recommendations based on user likes.
+  \item Quiz generation and score tracking with a leaderboard.
+\end{itemize}
+
+\subsection{Screenshots (Optional)}
+% If you do not have the image, comment out the figure block below.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{figures/ui_home.png}
+  \caption{Homepage (Optional Screenshot)}
+\end{figure}
+
+% =========================================================
+\section{Queries}
+\par This section presents representative complex SQL queries used in the BEEMD application. These queries demonstrate the use of multiple joins, aggregation functions, grouping, ordering, and filtering across several related tables.
+
+\subsection*{7.1 Complex Query 1}
+\par This query retrieves detailed movie information along with aggregated data such as the number of cast members and genres associated with each movie.
+
+\begin{lstlisting}[language=SQL]
+SELECT 
+    m.movieId,
+    m.movieTitle,
+    m.startYear,
+    r.averageRating,
+    COUNT(DISTINCT pr.peopleId) AS cast_count,
+    COUNT(DISTINCT g.genreId) AS genre_count,
+    GROUP_CONCAT(DISTINCT g.genreName SEPARATOR ', ') AS genre_str,
+    CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
+FROM movies m
+LEFT JOIN ratings r ON m.movieId = r.titleId
+LEFT JOIN principals pr ON m.movieId = pr.titleId
+LEFT JOIN movie_genres mg ON m.movieId = mg.movieId
+LEFT JOIN genres g ON mg.genreId = g.genreId
+LEFT JOIN githappens_users.user_likes_titles ul ON m.movieId = ul.title_id AND ul.user_id = :uid
+WHERE 1=1
+GROUP BY 
+    m.movieId, m.movieTitle, m.startYear, r.averageRating
+ORDER BY r.averageRating DESC
+LIMIT 100
+\end{lstlisting}
+
+\textbf{Query Explanation:}
+\begin{itemize}
+    \item The query starts from the \texttt{movies} table and joins it with \texttt{all\_titles} to access shared title attributes.
+    \item The \texttt{ratings} table is joined using a \texttt{LEFT JOIN} to include rating information even if some movies do not yet have ratings.
+    \item The \texttt{principals} table is joined to count how many people are associated with each movie.
+    \item The many-to-many relationship between movies and genres is resolved using the \texttt{movie\_genres} and \texttt{genres} tables.
+    \item \texttt{COUNT(DISTINCT ...)} is used to avoid double-counting cast members and genres caused by joins.
+    \item The query groups results by movie ID and title to support aggregation.
+\end{itemize}
+
+\textbf{Why This Query Is Complex:}
+\begin{itemize}
+    \item Uses multiple \texttt{LEFT JOIN} operations
+    \item Aggregates data across several tables
+    \item Resolves many-to-many relationships
+    \item Combines entity-level and relationship-level information
+\end{itemize}
+
+\subsection*{7.2 Complex Query 2 – Popular People with Professions and Like-Based Filtering}
+
+\textbf{Purpose:} \\
+This query retrieves people information along with their professions and prioritizes individuals liked by users.
+
+\begin{lstlisting}[language=SQL]
+SELECT 
+    p.peopleId, 
+    p.primaryName, 
+    p.birthYear, 
+    p.deathYear, 
+    GROUP_CONCAT(DISTINCT pd.name SEPARATOR ', ') as professionName,
+    MAX(r.averageRating) as top_rating, 
+    CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
+FROM people p
+JOIN principals pr ON p.peopleId = pr.peopleId
+JOIN ratings r ON pr.titleId = r.titleId
+LEFT JOIN profession_assignments pa ON p.peopleId = pa.peopleId
+LEFT JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id
+LEFT JOIN githappens_users.user_likes_people ul ON p.peopleId = ul.people_id 
+           AND ul.user_id = :uid
+WHERE r.numVotes > 1000      
+GROUP BY p.peopleId, p.primaryName, p.birthYear, 
+p.deathYear, ul.user_id
+HAVING COUNT(pr.titleId) >= 1
+ORDER BY top_rating DESC, p.primaryName ASC 
+LIMIT 50
+\end{lstlisting}
+
+\textbf{Query Explanation:}
+\begin{itemize}
+    \item The query joins the \texttt{people} table with \texttt{principals} to determine participation in titles.
+    \item Profession data is normalized and retrieved using \texttt{profession\_assignments} and \texttt{profession\_dictionary}.
+    \item User interaction data is incorporated by joining with the \texttt{likes} table.
+    \item \texttt{GROUP\_CONCAT} is used to aggregate multiple professions into a single readable field.
+    \item A \texttt{CASE} expression assigns higher priority to people liked by users.
+    \item The result set is ordered based on popularity and user preference.
+\end{itemize}
+
+\textbf{Why This Query Is Complex:}
+\begin{itemize}
+    \item Integrates normalized attribute tables
+    \item Uses aggregation with string concatenation
+    \item Applies conditional logic using \texttt{CASE}
+    \item Combines content data with user interaction data
+\end{itemize}
+
+\textbf{Usage in the Application:} \\
+This query is used in the Celebrity Page and Recommendation Page to highlight popular or user-preferred individuals.
+
+\subsection*{7.3 Complex Query 3 – Series Episodes with Cast, Professions, and Genre Information}
+
+\textbf{Purpose:} \\
+This query retrieves episode-level details for a selected series, including cast members, their professions, and associated genres.
+
+\begin{lstlisting}[language=SQL]
+SELECT 
+    e.episodeId, e.epTitle, e.runtimeMinutes, 
+    e.seriesId, e.seNumber, e.epNumber,
+    s.seriesTitle, s.startYear, s.endYear,
+    (SELECT COUNT(DISTINCT e2.seNumber) FROM Episode e2 WHERE e2.seriesId = e.seriesId) AS total_seasons,
+    (SELECT COUNT(*) FROM Episode e3 WHERE e3.seriesId = e.seriesId) AS total_episodes,
+    g.genreName,
+    p.peopleId, p.primaryName, pr.category, pr.characters, 
+    (
+        SELECT GROUP_CONCAT(pd.name SEPARATOR ', ') 
+        FROM profession_assignments pa 
+        JOIN profession_dictionary pd ON pa.profession_dict_id = pd.id 
+        WHERE pa.peopleId = p.peopleId
+    ) as professionName,
+    CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked  
+FROM Episode e
+LEFT JOIN Series s ON e.seriesId = s.seriesId
+LEFT JOIN Series_Genres sg ON s.seriesId = sg.seriesId
+LEFT JOIN genres g ON sg.genreId = g.genreId
+LEFT JOIN principals pr ON pr.titleId = e.seriesId
+LEFT JOIN people p ON pr.peopleId = p.peopleId
+\end{lstlisting}
+
+\textbf{Query Explanation:}
+\begin{itemize}
+    \item The query begins from the \texttt{episodes} table and links episodes to their parent series using a foreign key.
+    \item Episode titles are joined with \texttt{all\_titles} to retrieve display information.
+    \item The \texttt{principals} table connects episodes to participating people.
+    \item Profession information is retrieved via normalized profession tables.
+    \item Series genres are linked using the \texttt{series\_genres} and \texttt{genres} tables.
+    \item Grouping is applied to aggregate people and professions per episode.
+\end{itemize}
+
+\textbf{Why This Query Is Complex:}
+\begin{itemize}
+    \item Traverses a hierarchical relationship (Series $\rightarrow$ Episodes)
+    \item Combines weak entities with strong entities
+    \item Uses multiple joins across normalized tables
+    \item Aggregates relational data for presentation
+\end{itemize}
+
+\textbf{Usage in the Application:} \\
+This query is used on the Episodes Page to display detailed episode information within a selected series.
+% =========================================================
+
+\section{Team Contributions}
+\begin{table}[H]
+\centering
+\caption{Team Members and Contributions}
+\begin{tabular}{@{}p{0.34\textwidth} p{0.58\textwidth}@{}}
+\toprule
+\textbf{Member} & \textbf{Main Contributions} \\
+\midrule
+Eylül Ebrar Gülbeyaz & Flask implementation; Movies Page , Movie page, Quiz  Page; Movie Table \\
+Faruk Yiğit Oluşan & Database design and normalization; Data collection / Preprocessing; Episode Page, Recommend Page, Home Page; Episode Table \\
+Ceyda Nur Akalın & Database design and normalization; Frontend; Admin Page; Genres + Principals Table \\
+Turgut Emre Sürenkök & User Page; User Database; Celebrity Page; People + Profession Tables \\
+Şevval Hayyar &  Frontend; Series Page, Series Detail + Search Bar; Series Table \\
+\end{tabular}
+\end{table}
+
+% =========================================================
+\section{Difficulties Encountered and Solutions}
+\begin{itemize}
+  \item \textbf{Large dataset import:} IMDb files are large and bulk loading caused timeout/crash issues.
+  We addressed this by dropping unused columns, cleaning CSV files, filling empty cells, and splitting large tables
+  (especially principals) into smaller chunks for batch import.
+  \item \textbf{Data quality issues:} Some fields contained characters/formatting that broke parsing (e.g., characters lists).
+  We cleaned these fields using preprocessing scripts before import.
+  \item \textbf{Normalization iterations:} Multi-valued columns (genres/professions) required redesign using dictionary and
+  junction tables, improving consistency and queryability.
+  \item \textbf{Configuration issues:} Import required enabling \texttt{local\_infile} and adjusting MySQL settings; we documented
+  these steps in SQL comments and the project setup guide.
+\end{itemize}
+
+% =========================================================
+\section{Conclusion and Future Work}
+\par In this project, we designed and implemented a fully functional relational database-backed web application using the IMDb Non-Commercial dataset. The database schema was carefully normalized and derived from a well-structured ER model, ensuring data integrity and scalability.
+
+\par The integration of a web interface with complex SQL queries demonstrates practical usage of relational database concepts such as normalization, foreign keys, and many-to-many relationships. User-based features such as recommendations and AI-powered quizzes further enhance the system beyond basic data retrieval.
+
+\section*{Future Work}
+To further evolve the BEEMD platform, several enhancements are planned for future development:
+\begin{itemize}
+    \item \textbf{Advanced Indexing:} Adding advanced indexing strategies for performance optimization and faster query execution on large datasets.
+    \item \textbf{Enhanced Recommendations:} Enhancing recommendation algorithms by implementing collaborative filtering and user-behavior analysis.
+    \item \textbf{UI/UX Design:} Improving UI/UX design to provide a more modern, intuitive, and responsive user experience.
+    \item \textbf{Analytics and Rankings:} Expanding analytics and ranking features to provide deeper insights into movie trends and user preferences.
+\end{itemize}
+% =========================================================
+% References
+% =========================================================
+\newpage
+\addcontentsline{toc}{section}{\numberline{}REFERENCES}
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
