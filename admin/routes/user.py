@@ -4,6 +4,7 @@ from database.db import engine
 from admin import admin_bp
 from werkzeug.security import generate_password_hash
 
+
 # ==========================================================
 # USER MENU
 # ==========================================================
@@ -15,7 +16,7 @@ def user_menu():
         singular="User",
         add_route="admin.user_new",
         edit_route="admin.user_edit_menu",
-        delete_route="admin.user_delete_menu"
+        delete_route="admin.user_delete_menu",
     )
 
 
@@ -24,7 +25,6 @@ def user_menu():
 # ==========================================================
 @admin_bp.route("/users/new", methods=["GET", "POST"])
 def user_new():
-
     if request.method == "POST":
         username = request.form.get("username")
         email = request.form.get("email")
@@ -45,7 +45,7 @@ def user_new():
                     SELECT 1 FROM githappens_users.users 
                     WHERE username = :u OR email = :e
                 """),
-                {"u": username, "e": email}
+                {"u": username, "e": email},
             ).fetchone()
 
             if exists:
@@ -69,8 +69,8 @@ def user_new():
                     "d": dob if dob else None,
                     "g": gender if gender else None,
                     "s": int(score) if score else 0,
-                    "a": is_admin
-                }
+                    "a": is_admin,
+                },
             )
 
         flash("User created successfully!")
@@ -88,24 +88,32 @@ def user_edit_menu():
 
     with engine.connect() as conn:
         if query:
-            users = conn.execute(
-                text("""
+            users = (
+                conn.execute(
+                    text("""
                     SELECT id, username, email, dob, gender, score, is_admin
                     FROM githappens_users.users
                     WHERE username LIKE :q OR email LIKE :q
                     ORDER BY username
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            users = conn.execute(
-                text("""
+            users = (
+                conn.execute(
+                    text("""
                     SELECT id, username, email, dob, gender, score, is_admin
                     FROM githappens_users.users
                     ORDER BY username
                     LIMIT 50
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template("admin/user_edit_menu.html", users=users)
 
@@ -115,16 +123,19 @@ def user_edit_menu():
 # ==========================================================
 @admin_bp.route("/users/edit/<int:user_id>", methods=["GET", "POST"])
 def user_edit(user_id):
-
     with engine.connect() as conn:
-        user = conn.execute(
-            text("""
+        user = (
+            conn.execute(
+                text("""
                 SELECT id, username, email, dob, gender, score, is_admin
                 FROM githappens_users.users
                 WHERE id = :id
             """),
-            {"id": user_id}
-        ).mappings().first()
+                {"id": user_id},
+            )
+            .mappings()
+            .first()
+        )
 
     if not user:
         flash("User not found.")
@@ -160,8 +171,8 @@ def user_edit(user_id):
                         "s": int(score) if score else 0,
                         "a": is_admin,
                         "p": password_hash,
-                        "id": user_id
-                    }
+                        "id": user_id,
+                    },
                 )
             else:
                 conn.execute(
@@ -176,8 +187,8 @@ def user_edit(user_id):
                         "g": gender if gender else None,
                         "s": int(score) if score else 0,
                         "a": is_admin,
-                        "id": user_id
-                    }
+                        "id": user_id,
+                    },
                 )
 
         flash("User updated successfully!")
@@ -195,24 +206,32 @@ def user_delete_menu():
 
     with engine.connect() as conn:
         if query:
-            users = conn.execute(
-                text("""
+            users = (
+                conn.execute(
+                    text("""
                     SELECT id, username, email, score
                     FROM githappens_users.users
                     WHERE username LIKE :q OR email LIKE :q
                     ORDER BY username
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            users = conn.execute(
-                text("""
+            users = (
+                conn.execute(
+                    text("""
                     SELECT id, username, email, score
                     FROM githappens_users.users
                     ORDER BY username
                     LIMIT 50
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template("admin/user_delete_menu.html", users=users)
 
@@ -222,11 +241,10 @@ def user_delete_menu():
 # ==========================================================
 @admin_bp.route("/users/delete/<int:user_id>", methods=["POST"])
 def user_delete(user_id):
-
     with engine.begin() as conn:
         # Check if user has associated data (eğer tablolar varsa kontrol et)
         has_data = False
-        
+
         try:
             result = conn.execute(
                 text("""
@@ -237,7 +255,7 @@ def user_delete(user_id):
                     SELECT 1 FROM githappens_users.user_ratings WHERE user_id = :id
                     LIMIT 1
                 """),
-                {"id": user_id}
+                {"id": user_id},
             ).fetchone()
             has_data = result is not None
         except:
@@ -245,13 +263,14 @@ def user_delete(user_id):
             pass
 
         if has_data:
-            flash("Cannot delete: User has associated data (reviews, watchlist, ratings).")
+            flash(
+                "Cannot delete: User has associated data (reviews, watchlist, ratings)."
+            )
             return redirect(url_for("admin.user_delete_menu"))
 
         # Delete user
         conn.execute(
-            text("DELETE FROM githappens_users.users WHERE id = :id"),
-            {"id": user_id}
+            text("DELETE FROM githappens_users.users WHERE id = :id"), {"id": user_id}
         )
 
     flash("User deleted successfully!")

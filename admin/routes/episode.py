@@ -4,6 +4,7 @@ from database.db import engine
 from admin import admin_bp
 import random
 
+
 # ------------------------------------------------------------------
 # EPISODES MENU
 # ------------------------------------------------------------------
@@ -15,7 +16,7 @@ def episode_menu():
         singular="Episode",
         add_route="admin.episode_new",
         edit_route="admin.episode_edit_menu",
-        delete_route="admin.episode_delete_menu"
+        delete_route="admin.episode_delete_menu",
     )
 
 
@@ -48,7 +49,7 @@ def episode_new():
                     WHERE seriesTitle = :t
                     LIMIT 1
                 """),
-                {"t": series_title}
+                {"t": series_title},
             ).fetchone()
 
             if not series:
@@ -60,7 +61,7 @@ def episode_new():
                 episode_id = f"tt{random.randint(0, 9999999):07d}"
                 exists = conn.execute(
                     text("SELECT 1 FROM Episode WHERE episodeId = :id"),
-                    {"id": episode_id}
+                    {"id": episode_id},
                 ).fetchone()
                 if not exists:
                     break
@@ -77,8 +78,8 @@ def episode_new():
                     "sn": season_no,
                     "en": ep_no,
                     "rt": runtime,
-                    "t": ep_title
-                }
+                    "t": ep_title,
+                },
             )
 
         flash("New episode added successfully!")
@@ -92,10 +93,10 @@ def episode_new():
 # ------------------------------------------------------------------
 @admin_bp.route("/episodes/edit/<episode_id>", methods=["GET", "POST"])
 def episode_edit(episode_id):
-
     with engine.connect() as conn:
-        episode = conn.execute(
-            text("""
+        episode = (
+            conn.execute(
+                text("""
                 SELECT 
                     e.episodeId,
                     e.epTitle,
@@ -107,8 +108,11 @@ def episode_edit(episode_id):
                 JOIN Series s ON e.seriesId = s.seriesId
                 WHERE e.episodeId = :id
             """),
-            {"id": episode_id}
-        ).mappings().fetchone()
+                {"id": episode_id},
+            )
+            .mappings()
+            .fetchone()
+        )
 
     if not episode:
         flash("Episode not found.")
@@ -132,7 +136,7 @@ def episode_edit(episode_id):
         with engine.begin() as conn:
             series = conn.execute(
                 text("SELECT seriesId FROM Series WHERE seriesTitle = :t"),
-                {"t": series_title}
+                {"t": series_title},
             ).fetchone()
 
             if not series:
@@ -155,8 +159,8 @@ def episode_edit(episode_id):
                     "sn": season_no,
                     "en": ep_no,
                     "rt": runtime,
-                    "id": episode_id
-                }
+                    "id": episode_id,
+                },
             )
 
         flash("Episode updated successfully!")
@@ -174,24 +178,32 @@ def episode_edit_menu():
 
     with engine.connect() as conn:
         if query:
-            episodes = conn.execute(
-                text("""
+            episodes = (
+                conn.execute(
+                    text("""
                     SELECT episodeId, epTitle
                     FROM Episode
                     WHERE epTitle LIKE :q
                     LIMIT 50
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            episodes = conn.execute(
-                text("""
+            episodes = (
+                conn.execute(
+                    text("""
                     SELECT episodeId, epTitle
                     FROM Episode
                     ORDER BY epTitle
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template(
         "admin/edit_generic_menu.html",
@@ -202,7 +214,7 @@ def episode_edit_menu():
         name_field="epTitle",
         name_label="Title",
         edit_route="admin.episode_edit",
-        id_param="episode_id"
+        id_param="episode_id",
     )
 
 
@@ -215,24 +227,32 @@ def episode_delete_menu():
 
     with engine.connect() as conn:
         if query:
-            episodes = conn.execute(
-                text("""
+            episodes = (
+                conn.execute(
+                    text("""
                     SELECT episodeId, epTitle
                     FROM Episode
                     WHERE epTitle LIKE :q
                     LIMIT 50
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            episodes = conn.execute(
-                text("""
+            episodes = (
+                conn.execute(
+                    text("""
                     SELECT episodeId, epTitle
                     FROM Episode
                     ORDER BY epTitle
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template(
         "admin/delete_generic_menu.html",
@@ -243,7 +263,7 @@ def episode_delete_menu():
         name_field="epTitle",
         name_label="Title",
         delete_route="admin.episode_delete",
-        id_param="episode_id"
+        id_param="episode_id",
     )
 
 
@@ -254,8 +274,7 @@ def episode_delete_menu():
 def episode_delete(episode_id):
     with engine.begin() as conn:
         conn.execute(
-            text("DELETE FROM Episode WHERE episodeId = :id"),
-            {"id": episode_id}
+            text("DELETE FROM Episode WHERE episodeId = :id"), {"id": episode_id}
         )
 
     flash("Episode deleted successfully!")

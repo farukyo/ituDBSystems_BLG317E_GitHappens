@@ -8,17 +8,16 @@ from admin import admin_bp
 # TITLE TYPE + NAME → titleId BULMA
 # -------------------------------------------------
 def get_title_id(conn, title_type, title_name):
-
     if title_type == "movie":
         row = conn.execute(
             text("SELECT movieId AS id FROM movies WHERE movieTitle = :t"),
-            {"t": title_name}
+            {"t": title_name},
         ).fetchone()
 
     elif title_type == "series":
         row = conn.execute(
             text("SELECT seriesId AS id FROM Series WHERE seriesTitle = :t"),
-            {"t": title_name}
+            {"t": title_name},
         ).fetchone()
 
     else:
@@ -38,7 +37,7 @@ def rating_menu():
         singular="Rating",
         add_route="admin.rating_new",
         edit_route="admin.rating_edit_menu",
-        delete_route="admin.rating_delete_menu"
+        delete_route="admin.rating_delete_menu",
     )
 
 
@@ -47,7 +46,6 @@ def rating_menu():
 # -------------------------------------------------
 @admin_bp.route("/ratings/new", methods=["GET", "POST"])
 def rating_new():
-
     if request.method == "POST":
         title_type = request.form.get("titleType", "").strip()
         title_name = request.form.get("titleName", "").strip()
@@ -73,8 +71,7 @@ def rating_new():
                 return redirect(url_for("admin.rating_new"))
 
             exists = conn.execute(
-                text("SELECT 1 FROM ratings WHERE titleId = :id"),
-                {"id": title_id}
+                text("SELECT 1 FROM ratings WHERE titleId = :id"), {"id": title_id}
             ).fetchone()
 
             if exists:
@@ -86,11 +83,7 @@ def rating_new():
                     INSERT INTO ratings (titleId, averageRating, numVotes)
                     VALUES (:tid, :avg, :nv)
                 """),
-                {
-                    "tid": title_id,
-                    "avg": avg_rating,
-                    "nv": num_votes
-                }
+                {"tid": title_id, "avg": avg_rating, "nv": num_votes},
             )
 
         flash("New rating added successfully!")
@@ -104,10 +97,10 @@ def rating_new():
 # -------------------------------------------------
 @admin_bp.route("/ratings/edit/<int:rating_id>", methods=["GET", "POST"])
 def rating_edit(rating_id):
-
     with engine.connect() as conn:
-        rating = conn.execute(
-            text("""
+        rating = (
+            conn.execute(
+                text("""
                 SELECT 
                     r.ratingId,
                     r.averageRating,
@@ -121,8 +114,11 @@ def rating_edit(rating_id):
                 LEFT JOIN Series s ON r.titleId = s.seriesId
                 WHERE r.ratingId = :id
             """),
-            {"id": rating_id}
-        ).mappings().fetchone()
+                {"id": rating_id},
+            )
+            .mappings()
+            .fetchone()
+        )
 
     if not rating:
         flash("Rating not found.")
@@ -143,11 +139,7 @@ def rating_edit(rating_id):
                         numVotes = :nv
                     WHERE ratingId = :id
                 """),
-                {
-                    "avg": avg_rating,
-                    "nv": num_votes,
-                    "id": rating_id
-                }
+                {"avg": avg_rating, "nv": num_votes, "id": rating_id},
             )
 
         flash("Rating updated successfully!")
@@ -165,8 +157,9 @@ def rating_edit_menu():
 
     with engine.connect() as conn:
         if query:
-            ratings = conn.execute(
-                text("""
+            ratings = (
+                conn.execute(
+                    text("""
                     SELECT 
                         r.ratingId,
                         COALESCE(
@@ -181,11 +174,15 @@ def rating_edit_menu():
                         s.seriesTitle LIKE :q
                     LIMIT 50
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            ratings = conn.execute(
-                text("""
+            ratings = (
+                conn.execute(
+                    text("""
                     SELECT 
                         r.ratingId,
                         COALESCE(
@@ -198,7 +195,10 @@ def rating_edit_menu():
                     ORDER BY primaryTitle
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template(
         "admin/edit_generic_menu.html",
@@ -209,7 +209,7 @@ def rating_edit_menu():
         name_field="primaryTitle",
         name_label="Title",
         edit_route="admin.rating_edit",
-        id_param="rating_id"
+        id_param="rating_id",
     )
 
 
@@ -222,8 +222,9 @@ def rating_delete_menu():
 
     with engine.connect() as conn:
         if query:
-            ratings = conn.execute(
-                text("""
+            ratings = (
+                conn.execute(
+                    text("""
                     SELECT 
                         r.ratingId,
                         r.titleId,
@@ -241,11 +242,15 @@ def rating_delete_menu():
                         r.titleId LIKE :q
                     LIMIT 50
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            ratings = conn.execute(
-                text("""
+            ratings = (
+                conn.execute(
+                    text("""
                     SELECT 
                         r.ratingId,
                         r.titleId,
@@ -259,7 +264,10 @@ def rating_delete_menu():
                     ORDER BY r.ratingId DESC
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template(
         "admin/delete_ratings_menu.html",
@@ -270,7 +278,7 @@ def rating_delete_menu():
         name_field="primaryTitle",
         name_label="Title",
         delete_route="admin.rating_delete",
-        id_param="rating_id"
+        id_param="rating_id",
     )
 
 
@@ -281,8 +289,7 @@ def rating_delete_menu():
 def rating_delete(rating_id):
     with engine.begin() as conn:
         conn.execute(
-            text("DELETE FROM ratings WHERE ratingId = :id"),
-            {"id": rating_id}
+            text("DELETE FROM ratings WHERE ratingId = :id"), {"id": rating_id}
         )
 
     flash("Rating deleted successfully!")

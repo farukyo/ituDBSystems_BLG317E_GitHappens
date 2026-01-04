@@ -3,6 +3,7 @@ from sqlalchemy import text
 from database.db import engine
 from admin import admin_bp
 
+
 # ==========================================================
 # GENRES MENU
 # ==========================================================
@@ -16,7 +17,7 @@ def genre_menu():
         edit_route="admin.genre_edit_menu",
         delete_route="admin.genre_delete_menu",
         extra_route="admin.genre_assign",
-        extra_label="Assign Genres"
+        extra_label="Assign Genres",
     )
 
 
@@ -25,7 +26,6 @@ def genre_menu():
 # ==========================================================
 @admin_bp.route("/genres/new", methods=["GET", "POST"])
 def genre_new():
-
     if request.method == "POST":
         genre_id = request.form.get("genreId")
         genre_name = request.form.get("genreName", "").strip()
@@ -36,10 +36,8 @@ def genre_new():
             return redirect(url_for("admin.genre_new"))
 
         with engine.begin() as conn:
-
             exists = conn.execute(
-                text("SELECT 1 FROM genres WHERE genreId = :id"),
-                {"id": genre_id}
+                text("SELECT 1 FROM genres WHERE genreId = :id"), {"id": genre_id}
             ).fetchone()
 
             if exists:
@@ -51,11 +49,7 @@ def genre_new():
                     INSERT INTO genres (genreId, genreName, description)
                     VALUES (:id, :name, :desc)
                 """),
-                {
-                    "id": genre_id,
-                    "name": genre_name,
-                    "desc": description
-                }
+                {"id": genre_id, "name": genre_name, "desc": description},
             )
 
         flash("Genre added successfully!")
@@ -69,16 +63,19 @@ def genre_new():
 # ==========================================================
 @admin_bp.route("/genres/edit/<int:genre_id>", methods=["GET", "POST"])
 def genre_edit(genre_id):
-
     with engine.connect() as conn:
-        genre = conn.execute(
-            text("""
+        genre = (
+            conn.execute(
+                text("""
                 SELECT genreId, genreName, description
                 FROM genres
                 WHERE genreId = :id
             """),
-            {"id": genre_id}
-        ).mappings().fetchone()
+                {"id": genre_id},
+            )
+            .mappings()
+            .fetchone()
+        )
 
     if not genre:
         flash("Genre not found.")
@@ -100,11 +97,7 @@ def genre_edit(genre_id):
                         description = :desc
                     WHERE genreId = :id
                 """),
-                {
-                    "name": new_name,
-                    "desc": description,
-                    "id": genre_id
-                }
+                {"name": new_name, "desc": description, "id": genre_id},
             )
 
         flash("Genre updated successfully!")
@@ -121,16 +114,20 @@ def genre_edit_menu():
     query = request.form.get("search", "")
 
     with engine.connect() as conn:
-        genres = conn.execute(
-            text("""
+        genres = (
+            conn.execute(
+                text("""
                 SELECT genreId, genreName
                 FROM genres
                 WHERE genreName LIKE :q
                 ORDER BY genreName
                 LIMIT 50
             """),
-            {"q": f"%{query}%"}
-        ).mappings().all()
+                {"q": f"%{query}%"},
+            )
+            .mappings()
+            .all()
+        )
 
     return render_template(
         "admin/edit_generic_menu.html",
@@ -141,7 +138,7 @@ def genre_edit_menu():
         name_field="genreName",
         name_label="Genre Name",
         edit_route="admin.genre_edit",
-        id_param="genre_id"
+        id_param="genre_id",
     )
 
 
@@ -153,16 +150,20 @@ def genre_delete_menu():
     query = request.form.get("search", "")
 
     with engine.connect() as conn:
-        genres = conn.execute(
-            text("""
+        genres = (
+            conn.execute(
+                text("""
                 SELECT genreId, genreName
                 FROM genres
                 WHERE genreName LIKE :q
                 ORDER BY genreName
                 LIMIT 50
             """),
-            {"q": f"%{query}%"}
-        ).mappings().all()
+                {"q": f"%{query}%"},
+            )
+            .mappings()
+            .all()
+        )
 
     return render_template(
         "admin/delete_generic_menu.html",
@@ -173,7 +174,7 @@ def genre_delete_menu():
         name_field="genreName",
         name_label="Genre Name",
         delete_route="admin.genre_delete",
-        id_param="genre_id"
+        id_param="genre_id",
     )
 
 
@@ -182,41 +183,38 @@ def genre_delete_menu():
 # ==========================================================
 @admin_bp.route("/genres/delete/<int:genre_id>", methods=["POST"])
 def genre_delete(genre_id):
-
     with engine.begin() as conn:
-
         used_in_movies = conn.execute(
-            text("SELECT 1 FROM Movie_Genres WHERE genreId = :id"),
-            {"id": genre_id}
+            text("SELECT 1 FROM Movie_Genres WHERE genreId = :id"), {"id": genre_id}
         ).fetchone()
 
         used_in_series = conn.execute(
-            text("SELECT 1 FROM Series_Genres WHERE genreId = :id"),
-            {"id": genre_id}
+            text("SELECT 1 FROM Series_Genres WHERE genreId = :id"), {"id": genre_id}
         ).fetchone()
 
         if used_in_movies or used_in_series:
             flash("This genre is used by movies or series and cannot be deleted.")
             return redirect(url_for("admin.genre_delete_menu"))
 
-        conn.execute(
-            text("DELETE FROM genres WHERE genreId = :id"),
-            {"id": genre_id}
-        )
+        conn.execute(text("DELETE FROM genres WHERE genreId = :id"), {"id": genre_id})
 
     flash("Genre deleted successfully!")
     return redirect(url_for("admin.genre_delete_menu"))
+
 
 # ==========================================================
 # ASSIGN GENRES (MOVIE / SERIES)
 # ==========================================================
 @admin_bp.route("/genres/assign", methods=["GET", "POST"])
 def genre_assign():
-
     with engine.connect() as conn:
-        genres = conn.execute(
-            text("SELECT genreId, genreName FROM genres ORDER BY genreName")
-        ).mappings().all()
+        genres = (
+            conn.execute(
+                text("SELECT genreId, genreName FROM genres ORDER BY genreName")
+            )
+            .mappings()
+            .all()
+        )
 
     if request.method == "POST":
         title_type = request.form.get("titleType")
@@ -228,11 +226,10 @@ def genre_assign():
             return redirect(url_for("admin.genre_assign"))
 
         with engine.begin() as conn:
-
             if title_type == "movie":
                 row = conn.execute(
                     text("SELECT movieId FROM movies WHERE movieTitle = :t"),
-                    {"t": title_name}
+                    {"t": title_name},
                 ).fetchone()
                 table = "Movie_Genres"
                 col = "movieId"
@@ -240,7 +237,7 @@ def genre_assign():
             else:
                 row = conn.execute(
                     text("SELECT seriesId FROM Series WHERE seriesTitle = :t"),
-                    {"t": title_name}
+                    {"t": title_name},
                 ).fetchone()
                 table = "Series_Genres"
                 col = "seriesId"
@@ -253,8 +250,7 @@ def genre_assign():
 
             # önce eski ilişkileri sil
             conn.execute(
-                text(f"DELETE FROM {table} WHERE {col} = :id"),
-                {"id": title_id}
+                text(f"DELETE FROM {table} WHERE {col} = :id"), {"id": title_id}
             )
 
             # yenileri ekle
@@ -264,7 +260,7 @@ def genre_assign():
                         INSERT INTO {table} ({col}, genreId)
                         VALUES (:tid, :gid)
                     """),
-                    {"tid": title_id, "gid": gid}
+                    {"tid": title_id, "gid": gid},
                 )
 
         flash("Genres assigned successfully!")

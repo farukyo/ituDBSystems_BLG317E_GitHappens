@@ -4,6 +4,7 @@ from database.db import engine
 from admin import admin_bp
 import random
 
+
 # ------------------------------------------------------------------
 # PEOPLE MENU
 # ------------------------------------------------------------------
@@ -15,9 +16,10 @@ def person_menu():
         singular="Person",
         add_route="admin.person_new",
         edit_route="admin.person_edit_menu",
-        delete_route="admin.person_delete_menu"
+        delete_route="admin.person_delete_menu",
     )
-    
+
+
 # ------------------------------------------------------------------
 # NEW PERSON
 # ------------------------------------------------------------------
@@ -38,14 +40,16 @@ def person_new():
                 candidate_id = f"nm{random.randint(0, 9999999):07d}"
                 exists = conn.execute(
                     text("SELECT 1 FROM people WHERE peopleId = :id"),
-                    {"id": candidate_id}
+                    {"id": candidate_id},
                 ).fetchone()
                 if not exists:
                     break
 
             conn.execute(
-                text("INSERT INTO people (peopleId, primaryName, birthYear, deathYear) VALUES (:id, :n, :b, :d)"),
-                {"id": candidate_id, "n": name, "b": birth, "d": death}
+                text(
+                    "INSERT INTO people (peopleId, primaryName, birthYear, deathYear) VALUES (:id, :n, :b, :d)"
+                ),
+                {"id": candidate_id, "n": name, "b": birth, "d": death},
             )
             conn.commit()
 
@@ -61,8 +65,10 @@ def person_new():
 def person_edit(people_id):
     with engine.connect() as conn:
         result = conn.execute(
-            text("SELECT peopleId, primaryName, birthYear, deathYear FROM people WHERE peopleId = :id"),
-            {"id": people_id}
+            text(
+                "SELECT peopleId, primaryName, birthYear, deathYear FROM people WHERE peopleId = :id"
+            ),
+            {"id": people_id},
         )
         person = result.fetchone()
 
@@ -73,8 +79,10 @@ def person_edit(people_id):
 
         with engine.connect() as conn:
             conn.execute(
-                text("UPDATE people SET primaryName=:n, birthYear=:b, deathYear=:d WHERE peopleId=:id"),
-                {"n": name, "b": birth, "d": death, "id": people_id}
+                text(
+                    "UPDATE people SET primaryName=:n, birthYear=:b, deathYear=:d WHERE peopleId=:id"
+                ),
+                {"n": name, "b": birth, "d": death, "id": people_id},
             )
             conn.commit()
 
@@ -93,24 +101,32 @@ def person_edit_menu():
 
     with engine.connect() as conn:
         if query:
-            people = conn.execute(
-                text("""
+            people = (
+                conn.execute(
+                    text("""
                     SELECT peopleId, primaryName
                     FROM people
                     WHERE primaryName LIKE :q
                     LIMIT 50
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            people = conn.execute(
-                text("""
+            people = (
+                conn.execute(
+                    text("""
                     SELECT peopleId, primaryName
                     FROM people
                     ORDER BY primaryName
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template(
         "admin/edit_generic_menu.html",
@@ -121,7 +137,7 @@ def person_edit_menu():
         name_field="primaryName",
         name_label="Name",
         edit_route="admin.person_edit",
-        id_param="people_id"
+        id_param="people_id",
     )
 
 
@@ -134,24 +150,32 @@ def person_delete_menu():
 
     with engine.connect() as conn:
         if query:
-            people = conn.execute(
-                text("""
+            people = (
+                conn.execute(
+                    text("""
                     SELECT peopleId, primaryName
                     FROM people
                     WHERE primaryName LIKE :q
                     LIMIT 50
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            people = conn.execute(
-                text("""
+            people = (
+                conn.execute(
+                    text("""
                     SELECT peopleId, primaryName
                     FROM people
                     ORDER BY primaryName
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template(
         "admin/delete_generic_menu.html",
@@ -162,8 +186,9 @@ def person_delete_menu():
         name_field="primaryName",
         name_label="Name",
         delete_route="admin.person_delete",
-        id_param="people_id"
+        id_param="people_id",
     )
+
 
 # ------------------------------------------------------------------
 # DELETE PERSON
@@ -171,10 +196,7 @@ def person_delete_menu():
 @admin_bp.route("/people/delete/<people_id>", methods=["POST"])
 def person_delete(people_id):
     with engine.connect() as conn:
-        conn.execute(
-            text("DELETE FROM people WHERE peopleId=:id"),
-            {"id": people_id}
-        )
+        conn.execute(text("DELETE FROM people WHERE peopleId=:id"), {"id": people_id})
         conn.commit()
 
     flash("Person deleted!")

@@ -3,6 +3,7 @@ from sqlalchemy import text
 from database.db import engine
 from admin import admin_bp
 
+
 # -------------------------------------------------
 # PRINCIPALS MENU (GENERIC)
 # -------------------------------------------------
@@ -14,7 +15,7 @@ def principals_menu():
         singular="Principal",
         add_route="admin.principal_new",
         edit_route="admin.principal_edit_menu",
-        delete_route="admin.principal_delete_menu"
+        delete_route="admin.principal_delete_menu",
     )
 
 
@@ -23,7 +24,6 @@ def principals_menu():
 # -------------------------------------------------
 @admin_bp.route("/principals/new", methods=["GET", "POST"])
 def principal_new():
-
     if request.method == "POST":
         title_name = request.form.get("titleName")
         people_name = request.form.get("peopleName")
@@ -44,7 +44,7 @@ def principal_new():
                     SELECT seriesId AS titleId FROM series WHERE seriesTitle = :name
                     LIMIT 1
                 """),
-                {"name": title_name}
+                {"name": title_name},
             ).fetchone()
 
             # People ID bul
@@ -53,7 +53,7 @@ def principal_new():
                     SELECT peopleId FROM people WHERE primaryName = :name
                     LIMIT 1
                 """),
-                {"name": people_name}
+                {"name": people_name},
             ).fetchone()
 
             if not title_row or not people_row:
@@ -69,7 +69,7 @@ def principal_new():
                     SELECT 1 FROM principals
                     WHERE titleId = :t AND peopleId = :p
                 """),
-                {"t": title_id, "p": people_id}
+                {"t": title_id, "p": people_id},
             ).fetchone()
 
             if exists:
@@ -82,7 +82,13 @@ def principal_new():
                     INSERT INTO principals (titleId, peopleId, category, job, characters)
                     VALUES (:t, :p, :c, :j, :ch)
                 """),
-                {"t": title_id, "p": people_id, "c": category, "j": job, "ch": characters}
+                {
+                    "t": title_id,
+                    "p": people_id,
+                    "c": category,
+                    "j": job,
+                    "ch": characters,
+                },
             )
 
         flash("Principal added successfully.")
@@ -90,19 +96,20 @@ def principal_new():
 
     return render_template("admin/principal_form.html", principal=None)
 
+
 # -------------------------------------------------
 # DELETE PRINCIPAL MENU
 # -------------------------------------------------
 @admin_bp.route("/principals/delete", methods=["GET", "POST"])
 def principal_delete_menu():
-
     query = request.form.get("search")
 
     with engine.connect() as conn:
         if query:
             # Arama varsa: Kişi Adı OR ID OR Film Adı OR Dizi Adı
-            principals = conn.execute(
-                text("""
+            principals = (
+                conn.execute(
+                    text("""
                     SELECT
                         p.titleId,
                         p.peopleId,
@@ -120,12 +127,16 @@ def principal_delete_menu():
                     ORDER BY titleName
                     LIMIT 20
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
             # Arama yoksa varsayılan listeleme (Değişiklik yok)
-            principals = conn.execute(
-                text("""
+            principals = (
+                conn.execute(
+                    text("""
                     SELECT
                         p.titleId,
                         p.peopleId,
@@ -139,46 +150,44 @@ def principal_delete_menu():
                     ORDER BY titleName
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
-    return render_template(
-        "admin/principal_delete_menu.html",
-        principals=principals
-    )
+    return render_template("admin/principal_delete_menu.html", principals=principals)
+
 
 # -------------------------------------------------
 # DELETE PRINCIPAL
 # -------------------------------------------------
-@admin_bp.route(
-    "/principals/delete/<title_id>/<people_id>",
-    methods=["POST"]
-)
+@admin_bp.route("/principals/delete/<title_id>/<people_id>", methods=["POST"])
 def principal_delete(title_id, people_id):
-
     with engine.begin() as conn:
         conn.execute(
             text("""
                 DELETE FROM principals
                 WHERE titleId = :t AND peopleId = :p
             """),
-            {"t": title_id, "p": people_id}
+            {"t": title_id, "p": people_id},
         )
 
     flash("Principal deleted successfully.")
     return redirect(url_for("admin.principal_delete_menu"))
+
 
 # -------------------------------------------------
 # EDIT PRINCIPAL MENU
 # -------------------------------------------------
 @admin_bp.route("/principals/edit", methods=["GET", "POST"])
 def principal_edit_menu():
-
     query = request.form.get("search")
 
     with engine.connect() as conn:
         if query:
-            principals = conn.execute(
-                text("""
+            principals = (
+                conn.execute(
+                    text("""
                     SELECT
                         p.titleId,
                         p.peopleId,
@@ -198,11 +207,15 @@ def principal_edit_menu():
                     ORDER BY titleName
                     LIMIT 20
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            principals = conn.execute(
-                text("""
+            principals = (
+                conn.execute(
+                    text("""
                     SELECT
                         p.titleId,
                         p.peopleId,
@@ -218,19 +231,19 @@ def principal_edit_menu():
                     ORDER BY titleName
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
-    return render_template(
-        "admin/principal_edit_menu.html",
-        principals=principals
-    )
+    return render_template("admin/principal_edit_menu.html", principals=principals)
+
 
 # -------------------------------------------------
 # EDIT PRINCIPAL
 # -------------------------------------------------
 @admin_bp.route("/principals/edit/<title_id>/<people_id>", methods=["GET", "POST"])
 def principal_edit(title_id, people_id):
-
     if request.method == "POST":
         category = request.form.get("category")
         job = request.form.get("job")
@@ -248,16 +261,17 @@ def principal_edit(title_id, people_id):
                     "j": job,
                     "ch": characters,
                     "t": title_id,
-                    "p": people_id
-                }
+                    "p": people_id,
+                },
             )
 
         flash("Principal updated successfully.")
         return redirect(url_for("admin.principal_edit_menu"))
 
     with engine.connect() as conn:
-        principal = conn.execute(
-            text("""
+        principal = (
+            conn.execute(
+                text("""
                 SELECT
                     p.titleId,
                     p.peopleId,
@@ -272,7 +286,10 @@ def principal_edit(title_id, people_id):
                 LEFT JOIN series s ON p.titleId = s.seriesId
                 WHERE p.titleId = :t AND p.peopleId = :p
             """),
-            {"t": title_id, "p": people_id}
-        ).mappings().first()
+                {"t": title_id, "p": people_id},
+            )
+            .mappings()
+            .first()
+        )
 
     return render_template("admin/principal_form.html", principal=principal)

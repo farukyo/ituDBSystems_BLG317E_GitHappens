@@ -4,6 +4,7 @@ from database.db import engine
 from admin import admin_bp
 import random
 
+
 # ------------------------------------------------------------------
 # MOVIES MENU
 # ------------------------------------------------------------------
@@ -15,9 +16,10 @@ def movie_menu():
         singular="Movie",
         add_route="admin.movie_new",
         edit_route="admin.movie_edit_menu",
-        delete_route="admin.movie_delete_menu"
+        delete_route="admin.movie_delete_menu",
     )
-    
+
+
 # ------------------------------------------------------------------
 # NEW MOVIE
 # ------------------------------------------------------------------
@@ -40,7 +42,7 @@ def movie_new():
                 candidate_id = f"tt{random.randint(0, 9999999):07d}"
                 exists = conn.execute(
                     text("SELECT 1 FROM all_titles WHERE titleId = :id"),
-                    {"id": candidate_id}
+                    {"id": candidate_id},
                 ).fetchone()
                 if not exists:
                     break
@@ -51,9 +53,7 @@ def movie_new():
                     INSERT INTO all_titles (titleId)
                     VALUES (:id)
                 """),
-                {
-                    "id": candidate_id
-                }
+                {"id": candidate_id},
             )
 
             # 2️⃣ CHILD TABLO
@@ -69,8 +69,8 @@ def movie_new():
                     "tt": title_type,
                     "sy": start_year,
                     "rt": runtime,
-                    "ia": is_adult
-                }
+                    "ia": is_adult,
+                },
             )
 
         flash("New movie added successfully!")
@@ -83,7 +83,6 @@ def movie_new():
 # ------------------------------------------------------------------
 @admin_bp.route("/movies/edit/<movie_id>", methods=["GET", "POST"])
 def movie_edit(movie_id):
-
     with engine.connect() as conn:
         result = conn.execute(
             text("""
@@ -92,7 +91,7 @@ def movie_edit(movie_id):
                 FROM movies
                 WHERE movieId = :id
             """),
-            {"id": movie_id}
+            {"id": movie_id},
         )
         movie = result.fetchone()
 
@@ -120,8 +119,8 @@ def movie_edit(movie_id):
                     "sy": start_year or None,
                     "rt": runtime or None,
                     "ia": is_adult,
-                    "id": movie_id
-                }
+                    "id": movie_id,
+                },
             )
             conn.commit()
 
@@ -140,24 +139,32 @@ def movie_edit_menu():
 
     with engine.connect() as conn:
         if query:
-            movies = conn.execute(
-                text("""
+            movies = (
+                conn.execute(
+                    text("""
                     SELECT movieId, movieTitle
                     FROM movies
                     WHERE movieTitle LIKE :q
                     LIMIT 50
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            movies = conn.execute(
-                text("""
+            movies = (
+                conn.execute(
+                    text("""
                     SELECT movieId, movieTitle
                     FROM movies
                     ORDER BY movieTitle
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template(
         "admin/edit_generic_menu.html",
@@ -168,7 +175,7 @@ def movie_edit_menu():
         name_field="movieTitle",
         name_label="Title",
         edit_route="admin.movie_edit",
-        id_param="movie_id"
+        id_param="movie_id",
     )
 
 
@@ -181,24 +188,32 @@ def movie_delete_menu():
 
     with engine.connect() as conn:
         if query:
-            movies = conn.execute(
-                text("""
+            movies = (
+                conn.execute(
+                    text("""
                     SELECT movieId, movieTitle
                     FROM movies
                     WHERE movieTitle LIKE :q
                     LIMIT 50
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            movies = conn.execute(
-                text("""
+            movies = (
+                conn.execute(
+                    text("""
                     SELECT movieId, movieTitle
                     FROM movies
                     ORDER BY movieTitle
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template(
         "admin/delete_generic_menu.html",
@@ -209,8 +224,9 @@ def movie_delete_menu():
         name_field="movieTitle",
         name_label="Title",
         delete_route="admin.movie_delete",
-        id_param="movie_id"
+        id_param="movie_id",
     )
+
 
 # ------------------------------------------------------------------
 # DELETE MOVIE
@@ -219,15 +235,11 @@ def movie_delete_menu():
 def movie_delete(movie_id):
     with engine.begin() as conn:
         # 1️⃣ CHILD
-        conn.execute(
-            text("DELETE FROM movies WHERE movieId = :id"),
-            {"id": movie_id}
-        )
+        conn.execute(text("DELETE FROM movies WHERE movieId = :id"), {"id": movie_id})
 
         # 2️⃣ PARENT
         conn.execute(
-            text("DELETE FROM all_titles WHERE titleId = :id"),
-            {"id": movie_id}
+            text("DELETE FROM all_titles WHERE titleId = :id"), {"id": movie_id}
         )
 
     flash("Movie deleted successfully!")

@@ -4,6 +4,7 @@ from database.db import engine
 from admin import admin_bp
 import random
 
+
 # ------------------------------------------------------------------
 # SERIES MENU
 # ------------------------------------------------------------------
@@ -15,9 +16,10 @@ def series_menu():
         singular="Series",
         add_route="admin.series_new",
         edit_route="admin.series_edit_menu",
-        delete_route="admin.series_delete_menu"
+        delete_route="admin.series_delete_menu",
     )
-    
+
+
 # ------------------------------------------------------------------
 # NEW SERIES
 # ------------------------------------------------------------------
@@ -42,7 +44,7 @@ def series_new():
                 candidate_id = f"tt{random.randint(0, 9999999):07d}"
                 exists = conn.execute(
                     text("SELECT 1 FROM all_titles WHERE titleId = :id"),
-                    {"id": candidate_id}
+                    {"id": candidate_id},
                 ).fetchone()
                 if not exists:
                     break
@@ -53,9 +55,7 @@ def series_new():
                     INSERT INTO all_titles (titleId)
                     VALUES (:id)
                 """),
-                {
-                    "id": candidate_id
-                }
+                {"id": candidate_id},
             )
 
             # 2️⃣ CHILD TABLO
@@ -72,8 +72,8 @@ def series_new():
                     "sy": start_year,
                     "ey": end_year,
                     "rt": runtime,
-                    "ia": is_adult
-                }
+                    "ia": is_adult,
+                },
             )
 
         flash("New series added successfully!")
@@ -86,7 +86,6 @@ def series_new():
 # ------------------------------------------------------------------
 @admin_bp.route("/series/edit/<series_id>", methods=["GET", "POST"])
 def series_edit(series_id):
-
     with engine.connect() as conn:
         result = conn.execute(
             text("""
@@ -95,7 +94,7 @@ def series_edit(series_id):
                 FROM series
                 WHERE seriesId = :id
             """),
-            {"id": series_id}
+            {"id": series_id},
         )
         series = result.fetchone()
 
@@ -126,8 +125,8 @@ def series_edit(series_id):
                     "ey": end_year or None,
                     "rt": runtime or None,
                     "ia": is_adult,
-                    "id": series_id
-                }
+                    "id": series_id,
+                },
             )
             conn.commit()
 
@@ -135,6 +134,7 @@ def series_edit(series_id):
         return redirect(url_for("admin.series_edit_menu"))
 
     return render_template("series_form.html", series=series)
+
 
 # ------------------------------------------------------------------
 # EDIT SERIES MENU (Search)
@@ -145,24 +145,32 @@ def series_edit_menu():
 
     with engine.connect() as conn:
         if query:
-            series = conn.execute(
-                text("""
+            series = (
+                conn.execute(
+                    text("""
                     SELECT seriesId, seriesTitle
                     FROM series
                     WHERE seriesTitle LIKE :q
                     LIMIT 50
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            series = conn.execute(
-                text("""
+            series = (
+                conn.execute(
+                    text("""
                     SELECT seriesId, seriesTitle
                     FROM series
                     ORDER BY seriesTitle
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template(
         "admin/edit_generic_menu.html",
@@ -173,7 +181,7 @@ def series_edit_menu():
         name_field="seriesTitle",
         name_label="Title",
         edit_route="admin.series_edit",
-        id_param="series_id"
+        id_param="series_id",
     )
 
 
@@ -186,24 +194,32 @@ def series_delete_menu():
 
     with engine.connect() as conn:
         if query:
-            series = conn.execute(
-                text("""
+            series = (
+                conn.execute(
+                    text("""
                     SELECT seriesId, seriesTitle
                     FROM series
                     WHERE seriesTitle LIKE :q
                     LIMIT 50
                 """),
-                {"q": f"%{query}%"}
-            ).mappings().all()
+                    {"q": f"%{query}%"},
+                )
+                .mappings()
+                .all()
+            )
         else:
-            series = conn.execute(
-                text("""
+            series = (
+                conn.execute(
+                    text("""
                     SELECT seriesId, seriesTitle
                     FROM series
                     ORDER BY seriesTitle
                     LIMIT 20
                 """)
-            ).mappings().all()
+                )
+                .mappings()
+                .all()
+            )
 
     return render_template(
         "admin/delete_generic_menu.html",
@@ -214,8 +230,9 @@ def series_delete_menu():
         name_field="seriesTitle",
         name_label="Title",
         delete_route="admin.series_delete",
-        id_param="series_id"
+        id_param="series_id",
     )
+
 
 # ------------------------------------------------------------------
 # DELETE SERIES
@@ -224,15 +241,11 @@ def series_delete_menu():
 def series_delete(series_id):
     with engine.begin() as conn:
         # 1️⃣ CHILD
-        conn.execute(
-            text("DELETE FROM series WHERE seriesId = :id"),
-            {"id": series_id}
-        )
+        conn.execute(text("DELETE FROM series WHERE seriesId = :id"), {"id": series_id})
 
         # 2️⃣ PARENT
         conn.execute(
-            text("DELETE FROM all_titles WHERE titleId = :id"),
-            {"id": series_id}
+            text("DELETE FROM all_titles WHERE titleId = :id"), {"id": series_id}
         )
 
     flash("Series deleted successfully!")
