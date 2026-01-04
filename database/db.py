@@ -10,13 +10,8 @@ DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_NAME = os.getenv("DB_NAME")
 
 engine = create_engine(
-    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}",
-    echo=True
+    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}", echo=True
 )
-
-
-
-
 
 
 # env dosyası herkesin kendine özel DB_USER, DB_PASSWORD yazdığı dosya

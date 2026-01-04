@@ -41,7 +41,9 @@ def get_distinct_title_types(title_basics_path: str | None = None) -> pd.Series:
         title_basics_path = os.path.join(base_dir, "..", "data", "title.basics.csv")
 
     # Read only the titleType column
-    df = pd.read_csv(title_basics_path, usecols=["titleType"], dtype={"titleType": "string"})
+    df = pd.read_csv(
+        title_basics_path, usecols=["titleType"], dtype={"titleType": "string"}
+    )
 
     title_types = df["titleType"].dropna().str.strip()
 

@@ -46,7 +46,9 @@ def apply_genre_fk(
     - overwrite the `genres` column in the basics CSVs with these id lists.
     """
 
-    movies_path, series_path, genre_path = _load_paths(movies_path, series_path, genre_path)
+    movies_path, series_path, genre_path = _load_paths(
+        movies_path, series_path, genre_path
+    )
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
     if movies_output_path is None:
@@ -71,7 +73,9 @@ def apply_genre_fk(
         base["genres"] = base["genres"].astype("string")
         base = base.dropna(subset=["genres"])
 
-        exploded = base.assign(genre_str=base["genres"].str.split(",")).explode("genre_str")
+        exploded = base.assign(genre_str=base["genres"].str.split(",")).explode(
+            "genre_str"
+        )
         exploded["genre_str"] = exploded["genre_str"].astype("string").str.strip()
 
         mask_valid = (exploded["genre_str"] != "") & (exploded["genre_str"] != "\\N")

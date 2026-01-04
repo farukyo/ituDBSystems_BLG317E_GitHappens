@@ -48,7 +48,9 @@ def drop_unwanted_columns(
     series_df = pd.read_csv(series_path)
 
     # Drop columns if they exist
-    movies_drop_cols = [col for col in ["originalTitle", "endYear"] if col in movies_df.columns]
+    movies_drop_cols = [
+        col for col in ["originalTitle", "endYear"] if col in movies_df.columns
+    ]
     series_drop_cols = [col for col in ["originalTitle"] if col in series_df.columns]
 
     movies_df = movies_df.drop(columns=movies_drop_cols)
@@ -80,4 +82,3 @@ if __name__ == "__main__":
     print(f"    Columns   : {', '.join(result['movies_columns'])}")
     print(f"  Series file : {result['series_path']}")
     print(f"    Columns   : {', '.join(result['series_columns'])}")
-

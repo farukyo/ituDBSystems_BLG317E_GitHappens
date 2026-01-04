@@ -38,13 +38,7 @@ def build_genre_df(
     df = pd.read_csv(title_basics_path, usecols=["genres"], dtype={"genres": "string"})
 
     # Split comma-separated genres, stack, drop duplicates and missing values
-    genres_series = (
-        df["genres"]
-        .dropna()
-        .str.split(",")
-        .explode()
-        .str.strip()
-    )
+    genres_series = df["genres"].dropna().str.split(",").explode().str.strip()
 
     # Remove empty strings and special missing markers like "\\N"
     genres_series = genres_series[genres_series != ""]
@@ -54,7 +48,9 @@ def build_genre_df(
 
     genre_df = pd.DataFrame(
         {
-            "genre_id": range(1, len(unique_genres) + 1),  # auto-increment starting from 1
+            "genre_id": range(
+                1, len(unique_genres) + 1
+            ),  # auto-increment starting from 1
             "genre": unique_genres,
         }
     )
@@ -76,4 +72,3 @@ if __name__ == "__main__":
     df = build_genre_df(default_title_basics, default_output)
     print(df.head())
     print(f"Created {len(df)} distinct genres and saved to: {default_output}")
-
