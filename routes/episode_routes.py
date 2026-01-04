@@ -6,17 +6,17 @@ from sqlalchemy import text
 from flask_login import current_user
 from database.db import engine
 
-episode_bp = Blueprint('episode', __name__)
+episode_bp = Blueprint("episode", __name__)
 
 
 @episode_bp.route("/episodes")
 def episodes():
-    ep_title = request.args.get('epTitle')
-    runtime_min = request.args.get('runtimeMin')
-    runtime_max = request.args.get('runtimeMax')
-    series_name = request.args.get('seriesName')
-    season_number = request.args.get('seNumber')
-    episode_number = request.args.get('epNumber')
+    ep_title = request.args.get("epTitle")
+    runtime_min = request.args.get("runtimeMin")
+    runtime_max = request.args.get("runtimeMax")
+    series_name = request.args.get("seriesName")
+    season_number = request.args.get("seNumber")
+    episode_number = request.args.get("epNumber")
     uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
         sql = """
@@ -30,52 +30,53 @@ def episodes():
             WHERE 1=1
         """
         params = {"uid": uid}
-        
+
         if ep_title:
             sql += " AND e.epTitle LIKE :epTitle"
             params["epTitle"] = f"%{ep_title}%"
-        
+
         if runtime_min:
             sql += " AND e.runtimeMinutes >= :runtimeMin"
             params["runtimeMin"] = int(runtime_min)
-        
+
         if runtime_max:
             sql += " AND e.runtimeMinutes <= :runtimeMax"
             params["runtimeMax"] = int(runtime_max)
-        
+
         if series_name:
             sql += " AND s.seriesTitle LIKE :seriesName"
             params["seriesName"] = f"%{series_name}%"
-        
+
         if season_number:
             sql += " AND e.seNumber = :seNumber"
             params["seNumber"] = int(season_number)
-        
+
         if episode_number:
             sql += " AND e.epNumber = :epNumber"
             params["epNumber"] = int(episode_number)
-        
+
         sql += " LIMIT 100"
-        
+
         display_sql = sql
         for key, value in params.items():
             if isinstance(value, str):
                 display_sql = display_sql.replace(f":{key}", f"'{value}'")
             else:
                 display_sql = display_sql.replace(f":{key}", str(value))
-        
+
         result = conn.execute(text(sql), params)
         data = result.fetchall()
-    
+
     title = f"Episodes matching '{ep_title}'" if ep_title else "Episodes"
-    return render_template("episodes.html", items=data, title=title, sql_query=display_sql)
+    return render_template(
+        "episodes.html", items=data, title=title, sql_query=display_sql
+    )
 
 
 @episode_bp.route("/episode/<episode_id>")
 def episode_detail(episode_id):
     uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
-        
         sql = """
             SELECT 
                 e.episodeId, e.epTitle, e.runtimeMinutes, 
@@ -102,79 +103,81 @@ def episode_detail(episode_id):
             WHERE e.episodeId = :episodeId
             ORDER BY pr.category, p.primaryName
         """
-        
-        display_sql = sql.strip().replace(':episodeId', f"'{episode_id}'")
+
+        display_sql = sql.strip().replace(":episodeId", f"'{episode_id}'")
         result = conn.execute(text(sql), {"episodeId": episode_id, "uid": uid})
         rows = result.fetchall()
-        
+
         if not rows:
             flash("Episode not found.")
-            return redirect(url_for('episode.episodes'))
-        
+            return redirect(url_for("episode.episodes"))
+
         first_row = rows[0]
         episode = {
-            'episodeId': first_row.episodeId,
-            'epTitle': first_row.epTitle,
-            'runtimeMinutes': first_row.runtimeMinutes,
-            'seriesId': first_row.seriesId,
-            'seNumber': first_row.seNumber,
-            'epNumber': first_row.epNumber,
-            'seriesTitle': first_row.seriesTitle,
-            'startYear': first_row.startYear,
-            'endYear': first_row.endYear,
-            'is_liked': first_row.is_liked  
+            "episodeId": first_row.episodeId,
+            "epTitle": first_row.epTitle,
+            "runtimeMinutes": first_row.runtimeMinutes,
+            "seriesId": first_row.seriesId,
+            "seNumber": first_row.seNumber,
+            "epNumber": first_row.epNumber,
+            "seriesTitle": first_row.seriesTitle,
+            "startYear": first_row.startYear,
+            "endYear": first_row.endYear,
+            "is_liked": first_row.is_liked,
         }
-        
+
         stats = {
-            'total_seasons': first_row.total_seasons,
-            'total_episodes': first_row.total_episodes
+            "total_seasons": first_row.total_seasons,
+            "total_episodes": first_row.total_episodes,
         }
-        
+
         genres = []
         seen_genres = set()
         for row in rows:
             if row.genreName and row.genreName not in seen_genres:
                 genres.append(row.genreName)
                 seen_genres.add(row.genreName)
-        
+
         cast = []
         seen_people = set()
         for row in rows:
             if row.peopleId and row.peopleId not in seen_people:
-                
                 chars = row.characters
                 if chars and isinstance(chars, str):
-                   
-                    if '\n' in chars or '\r' in chars:
+                    if "\n" in chars or "\r" in chars:
                         chars = chars.splitlines()[0]
-                    
-                    
-                    if chars.startswith('['):
+
+                    if chars.startswith("["):
                         import json
+
                         try:
                             parsed = json.loads(chars)
                             if isinstance(parsed, list) and len(parsed) > 0:
                                 chars = parsed[0]
                         except:
                             pass
-                    
+
                     chars = chars.strip('"')
-                
-                cast.append({
-                    'peopleId': row.peopleId,
-                    'primaryName': row.primaryName,
-                    'category': row.category,
-                    'characters': chars,
-                    'professionName': row.professionName
-                })
+
+                cast.append(
+                    {
+                        "peopleId": row.peopleId,
+                        "primaryName": row.primaryName,
+                        "category": row.category,
+                        "characters": chars,
+                        "professionName": row.professionName,
+                    }
+                )
                 seen_people.add(row.peopleId)
-    
-    return render_template("episode.html", 
-                           episode=episode, 
-                           genres=genres,
-                           stats=stats,
-                           cast=cast,
-                           sql_query=display_sql)
+
+    return render_template(
+        "episode.html",
+        episode=episode,
+        genres=genres,
+        stats=stats,
+        cast=cast,
+        sql_query=display_sql,
+    )
 
 
 @episode_bp.route("/characters")

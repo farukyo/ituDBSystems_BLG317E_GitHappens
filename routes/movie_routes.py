@@ -6,22 +6,20 @@ from sqlalchemy import text
 from flask_login import current_user
 from database.db import engine
 
-movie_bp = Blueprint('movie', __name__)
+movie_bp = Blueprint("movie", __name__)
 
 
 @movie_bp.route("/movies")
 def movies():
-    title_query = request.args.get('title')
-    genre_filter = request.args.get('genre')
-    year_filter = request.args.get('year')
-    min_rating = request.args.get('min_rating')
-    max_rating = request.args.get('max_rating')
-    view = request.args.get('view')
+    title_query = request.args.get("title")
+    genre_filter = request.args.get("genre")
+    year_filter = request.args.get("year")
+    min_rating = request.args.get("min_rating")
+    max_rating = request.args.get("max_rating")
+    view = request.args.get("view")
 
     uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
-
-        
         genre_sql = """
             SELECT DISTINCT g.genreName 
             FROM genres g
@@ -128,7 +126,6 @@ def movies():
 
         data = conn.execute(text(sql), params).fetchall()
 
-    
     if view == "stats":
         page_title = "Detailed Movie Statistics"
     elif title_query:
@@ -139,20 +136,14 @@ def movies():
         page_title = "All Movies"
 
     return render_template(
-        "movies.html",
-        movies=data,
-        genres=genres_list,
-        title=page_title
+        "movies.html", movies=data, genres=genres_list, title=page_title
     )
-
-
-
 
 
 @movie_bp.route("/movie/<movie_id>")
 def movie(movie_id):
     uid = current_user.id if current_user.is_authenticated else -1
-    
+
     with engine.connect() as conn:
         sql = """
             SELECT m.*, r.averageRating, r.numVotes,
@@ -162,13 +153,21 @@ def movie(movie_id):
             LEFT JOIN githappens_users.user_likes_titles ul ON m.movieId = ul.title_id AND ul.user_id = :uid
             WHERE m.movieId = :movieId
         """
-        result = conn.execute(text(sql), {"movieId": movie_id, "uid": uid})
+        params = {"movieId": movie_id, "uid": uid}
+        display_sql = sql.strip()
+        for key, value in params.items():
+            if isinstance(value, str):
+                display_sql = display_sql.replace(f":{key}", f"'{value}'")
+            else:
+                display_sql = display_sql.replace(f":{key}", str(value))
+
+        result = conn.execute(text(sql), params)
         movie = result.fetchone()
-        
+
         if not movie:
             flash(f"Movie with ID {movie_id} not found.")
-            return redirect(url_for('movie.movies'))
-        
+            return redirect(url_for("movie.movies"))
+
         genre_sql = """
             SELECT g.genreName 
             FROM movie_genres mg
@@ -177,46 +176,49 @@ def movie(movie_id):
         """
         genre_result = conn.execute(text(genre_sql), {"movieId": movie_id})
         genres = [row[0] for row in genre_result.fetchall()]
-        
-        
-        stats = {
-            'averageRating': movie.averageRating,
-            'numVotes': movie.numVotes
-        }
-        
+
+        stats = {"averageRating": movie.averageRating, "numVotes": movie.numVotes}
+
         cast_sql = text("""
             SELECT p.peopleId, p.primaryName, pr.category, pr.characters
             FROM principals pr
             JOIN people p ON pr.peopleId = p.peopleId
             WHERE pr.titleId = :id OR pr.titleId LIKE :like_id
         """)
-        
-        like_param = f"%{movie_id}" if not str(movie_id).startswith('tt') else movie_id
-        cast_result = conn.execute(cast_sql, {"id": movie_id, "like_id": like_param}).fetchall()
-        
-        
+
+        like_param = f"%{movie_id}" if not str(movie_id).startswith("tt") else movie_id
+        cast_result = conn.execute(
+            cast_sql, {"id": movie_id, "like_id": like_param}
+        ).fetchall()
+
         cast = []
         for row in cast_result:
             d = dict(row._mapping)
-            chars = d.get('characters')
+            chars = d.get("characters")
             if chars and isinstance(chars, str):
-                
-                if '\n' in chars or '\r' in chars:
+                if "\n" in chars or "\r" in chars:
                     chars = chars.splitlines()[0]
-                
-                
-                if chars.startswith('['):
+
+                if chars.startswith("["):
                     import json
+
                     try:
                         parsed = json.loads(chars)
                         if isinstance(parsed, list) and len(parsed) > 0:
                             chars = parsed[0]
                     except:
                         pass
-                
-                d['characters'] = chars.strip('"')
+
+                d["characters"] = chars.strip('"')
             cast.append(d)
 
-
     page_title = f"{movie.movieTitle} ({movie.startYear})"
-    return render_template("movie.html", movie=movie, cast=cast, genres=genres, stats=stats, title=page_title)
+    return render_template(
+        "movie.html",
+        movie=movie,
+        cast=cast,
+        genres=genres,
+        stats=stats,
+        title=page_title,
+        sql_query=display_sql,
+    )

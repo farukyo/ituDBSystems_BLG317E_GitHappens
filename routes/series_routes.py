@@ -6,26 +6,23 @@ from flask_login import current_user
 from sqlalchemy import text
 from database.db import engine
 
-series_bp = Blueprint('series', __name__)
+series_bp = Blueprint("series", __name__)
 
 
 @series_bp.route("/series")
 def series():
-    
-    search_query = request.args.get('q')
-    title_type = request.args.get('titleType')
-    start_year = request.args.get('startYear')
-    end_year = request.args.get('endYear')
-    is_adult = request.args.get('isAdult')
-    view = request.args.get('view')
+    search_query = request.args.get("q")
+    title_type = request.args.get("titleType")
+    start_year = request.args.get("startYear")
+    end_year = request.args.get("endYear")
+    is_adult = request.args.get("isAdult")
+    view = request.args.get("view")
 
-    
     uid = current_user.id if current_user.is_authenticated else -1
 
     with engine.connect() as conn:
         params = {"uid": uid}
 
-        
         if view == "stats":
             sql = """
             SELECT 
@@ -49,7 +46,7 @@ def series():
             if search_query:
                 sql += " AND seriesTitle LIKE :q"
                 params["q"] = f"%{search_query}%"
-            
+
             if title_type:
                 sql += " AND titleType = :tType"
                 params["tType"] = title_type
@@ -73,7 +70,6 @@ def series():
             LIMIT 100
             """
 
-        
         else:
             sql = """
             SELECT 
@@ -103,7 +99,7 @@ def series():
             if search_query:
                 sql += " AND seriesTitle LIKE :q"
                 params["q"] = f"%{search_query}%"
-            
+
             if title_type:
                 sql += " AND titleType = :tType"
                 params["tType"] = title_type
@@ -120,7 +116,6 @@ def series():
                 sql += " AND isAdult = :adult"
                 params["adult"] = int(is_adult)
 
-            
             sql += """
             AND s.seriesId IN (
                 SELECT r2.titleId
@@ -130,7 +125,6 @@ def series():
             )
             """
 
-            
             sql += """
             GROUP BY
                 s.seriesId,
@@ -160,7 +154,6 @@ def series():
             """
         return html_snippets
 
-    
     if view == "stats":
         page_title = "Detailed Series Statistics"
     elif search_query:
@@ -175,7 +168,6 @@ def series():
 def serie_detail(series_id):
     uid = current_user.id if current_user.is_authenticated else -1
     with engine.connect() as conn:
-        
         sql_series = """
             SELECT s.seriesId, s.seriesTitle, s.titleType, s.startYear, s.endYear, s.runtimeMinutes, s.isAdult,
                    CASE WHEN ul.user_id IS NOT NULL THEN 1 ELSE 0 END as is_liked
@@ -183,23 +175,27 @@ def serie_detail(series_id):
             LEFT JOIN githappens_users.user_likes_titles ul ON s.seriesId = ul.title_id AND ul.user_id = :uid
             WHERE s.seriesId = :id
         """
-        series = conn.execute(text(sql_series), {"id": series_id, "uid": uid}).fetchone()
+        series = conn.execute(
+            text(sql_series), {"id": series_id, "uid": uid}
+        ).fetchone()
 
         if not series:
             from flask import flash, redirect, url_for
-            flash("Series not found.")
-            return redirect(url_for('series.series'))
 
-        
+            flash("Series not found.")
+            return redirect(url_for("series.series"))
+
         sql_genres = """
             SELECT g.genreName
             FROM Series_Genres sg
             JOIN genres g ON sg.genreId = g.genreId
             WHERE sg.seriesId = :id
         """
-        genres = [r.genreName for r in conn.execute(text(sql_genres), {"id": series_id}).fetchall()]
+        genres = [
+            r.genreName
+            for r in conn.execute(text(sql_genres), {"id": series_id}).fetchall()
+        ]
 
-        
         sql_cast = """
             SELECT p.peopleId, p.primaryName, pr.category, pr.characters
             FROM principals pr
@@ -209,39 +205,37 @@ def serie_detail(series_id):
             LIMIT 20
         """
         cast_data = conn.execute(text(sql_cast), {"id": series_id}).fetchall()
-        
-        
+
         cast = []
         for person in cast_data:
             chars = person.characters
             if chars and isinstance(chars, str):
-                
-                if '\n' in chars or '\r' in chars:
+                if "\n" in chars or "\r" in chars:
                     chars = chars.splitlines()[0]
-                
-                
-                if chars.startswith('['):
+
+                if chars.startswith("["):
                     import json
+
                     try:
                         parsed = json.loads(chars)
                         if isinstance(parsed, list) and len(parsed) > 0:
                             chars = parsed[0]
                     except:
                         pass
-                
+
                 chars = chars.strip('"')
             else:
                 chars = None
-            
-            cast.append({
-                'peopleId': person.peopleId,
-                'primaryName': person.primaryName,
-                'category': person.category,
-                'characters': chars
-            })
 
+            cast.append(
+                {
+                    "peopleId": person.peopleId,
+                    "primaryName": person.primaryName,
+                    "category": person.category,
+                    "characters": chars,
+                }
+            )
 
-        
         try:
             sql_stats = """
                 SELECT COUNT(DISTINCT seNumber) as total_seasons,
@@ -252,16 +246,11 @@ def serie_detail(series_id):
             stats_result = conn.execute(text(sql_stats), {"id": series_id}).fetchone()
             stats = {
                 "total_seasons": stats_result.total_seasons if stats_result else 0,
-                "total_episodes": stats_result.total_episodes if stats_result else 0
+                "total_episodes": stats_result.total_episodes if stats_result else 0,
             }
         except:
-            
-            stats = {
-                "total_seasons": 0,
-                "total_episodes": 0
-            }
+            stats = {"total_seasons": 0, "total_episodes": 0}
 
-        
         sql_rating = """
             SELECT averageRating, numVotes
             FROM ratings
@@ -270,14 +259,16 @@ def serie_detail(series_id):
         rating_result = conn.execute(text(sql_rating), {"id": series_id}).fetchone()
         rating = {
             "rating": rating_result.averageRating if rating_result else 0,
-            "votes": rating_result.numVotes if rating_result else 0
+            "votes": rating_result.numVotes if rating_result else 0,
         }
 
     page_title = f"{series.seriesTitle} ({series.startYear})"
-    return render_template("serie.html", 
-                           series=series, 
-                           genres=genres,
-                           cast=cast,
-                           stats=stats,
-                           rating=rating,
-                           title=page_title)
+    return render_template(
+        "serie.html",
+        series=series,
+        genres=genres,
+        cast=cast,
+        stats=stats,
+        rating=rating,
+        title=page_title,
+    )

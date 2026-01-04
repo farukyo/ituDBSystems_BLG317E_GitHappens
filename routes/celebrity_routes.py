@@ -3,16 +3,17 @@ from flask_login import current_user, login_required
 from sqlalchemy import text
 from database.db import engine
 
-celebrity_bp = Blueprint('celebrity', __name__)
+celebrity_bp = Blueprint("celebrity", __name__)
+
 
 @celebrity_bp.route("/celebrities")
 def celebrities():
-    search_query = request.args.get('q')
-    profession_list = request.args.getlist('profession')
-    primary_letter = request.args.get('primary_name')
-    birth_filter = request.args.get('birth_year')
-    death_filter = request.args.get('death_year')
-    order_filter = request.args.get('order_by')
+    search_query = request.args.get("q")
+    profession_list = request.args.getlist("profession")
+    primary_letter = request.args.get("primary_name")
+    birth_filter = request.args.get("birth_year")
+    death_filter = request.args.get("death_year")
+    order_filter = request.args.get("order_by")
 
     uid = current_user.id if current_user.is_authenticated else -1
 
@@ -20,10 +21,18 @@ def celebrities():
     display_sql = ""
     page_title = "Celebrities"
 
-    has_filters = any([search_query, profession_list, primary_letter, birth_filter, death_filter, order_filter])
+    has_filters = any(
+        [
+            search_query,
+            profession_list,
+            primary_letter,
+            birth_filter,
+            death_filter,
+            order_filter,
+        ]
+    )
 
     with engine.connect() as conn:
-        
         if not has_filters:
             sql = """
             SELECT 
@@ -49,15 +58,16 @@ def celebrities():
             LIMIT 50
             """
             params = {"uid": uid}
-            
+
             result = conn.execute(text(sql), params)
             data = result.fetchall()
             display_sql = sql.replace(":uid", str(uid))
 
         else:
-            page_title = f"Results for '{search_query}'" if search_query else "Search Results"
-            
-            
+            page_title = (
+                f"Results for '{search_query}'" if search_query else "Search Results"
+            )
+
             sql = """
                 SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, 
                        GROUP_CONCAT(DISTINCT pd.name SEPARATOR ', ') as professionName,
@@ -72,23 +82,22 @@ def celebrities():
             """
             params = {"uid": uid}
 
-            
             if not search_query and not primary_letter:
                 sql += " AND p.primaryName REGEXP '^[A-Za-z]'"
                 sql += " AND CHAR_LENGTH(p.primaryName) >= 3"
-            
+
             if search_query:
                 sql += " AND p.primaryName LIKE :q"
                 params["q"] = f"%{search_query}%"
 
-            
             if profession_list:
-                
-                prof_conditions = [f"pd.name LIKE :prof_{i}" for i in range(len(profession_list))]
+                prof_conditions = [
+                    f"pd.name LIKE :prof_{i}" for i in range(len(profession_list))
+                ]
                 for i, prof in enumerate(profession_list):
                     params[f"prof_{i}"] = f"%{prof}%"
                 sql += " AND (" + " AND ".join(prof_conditions) + ")"
-                
+
             if primary_letter:
                 sql += " AND p.primaryName LIKE :letter"
                 params["letter"] = f"{primary_letter}%"
@@ -101,7 +110,6 @@ def celebrities():
                 sql += " AND p.deathYear = :dyear"
                 params["dyear"] = int(death_filter)
 
-            
             sql += " GROUP BY p.peopleId, p.primaryName, p.birthYear, p.deathYear, ul.user_id"
 
             if order_filter == "alphabetical":
@@ -114,28 +122,30 @@ def celebrities():
                 sql += " ORDER BY p.primaryName ASC"
 
             sql += " LIMIT 50"
-            
+
             result = conn.execute(text(sql), params)
             data = result.fetchall()
 
             display_sql = sql
             for k, v in params.items():
-                display_sql = display_sql.replace(f":{k}", str(v) if isinstance(v, int) else f"'{v}'")
+                display_sql = display_sql.replace(
+                    f":{k}", str(v) if isinstance(v, int) else f"'{v}'"
+                )
 
-    
-    return render_template("celebrities.html", 
-                           items=data, 
-                           title=page_title, 
-                           selected_professions=profession_list,
-                           sql_query=display_sql)
+    return render_template(
+        "celebrities.html",
+        items=data,
+        title=page_title,
+        selected_professions=profession_list,
+        sql_query=display_sql,
+    )
+
 
 @celebrity_bp.route("/celebrity/<people_id>")
 def celebrity_detail(people_id):
     uid = current_user.id if current_user.is_authenticated else -1
-    
-    with engine.connect() as conn:
 
-        
+    with engine.connect() as conn:
         sql_person = """
             SELECT p.peopleId, p.primaryName, p.birthYear, p.deathYear, 
                    GROUP_CONCAT(DISTINCT pd.name SEPARATOR ', ') as professionName,
@@ -153,8 +163,8 @@ def celebrity_detail(people_id):
 
         if not person:
             flash("Celebrity not found.")
-            return redirect(url_for('celebrity.celebrities'))
-            
+            return redirect(url_for("celebrity.celebrities"))
+
         sql_works = """
             SELECT * FROM (
                 -- 1. MOVIES
@@ -179,41 +189,47 @@ def celebrity_detail(people_id):
             LIMIT 8
         """
         best_works = conn.execute(text(sql_works), {"pid": people_id}).fetchall()
-        display_sql = "-- 1. Fetch Person Details\n" + sql_person.replace(":id", f"'{people_id}'").replace(":uid", str(uid))
-        display_sql += "\n\n-- 2. Fetch Top Rated Works (Union of Movies, Series, Episodes)\n" + sql_works.replace(":pid", f"'{people_id}'")
+        display_sql = "-- 1. Fetch Person Details\n" + sql_person.replace(
+            ":id", f"'{people_id}'"
+        ).replace(":uid", str(uid))
+        display_sql += (
+            "\n\n-- 2. Fetch Top Rated Works (Union of Movies, Series, Episodes)\n"
+            + sql_works.replace(":pid", f"'{people_id}'")
+        )
 
-    return render_template("celebrity.html", person=person, best_works=best_works, sql_query=display_sql)
+    return render_template(
+        "celebrity.html", person=person, best_works=best_works, sql_query=display_sql
+    )
 
 
 @celebrity_bp.route("/like_celebrity", methods=["POST"])
 @login_required
 def like_celebrity():
-    people_id = request.form.get('people_id')
+    people_id = request.form.get("people_id")
     user_id = current_user.id
-    
+
     with engine.connect() as conn:
-        
         check_sql = """
             SELECT 1 FROM githappens_users.user_likes_people 
             WHERE user_id = :uid AND people_id = :eid
         """
-        result = conn.execute(text(check_sql), {"uid": user_id, "eid": people_id}).fetchone()
-        
+        result = conn.execute(
+            text(check_sql), {"uid": user_id, "eid": people_id}
+        ).fetchone()
+
         if result:
-            
             delete_sql = """
                 DELETE FROM githappens_users.user_likes_people 
                 WHERE user_id = :uid AND people_id = :eid
             """
             conn.execute(text(delete_sql), {"uid": user_id, "eid": people_id})
         else:
-            
             insert_sql = """
                 INSERT INTO githappens_users.user_likes_people (user_id, people_id)
                 VALUES (:uid, :eid)
             """
             conn.execute(text(insert_sql), {"uid": user_id, "eid": people_id})
-            
+
         conn.commit()
 
     return "1"
