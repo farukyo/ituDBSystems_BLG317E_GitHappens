@@ -258,7 +258,7 @@ def user_delete(user_id):
                 {"id": user_id},
             ).fetchone()
             has_data = result is not None
-        except:
+        except Exception:
             # Tablolar yoksa kontrol yapma
             pass
 

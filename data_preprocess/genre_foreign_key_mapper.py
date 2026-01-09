@@ -15,7 +15,7 @@ def _load_paths(
     series_path: str | None,
     genre_path: str | None,
 ):
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # base_dir = os.path.dirname(os.path.abspath(__file__))  # Removed unused variable
     if movies_path is None:
         movies_path = os.path.join(base_dir, "..", "data", "movies.basics.csv")
     if series_path is None:
@@ -50,7 +50,7 @@ def apply_genre_fk(
         movies_path, series_path, genre_path
     )
 
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # base_dir = os.path.dirname(os.path.abspath(__file__))  # Removed unused variable
     if movies_output_path is None:
         movies_output_path = movies_path  # overwrite by default
     if series_output_path is None:

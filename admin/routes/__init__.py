@@ -1,11 +1,28 @@
-from admin.routes.home import *
-from admin.routes.people import *
-from admin.routes.movie import *
-from admin.routes.series import *
-from admin.routes.episode import *
-from admin.routes.ratings import *
-from admin.routes.genres import *
-from admin.routes.principals import *
-from admin.routes.professions import *
-from admin.routes.user import *
-from admin.routes.suggestion import *
+# Explicit imports instead of wildcard imports
+from admin.routes import (
+    home,
+    people,
+    movie,
+    series,
+    episode,
+    ratings,
+    genres,
+    principals,
+    professions,
+    user,
+    suggestion,
+)
+
+__all__ = [
+    "home",
+    "people",
+    "movie",
+    "series",
+    "episode",
+    "ratings",
+    "genres",
+    "principals",
+    "professions",
+    "user",
+    "suggestion",
+]

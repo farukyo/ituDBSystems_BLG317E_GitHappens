@@ -154,7 +154,7 @@ def episode_detail(episode_id):
                             parsed = json.loads(chars)
                             if isinstance(parsed, list) and len(parsed) > 0:
                                 chars = parsed[0]
-                        except:
+                        except Exception:
                             pass
 
                     chars = chars.strip('"')

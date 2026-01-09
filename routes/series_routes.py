@@ -220,7 +220,7 @@ def serie_detail(series_id):
                         parsed = json.loads(chars)
                         if isinstance(parsed, list) and len(parsed) > 0:
                             chars = parsed[0]
-                    except:
+                    except Exception:
                         pass
 
                 chars = chars.strip('"')
@@ -248,7 +248,7 @@ def serie_detail(series_id):
                 "total_seasons": stats_result.total_seasons if stats_result else 0,
                 "total_episodes": stats_result.total_episodes if stats_result else 0,
             }
-        except:
+        except Exception:
             stats = {"total_seasons": 0, "total_episodes": 0}
 
         sql_rating = """

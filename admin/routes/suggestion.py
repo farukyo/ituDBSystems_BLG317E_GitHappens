@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash
 from sqlalchemy import text
 from database.db import engine
 from admin import admin_bp

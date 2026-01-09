@@ -44,7 +44,7 @@ def search():
             movies = conn.execute(
                 text(sql_movies), {"q": f"%{search_query}%"}
             ).fetchall()
-        except:
+        except Exception:
             movies = []
 
         try:
@@ -57,7 +57,7 @@ def search():
             series = conn.execute(
                 text(sql_series), {"q": f"%{search_query}%"}
             ).fetchall()
-        except:
+        except Exception:
             series = []
 
         try:
@@ -71,7 +71,7 @@ def search():
             episodes = conn.execute(
                 text(sql_episodes), {"q": f"%{search_query}%"}
             ).fetchall()
-        except:
+        except Exception:
             episodes = []
 
         try:
@@ -84,7 +84,7 @@ def search():
             people = conn.execute(
                 text(sql_people), {"q": f"%{search_query}%"}
             ).fetchall()
-        except:
+        except Exception:
             people = []
 
     return render_template(
